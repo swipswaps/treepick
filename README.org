@@ -1,4 +1,5 @@
 #+AUTHOR: Toby Slight
+#+OPTIONS: toc:nil
 
 * CURSES PATH PICKER
 
