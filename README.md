@@ -1,11 +1,3 @@
-# Table of Contents
-
-1.  [CURSES PATH PICKER](#org804499e)
-
-
-
-<a id="org804499e"></a>
-
 # CURSES PATH PICKER
 
 A curses based path picker/file browser.
