@@ -1,24 +1,3 @@
-#!/usr/bin/env python3
-"""
-There are several general approaches to the drawing-an-outline problem. This
-program supports the following operations:
-
-   - Navigate items using pre-order traversal, with arrow keys, Vi or Emacs
-     bindings.
-   - Expand or collapse children, one at time or all at once.
-   - Toggle marking of items, for use in selection mechanism for another module.
-   - Toggling display of toggle disk usage of an item, using size.py module.
-
-It runs over the filesystem, so it is somewhat lazy about expanding children.
-
-It doesn't really bother to worry about someone else changing the outline behind
-its back.
-
-So the strategy is to store our current linear position in the inorder
-traversal, and defer operations on the current node until the next time we're
-traversing.
-"""
-
 import argparse
 import cgitb
 import curses
