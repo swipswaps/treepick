@@ -6,7 +6,7 @@ import pdb
 import readline
 import sys
 
-from ppaths import Paths
+from paths import Paths
 
 # Get more detailed traceback reports
 cgitb.enable(format="text")  # https://pymotw.com/2/cgitb/
@@ -163,24 +163,3 @@ def select(stdscr, root, hidden):
             curline = results[1]
         else:
             return selected
-
-
-def get_args():
-    """
-    Return a list of valid arguments.
-    """
-    parser = argparse.ArgumentParser(description='\
-    Select paths from a directory tree.')
-    parser.add_argument("-a", "--hidden", action="store_false",
-                        help="Show all hidden paths too.")
-    parser.add_argument("path", type=str, nargs='?',
-                        default=".", help="A valid path.")
-    return parser.parse_args()
-
-
-if __name__ == '__main__':
-    args = get_args()
-    root = args.path
-    hidden = args.hidden
-    paths = curses.wrapper(select, root, hidden)
-    print("\n".join(paths))

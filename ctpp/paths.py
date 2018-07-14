@@ -1,7 +1,7 @@
 import curses
 import os
 
-from ccolor import Colors
+from color import Colors
 from du import DiskUsage
 
 
