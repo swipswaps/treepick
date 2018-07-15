@@ -1,7 +1,6 @@
 # CURSES TREE STYLE PATH PICKER
 
-A Curses based, Tree style, Path Picker. For use as a terminal based file dialog
-library.
+A Curses based, tree style, path picker. For use as a terminal based file dialog.
 
 ![img](./img/treepick.png "TreePick")
 
@@ -14,7 +13,7 @@ library.
 * Reset marking and expansion.
 
 ```
-USAGE: treepick.py [-h] [-a] [path]
+USAGE: treepick [-h] [-a] [path]
 
 Select paths from a directory tree.
 

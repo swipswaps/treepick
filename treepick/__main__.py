@@ -17,9 +17,13 @@ def get_args():
     return parser.parse_args()
 
 
-if __name__ == '__main__':
+def main():
     args = get_args()
     root = args.path
     hidden = args.hidden
     paths = curses.wrapper(pick, root, hidden)
     print("\n".join(paths))
+
+
+if __name__ == '__main__':
+    main()

@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="treepick",
-    version="0.0.1",
+    version="0.0.3",
     author="Toby Slight",
     author_email="tobyslight@gmail.com",
     description="Curses Tree Style Path Picker",
@@ -18,4 +18,9 @@ setuptools.setup(
         "License :: OSI Approved :: ISC License (ISCL)",
         "Operating System :: OS Independent",
     ),
+    entry_points={
+        'console_scripts': [
+            'treepick = treepick.__main__:main',
+        ],
+    }
 )
