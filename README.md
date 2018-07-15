@@ -3,9 +3,9 @@
 A Curses based, Tree style, Path Picker. For use as a terminal based file dialog
 library.
 
-![img](./img/scrot0.png "Interface")
-
-![img](./img/scrot1.png "Output")
+| Interface                            | Output                            |
+|:------------------------------------:|:---------------------------------:|
+| ![img](./img/scrot0.png "Interface") | ![img](./img/scrot1.png "Output") |
 
 * Pre-order file system traversal from a given point, or `$PWD` if not specified.
 * Expand or collapse child nodes one at a time or all at once.
