@@ -1,3 +1,5 @@
+import argparse
+import curses
 import pick
 from pick import select
 
