@@ -7,36 +7,33 @@ library.
 
 ![img](./img/scrot1.png "Screenshot 2")
 
-![img](./img/scrot2.png "Screenshot 3")
-
 -   Pre-order file system traversal from a given point, or `$PWD` if not specified.
 -   Expand or collapse child nodes one at a time or all at once.
 -   Recursively get disk usage of a single node or all expanded nodes.
 -   Toggle display of dotfiles.
 -   Toggle marking of files that can then be piped into another program or simply
-    echoed back to the screen upon exit.
+echoed back to the screen upon exit.
 -   Reset marking and expansion.
 
+```
 **USAGE:** treepick.py [-h] [-a] [path]
 
 *Select paths from a directory tree.*
 
 **POSITIONAL ARGUMENTS:**
-  path          A valid path.
+path          A valid path.
 
 **OPTIONAL ARGUMENTS:**
-  -h, &#x2013;help    show this help message and exit
-  -a, &#x2013;hidden  Show all hidden paths too.
-
+-h, --help    show this help message and exit
+-a, --hidden  Show all hidden paths too.
+```
 
 ## KEYBINDINGS
 
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
-
 <colgroup>
 <col  class="org-left" />
-
 <col  class="org-left" />
 </colgroup>
 <thead>

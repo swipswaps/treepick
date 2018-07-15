@@ -40,7 +40,7 @@ class Paths:
         return nodestr + ' ' * (width - len(nodestr))
 
     def drawlines(self, depth, curline, line):
-        offset = max(0, curline - curses.LINES + 10)
+        offset = max(0, curline - curses.LINES + 2)
         y = line - offset
         x = 0
         string = self.drawline(depth - 1, curses.COLS)
