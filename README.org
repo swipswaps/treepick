@@ -1,19 +1,60 @@
 #+AUTHOR: Toby Slight
 #+OPTIONS: toc:nil
 
-* [C]URSES [T]REE [P]ATH [P]ICKER
+* CURSES TREE STYLE PATH PICKER
 
-A Curses based, Tree style, Path Picker/file browser/dialog.
+A Curses based, Tree style, Path Picker. For use as a terminal based file dialog
+library.
 
-- Pre-order file system traversal from a given point, or =$PWD= if not specified,
-  using Vi or Emacs bindings (or the arrow keys).
+#+CAPTION: Screenshot 1
+#+NAME:fig:scrot 0
+     [[./img/scrot0.png]]
+
+#+CAPTION: Screenshot 2
+#+NAME:fig:scrot 1
+     [[./img/scrot1.png]]
+
+#+CAPTION: Screenshot 3
+#+NAME:fig:scrot 2
+     [[./img/scrot2.png]]
+
+- Pre-order file system traversal from a given point, or =$PWD= if not specified.
 - Expand or collapse child nodes one at a time or all at once.
 - Recursively get disk usage of a single node or all expanded nodes.
+- Toggle display of dotfiles.
 - Toggle marking of files that can then be piped into another program or simply
   echoed back to the screen upon exit.
+- Reset marking and expansion.
 
-Inspired by:
+*USAGE:* treepick.py [-h] [-a] [path]
 
-https://github.com/mcchae/treesel
+/Select paths from a directory tree./
 
-https://gist.github.com/rygwdn/394885
+*POSITIONAL ARGUMENTS:*
+  path          A valid path.
+
+*OPTIONAL ARGUMENTS:*
+  -h, --help    show this help message and exit
+  -a, --hidden  Show all hidden paths too.
+
+** KEYBINDINGS
+
+| Key         | Action                                                  |
+|-------------+---------------------------------------------------------|
+| UP, k, p    | Go up one line.                                         |
+| DOWN, j, n  | Go down one line.                                       |
+| RIGHT, l, f | Expand child node, and move down one line (into child). |
+| LEFT, h, b  | Collapse child node.                                    |
+| Tab         | Toggle expansion/collapse of child node.                |
+| PGDN, d, v  | Move down a page of lines at a time.                    |
+| PGUP, V, u  | Move up a page of lines at a time.                      |
+| J, N        | Move to next child node, of parent. (needs some TLC!)   |
+| K, P        | Move to parent node. (also currently pretty broken!)    |
+| g, <        | Move to first line.                                     |
+| G, >        | Move to last line.                                      |
+| m, SPC, RET | Toggle marking of paths.                                |
+| .           | Toggle display of dotfiles.                             |
+| s           | Display total size of path, recursively                 |
+| S           | Display, totol size of all currently expanded paths.    |
+| r           | Reset marking and expansion.                            |
+| q, e, ESC   | Quit and display all marked paths.                      |
