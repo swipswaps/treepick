@@ -6,12 +6,12 @@ from du import DiskUsage
 
 
 class Paths:
-    def __init__(self, scr, name, hidden, selected):
+    def __init__(self, scr, name, hidden, picked):
         self.scr = scr
         self.name = name
         self.hidden = hidden
-        self.selected = selected
-        self.colors = Colors(self.scr, self.selected)
+        self.picked = picked
+        self.colors = Colors(self.scr, self.picked)
         try:
             if self.hidden:
                 self.children = sorted(self.listdir(name))
@@ -93,7 +93,7 @@ class Paths:
         count = 0
         if depth > 1:
             curpar = os.path.dirname(os.path.dirname(self.name))
-            cpaths = Paths(self.scr, curpar, self.hidden, self.selected)
+            cpaths = Paths(self.scr, curpar, self.hidden, self.picked)
             curdir = os.path.basename(os.path.dirname(self.name))
             curidx = cpaths.children.index(curdir)
             nextdir = cpaths.children[curidx + 1]
@@ -140,7 +140,7 @@ class Paths:
             return
         if self.paths is None:
             self.paths = [Paths(
-                self.scr, os.path.join(self.name, child), self.hidden, self.selected)
+                self.scr, os.path.join(self.name, child), self.hidden, self.picked)
                 for child in self.children]
         return self.paths
 

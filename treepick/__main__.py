@@ -1,7 +1,7 @@
 import argparse
 import curses
 import pick
-from pick import select
+from pick import pick
 
 
 def get_args():
@@ -21,5 +21,5 @@ if __name__ == '__main__':
     args = get_args()
     root = args.path
     hidden = args.hidden
-    paths = curses.wrapper(select, root, hidden)
+    paths = curses.wrapper(pick, root, hidden)
     print("\n".join(paths))

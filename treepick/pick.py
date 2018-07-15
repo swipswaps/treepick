@@ -12,9 +12,9 @@ from keys import parse_keys
 cgitb.enable(format="text")  # https://pymotw.com/2/cgitb/
 
 
-def select(stdscr, root, hidden):
-    selected = []
-    parent = Paths(stdscr, root, hidden, selected)
+def pick(stdscr, root, hidden):
+    picked = []
+    parent = Paths(stdscr, root, hidden, picked)
     parent.expand()
     curline = 0
     action = None
@@ -25,8 +25,8 @@ def select(stdscr, root, hidden):
         # to reset or toggle view of dotfiles we need to create a new Path
         # object before, erasing the screen & descending into draw loop.
         if action == 'reset':
-            selected = []
-            parent = Paths(stdscr, root, hidden, selected)
+            picked = []
+            parent = Paths(stdscr, root, hidden, picked)
             parent.expand()
             action = None
         elif action == 'toggle_hidden':
@@ -34,12 +34,12 @@ def select(stdscr, root, hidden):
                 hidden = False
             else:
                 hidden = True
-            parent = Paths(stdscr, root, hidden, selected)
+            parent = Paths(stdscr, root, hidden, picked)
             parent.expand()
             action = None
             # restore marked state
             for child, depth in parent.traverse():
-                if child.name in selected:
+                if child.name in picked:
                     child.mark()
 
         stdscr.erase()  # https://stackoverflow.com/a/24966639 - prevent flashes
@@ -48,7 +48,7 @@ def select(stdscr, root, hidden):
             if depth == 0:
                 continue  # don't draw root node
             if line == curline:
-                # selected line needs to be different than default
+                # picked line needs to be different than default
                 child.colors.curline(child.name)
 
                 if action == 'expand':
@@ -73,11 +73,11 @@ def select(stdscr, root, hidden):
                 elif action == 'toggle_mark':
                     if child.marked:
                         child.marked = False
-                        selected.remove(child.name)
+                        picked.remove(child.name)
                         child.colors.default(child.name)
                     else:
                         child.marked = True
-                        selected.append(child.name)
+                        picked.append(child.name)
                         child.colors.yellow_black()
                     curline += 1
                 elif action == 'next_parent':
@@ -108,4 +108,4 @@ def select(stdscr, root, hidden):
             action = results[0]
             curline = results[1]
         else:
-            return selected
+            return picked
