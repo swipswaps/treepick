@@ -3,18 +3,14 @@
 A Curses based, Tree style, Path Picker. For use as a terminal based file dialog
 library.
 
-|:---------------------------------------:|:-----------------------------------------:|:--------------------------------------:|
-| ![img](./img/interface.png "Interface") | ![img](./img/hidden.size.png "Interface") | ![img](./img/output_src.png "Output")  |
-|                                         |                                           | ![img](./img/output_home.png "Output") |
-
-
-
+![img](./img/treepick.png "TreePick")
 
 * Pre-order file system traversal from a given point, or `$PWD` if not specified.
 * Expand or collapse child nodes one at a time or all at once.
 * Recursively get disk usage of a single node or all expanded nodes.
 * Toggle display of dotfiles.
-* Toggle marking of files that can then be piped into another program or simply echoed back to the screen upon exit.
+* Toggle marking of files that can then be piped into another program or simply
+  echoed back to the screen upon exit.
 * Reset marking and expansion.
 
 ```
