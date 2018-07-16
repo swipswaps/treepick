@@ -1,7 +1,7 @@
 import curses
 
 
-def parse_keys(stdscr, curline, line):
+def parse(stdscr, curline, line):
     ESC = 27
     action = None
     ch = stdscr.getch()

@@ -1,12 +1,11 @@
-import cgitb
-import curses
 import os
+import cgitb
 import pdb
 import readline
 import sys
 
-from paths import Paths
-from keys import parse_keys
+from .paths import Paths
+from .keys import parse
 
 # Get more detailed traceback reports
 cgitb.enable(format="text")  # https://pymotw.com/2/cgitb/
@@ -49,11 +48,11 @@ def pick(stdscr, root, hidden):
                 continue  # don't draw root node
             if line == curline:
                 # picked line needs to be different than default
-                child.colors.curline(child.name)
+                child.color.curline(child.name)
 
                 if action == 'expand':
                     child.expand()
-                    child.colors.default(child.name)
+                    child.color.default(child.name)
                     curline += 1
                 elif action == 'collapse':
                     child.collapse()
@@ -74,11 +73,11 @@ def pick(stdscr, root, hidden):
                     if child.marked:
                         child.marked = False
                         picked.remove(child.name)
-                        child.colors.default(child.name)
+                        child.color.default(child.name)
                     else:
                         child.marked = True
                         picked.append(child.name)
-                        child.colors.yellow_black()
+                        child.color.yellow_black()
                     curline += 1
                 elif action == 'next_parent':
                     curline += child.nextparent(parent, curline, depth)
@@ -86,7 +85,7 @@ def pick(stdscr, root, hidden):
                     curline = child.prevparent(parent)
                 elif action == 'get_size':
                     child.getsize = True
-                    child.colors.default(child.name)
+                    child.color.default(child.name)
                     curline += 1
                 elif action == 'get_size_all':
                     for c, d in parent.traverse():
@@ -94,7 +93,7 @@ def pick(stdscr, root, hidden):
                 action = None  # reset action
 
             else:
-                child.colors.default(child.name)
+                child.color.default(child.name)
 
             child.drawlines(depth, curline, line)
 
@@ -103,7 +102,7 @@ def pick(stdscr, root, hidden):
 
         stdscr.refresh()
 
-        results = parse_keys(stdscr, curline, line)
+        results = parse(stdscr, curline, line)
         if results:
             action = results[0]
             curline = results[1]

@@ -1,8 +1,8 @@
-import curses
 import os
+import curses
 
-from color import Colors
-from du import DiskUsage
+from .color import Color
+from .du import DiskUsage
 
 
 class Paths:
@@ -11,7 +11,7 @@ class Paths:
         self.name = name
         self.hidden = hidden
         self.picked = picked
-        self.colors = Colors(self.scr, self.picked)
+        self.color = Color(self.scr, self.picked)
         try:
             if self.hidden:
                 self.children = sorted(self.listdir(name))
@@ -81,7 +81,7 @@ class Paths:
     def expand(self):
         if os.path.isdir(self.name):
             self.expanded = True
-            # self.colors.default(self.name)
+            # self.color.default(self.name)
 
     def collapse(self):
         if os.path.isdir(self.name):
@@ -101,14 +101,14 @@ class Paths:
                 if os.path.basename(c.name) == nextdir:
                     break
                 if line > curline:
-                    self.colors.default(self.name)
+                    self.color.default(self.name)
                     count += 1
                 line += 1
         else:
             # if we're in root then skip to next dir
             for c, d in parent.traverse():
                 if line > curline + 1:
-                    self.colors.default(self.name)
+                    self.color.default(self.name)
                     count += 1
                     if os.path.isdir(c.name):
                         break
@@ -128,7 +128,7 @@ class Paths:
             if c.name == p:
                 break
             count += 1
-        self.colors.default(self.name)
+        self.color.default(self.name)
         return count
 
     def getpaths(self):

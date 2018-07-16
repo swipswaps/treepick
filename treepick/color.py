@@ -2,7 +2,7 @@ import curses
 import os
 
 
-class Colors:
+class Color:
     def __init__(self, stdscr, picked):
         self.scr = stdscr
         self.picked = picked
