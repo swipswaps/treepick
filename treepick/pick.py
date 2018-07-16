@@ -22,38 +22,38 @@ def pick(stdscr, root, hidden):
     while True:
         line = 0
 
-        # to reset or toggle view of dotfiles we need to create a new Path
-        # object before, erasing the screen & descending into draw loop.
-        if action == 'reset':
-            picked = []
-            parent = Paths(stdscr, root, hidden, picked)
-            parent.expand()
-            action = None
-        elif action == 'toggle_hidden':
-            if hidden:
-                hidden = False
-            else:
-                hidden = True
-            parent = Paths(stdscr, root, hidden, picked)
-            parent.expand()
-            action = None
-            # restore expanded & marked state
-            for child, depth in parent.traverse():
-                if child.name in expanded:
-                    child.expand()
-                if child.name in picked:
-                    child.mark()
-
         stdscr.erase()  # https://stackoverflow.com/a/24966639 - prevent flashes
 
         for child, depth in parent.traverse():
+            # to reset or toggle view of dotfiles we need to create a new Path
+            # object before, erasing the screen & descending into draw loop.
+
             if depth == 0:
                 continue  # don't draw root node
             if line == curline:
                 # picked line needs to be different than default
                 child.color.curline(child.name)
+                if action == 'reset':
+                    picked = []
+                    parent = Paths(stdscr, root, hidden, picked)
+                    parent.expand()
+                    action = None
+                elif action == 'toggle_hidden':
+                    if hidden:
+                        hidden = False
+                    else:
+                        hidden = True
+                    parent = Paths(stdscr, root, hidden, picked)
+                    parent.expand()
+                    action = None
+                    # restore expanded & marked state
+                    for child, depth in parent.traverse():
+                        if child.name in expanded:
+                            child.expand()
+                        if child.name in picked:
+                            child.mark()
 
-                if action == 'expand':
+                elif action == 'expand':
                     child.expand()
                     expanded.append(child.name)
                     child.color.default(child.name)
@@ -100,7 +100,6 @@ def pick(stdscr, root, hidden):
                     for c, d in parent.traverse():
                         c.getsize = True
                 action = None  # reset action
-
             else:
                 child.color.default(child.name)
 
