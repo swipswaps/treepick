@@ -1,7 +1,7 @@
 import argparse
 import curses
 
-from .pick import pick
+from treepick.pick import pick
 
 
 def get_args():

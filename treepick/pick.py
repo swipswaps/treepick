@@ -13,6 +13,7 @@ cgitb.enable(format="text")  # https://pymotw.com/2/cgitb/
 
 def pick(stdscr, root, hidden):
     picked = []
+    expanded = []
     parent = Paths(stdscr, root, hidden, picked)
     parent.expand()
     curline = 0
@@ -36,8 +37,10 @@ def pick(stdscr, root, hidden):
             parent = Paths(stdscr, root, hidden, picked)
             parent.expand()
             action = None
-            # restore marked state
+            # restore expanded & marked state
             for child, depth in parent.traverse():
+                if child.name in expanded:
+                    child.expand()
                 if child.name in picked:
                     child.mark()
 
@@ -52,23 +55,29 @@ def pick(stdscr, root, hidden):
 
                 if action == 'expand':
                     child.expand()
+                    expanded.append(child.name)
                     child.color.default(child.name)
                     curline += 1
                 elif action == 'collapse':
                     child.collapse()
+                    expanded.remove(child.name)
                 elif action == 'expand_all':
                     for c, d in child.traverse():
                         # only expand one level at a time
                         if d > 1:
                             continue
                         c.expand()
+                        expanded.append(c.name)
                 elif action == 'collapse_all':
-                    pass
+                    curline = child.prevparent(parent)
+                    child.collapse()
                 elif action == 'toggle_expand':
                     if child.expanded:
                         child.collapse()
+                        expanded.remove(child.name)
                     else:
                         child.expand()
+                        expanded.append(child.name)
                 elif action == 'toggle_mark':
                     if child.marked:
                         child.marked = False
