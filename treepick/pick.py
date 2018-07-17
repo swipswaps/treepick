@@ -13,7 +13,6 @@ cgitb.enable(format="text")  # https://pymotw.com/2/cgitb/
 
 def draw(parent, action, curline, picked, expanded):
     line = 0
-
     for child, depth in parent.traverse():
         if depth == 0:
             continue  # don't draw root node
@@ -68,13 +67,15 @@ def draw(parent, action, curline, picked, expanded):
                     c.getsize = True
             action = None  # reset action
         else:
-            child.color.default(child.name)
-
+            # import pdb
+            # pdb.set_trace()
+            if os.path.dirname(child.name) in picked:
+                child.color.yellow_black()
+            else:
+                child.color.default(child.name)
         child.drawlines(depth, curline, line)
-
         child.getsize = False  # stop computing sizes!
         line += 1  # keep scrolling!
-
     return picked, expanded, line, curline
 
 
@@ -88,7 +89,7 @@ def pick(stdscr, root, hidden):
 
     while True:
         # to reset or toggle view of dotfiles we need to create a new Path
-        # object before, erasing the screen & descending into draw loop.
+        # object before erasing the screen & descending into draw function.
         if action == 'reset':
             picked = []
             parent = Paths(stdscr, root, hidden, picked)
@@ -107,7 +108,7 @@ def pick(stdscr, root, hidden):
                 if child.name in expanded:
                     child.expand()
                 if child.name in picked:
-                    child.mark()
+                    child.marked = True
 
         stdscr.erase()  # https://stackoverflow.com/a/24966639 - prevent flashes
 
