@@ -11,38 +11,16 @@ from .keys import parse
 cgitb.enable(format="text")  # https://pymotw.com/2/cgitb/
 
 
-def draw(stdscr, parent, action, curline, picked, expanded, hidden):
+def draw(parent, action, curline, picked, expanded):
     line = 0
 
     for child, depth in parent.traverse():
-        # to reset or toggle view of dotfiles we need to create a new Path
-        # object before, erasing the screen & descending into draw loop.
-
         if depth == 0:
             continue  # don't draw root node
         if line == curline:
             # picked line needs to be different than default
             child.color.curline(child.name)
-            if action == 'reset':
-                picked = []
-                parent = Paths(stdscr, root, hidden, picked)
-                parent.expand()
-                action = None
-            elif action == 'toggle_hidden':
-                if hidden:
-                    hidden = False
-                else:
-                    hidden = True
-                parent = Paths(stdscr, root, hidden, picked)
-                parent.expand()
-                action = None
-                # restore expanded & marked state
-                for child, depth in parent.traverse():
-                    if child.name in expanded:
-                        child.expand()
-                    if child.name in picked:
-                        child.mark()
-            elif action == 'expand':
+            if action == 'expand':
                 child.expand()
                 expanded.append(child.name)
                 child.color.default(child.name)
@@ -97,7 +75,7 @@ def draw(stdscr, parent, action, curline, picked, expanded, hidden):
         child.getsize = False  # stop computing sizes!
         line += 1  # keep scrolling!
 
-    return picked, expanded, line
+    return picked, expanded, line, curline
 
 
 def pick(stdscr, root, hidden):
@@ -109,15 +87,36 @@ def pick(stdscr, root, hidden):
     action = None
 
     while True:
+        # to reset or toggle view of dotfiles we need to create a new Path
+        # object before, erasing the screen & descending into draw loop.
+        if action == 'reset':
+            picked = []
+            parent = Paths(stdscr, root, hidden, picked)
+            parent.expand()
+            action = None
+        elif action == 'toggle_hidden':
+            if hidden:
+                hidden = False
+            else:
+                hidden = True
+            parent = Paths(stdscr, root, hidden, picked)
+            parent.expand()
+            action = None
+            # restore expanded & marked state
+            for child, depth in parent.traverse():
+                if child.name in expanded:
+                    child.expand()
+                if child.name in picked:
+                    child.mark()
 
         stdscr.erase()  # https://stackoverflow.com/a/24966639 - prevent flashes
 
-        results = draw(stdscr, parent, action, curline,
-                       picked, expanded, hidden)
+        results = draw(parent, action, curline, picked, expanded)
 
         picked = results[0]
         expanded = results[1]
         line = results[2]
+        curline = results[3]
 
         stdscr.refresh()
 
