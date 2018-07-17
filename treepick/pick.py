@@ -69,7 +69,7 @@ def draw(parent, action, curline, picked, expanded):
         else:
             # import pdb
             # pdb.set_trace()
-            if os.path.dirname(child.name) in picked:
+            if child.name.startswith(os.path.dirname(child.name)) in picked:
                 child.color.yellow_black()
             else:
                 child.color.default(child.name)
