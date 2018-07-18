@@ -36,8 +36,8 @@ def draw(parent, action, curline, picked, expanded):
                     c.expand()
                     expanded.append(c.name)
             elif action == 'collapse_all':
-                curline = child.prevparent(parent)
-                child.collapse()
+                curline = child.prevparent(parent, curline, depth)[0]
+                child.prevparent(parent, curline, depth)[1].collapse()
             elif action == 'toggle_expand':
                 if child.expanded:
                     child.collapse()
@@ -58,7 +58,7 @@ def draw(parent, action, curline, picked, expanded):
             elif action == 'next_parent':
                 curline += child.nextparent(parent, curline, depth)
             elif action == 'prev_parent':
-                curline = child.prevparent(parent, curline, depth)
+                curline = child.prevparent(parent, curline, depth)[0]
             elif action == 'get_size':
                 child.getsize = True
                 child.color.default(child.name)

@@ -134,7 +134,7 @@ class Paths:
                     count -= 1
                     c.drawlines(d, 0, count)
                     self.color.default(self.name)
-                    return count
+                    return count, c
                 count += 1
         else:
             curline -= 1
