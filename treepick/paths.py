@@ -140,6 +140,11 @@ class Paths:
             curline -= 1
             return curline, self
 
+    def collapse_all(self, parent, curline, depth):
+        self.prevparent(parent, curline, depth)[1].collapse()
+        self.color.curline(self.name)
+        return self.prevparent(parent, curline, depth)[0]
+
     def getpaths(self):
         '''
         If we have children, use a list comprehension to instantiate new paths
