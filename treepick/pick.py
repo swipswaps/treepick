@@ -71,11 +71,13 @@ def draw(parent, action, curline, picked, expanded):
         child.drawlines(depth, curline, line)
         child.getsize = False  # stop computing sizes!
         line += 1  # keep scrolling!
+
     return picked, expanded, line, curline
 
 
 def pick(stdscr, root, hidden):
-    picked = [], expanded = []
+    picked = []
+    expanded = []
     parent = Paths(stdscr, root, hidden, picked)
     parent.expand()
     curline = 0
@@ -85,7 +87,8 @@ def pick(stdscr, root, hidden):
         # to reset or toggle view of dotfiles we need to create a new Path
         # object before erasing the screen & descending into draw function.
         if action == 'reset':
-            picked = [], expanded = []
+            picked = []
+            expanded = []
             parent = Paths(stdscr, root, hidden, picked)
             parent.expand()
             action = None

@@ -128,7 +128,6 @@ class Paths:
             if c.name == p:
                 break
             count += 1
-        self.color.default(self.name)
         return count
 
     def getpaths(self):
