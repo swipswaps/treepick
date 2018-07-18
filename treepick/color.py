@@ -33,16 +33,18 @@ class Color:
         self.scr.attrset(curses.color_pair(4))
 
     def curline(self, path):
-        if path in self.picked:
-            self.black_yellow()
-        else:
-            self.white_blue()
+        # can't use "in", as we have to catch all descendants.
+        self.white_blue()
+        for p in self.picked:
+            if path.startswith(p):
+                self.black_yellow()
 
     def default(self, path):
-        # restore color to marked
-        if path in self.picked:
-            self.yellow_black()
-        elif os.path.isdir(path):
+        # can't use "in", as we have to catch all descendants.
+        if os.path.isdir(path):
             self.blue_black()
         else:
             self.reset()
+        for p in self.picked:
+            if path.startswith(p):
+                self.yellow_black()

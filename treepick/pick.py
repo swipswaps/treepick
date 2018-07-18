@@ -67,12 +67,7 @@ def draw(parent, action, curline, picked, expanded):
                     c.getsize = True
             action = None  # reset action
         else:
-            # import pdb
-            # pdb.set_trace()
-            if os.path.dirname(child.name) in picked:
-                child.color.yellow_black()
-            else:
-                child.color.default(child.name)
+            child.color.default(child.name)
         child.drawlines(depth, curline, line)
         child.getsize = False  # stop computing sizes!
         line += 1  # keep scrolling!
