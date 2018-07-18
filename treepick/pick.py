@@ -26,7 +26,8 @@ def draw(parent, action, curline, picked, expanded):
                 curline += 1
             elif action == 'collapse':
                 child.collapse()
-                expanded.remove(child.name)
+                if child.name in expanded:
+                    expanded.remove(child.name)
             elif action == 'expand_all':
                 for c, d in child.traverse():
                     # only expand one level at a time
@@ -57,7 +58,7 @@ def draw(parent, action, curline, picked, expanded):
             elif action == 'next_parent':
                 curline += child.nextparent(parent, curline, depth)
             elif action == 'prev_parent':
-                curline = child.prevparent(parent)
+                curline = child.prevparent(parent, curline, depth)
             elif action == 'get_size':
                 child.getsize = True
                 child.color.default(child.name)

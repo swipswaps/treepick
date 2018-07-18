@@ -40,7 +40,7 @@ class Paths:
         return nodestr + ' ' * (width - len(nodestr))
 
     def drawlines(self, depth, curline, line):
-        offset = max(0, curline - curses.LINES + 2)
+        offset = max(0, curline - curses.LINES + 10)
         y = line - offset
         x = 0
         string = self.drawline(depth - 1, curses.COLS)
@@ -87,8 +87,12 @@ class Paths:
         if os.path.isdir(self.name):
             self.expanded = False
 
-    # next & prev parent need a lot of love. multiple bugs!
     def nextparent(self, parent, curline, depth):
+        '''
+        Get index of current parent directory, in the context of it's traversal,
+        count until we reach the node corresponding to that index + 1 - ie) the
+        next parent.
+        '''
         line = 0
         count = 0
         if depth > 1:
@@ -115,7 +119,7 @@ class Paths:
                 line += 1
         return count
 
-    def prevparent(self, parent):
+    def prevparent(self, parent, curline, depth):
         '''
         Count lines from top of parent until we reach our current path and then
         return that count so that we can set curline to it.
@@ -124,11 +128,17 @@ class Paths:
         p = os.path.dirname(self.name)
         # once we hit the parent directory, break, and set the
         # curline to the line number we got to.
-        for c, d in parent.traverse():
-            if c.name == p:
-                break
-            count += 1
-        return count
+        if depth > 1:
+            for c, d in parent.traverse():
+                if c.name == p:
+                    count -= 1
+                    c.drawlines(d, 0, count)
+                    self.color.default(self.name)
+                    return count
+                count += 1
+        else:
+            curline -= 1
+            return curline
 
     def getpaths(self):
         '''
