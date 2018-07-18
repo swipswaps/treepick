@@ -138,7 +138,7 @@ class Paths:
                 count += 1
         else:
             curline -= 1
-            return curline
+            return curline, self
 
     def getpaths(self):
         '''
