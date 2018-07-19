@@ -33,14 +33,14 @@ OPTIONAL ARGUMENTS:
 | DOWN, j, n  | Go down one line.                                       |
 | RIGHT, l, f | Expand child node, and move down one line (into child). |
 | LEFT, h, b  | Collapse child node.                                    |
-| Tab         | Toggle expansion/collapse of child node.                |
+| TAB, RET    | Toggle expansion/collapse of child node.                |
 | PGDN, d, v  | Move down a page of lines at a time.                    |
 | PGUP, V, u  | Move up a page of lines at a time.                      |
 | J, N        | Move to next child node, of parent. (needs some TLC!)   |
 | K, P        | Move to parent node. (also currently pretty broken!)    |
 | g, <        | Move to first line.                                     |
 | G, >        | Move to last line.                                      |
-| m, SPC, RET | Toggle marking of paths.                                |
+| m, SPC      | Toggle marking of paths.                                |
 | .           | Toggle display of dotfiles.                             |
 | s           | Display total size of path, recursively                 |
 | S           | Display, totol size of all currently expanded paths.    |
