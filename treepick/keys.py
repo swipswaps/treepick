@@ -1,4 +1,6 @@
 import curses
+from os import environ
+environ.setdefault('ESCDELAY', '12')  # otherwise it takes an age!
 
 
 def parse(stdscr, curline, line):
