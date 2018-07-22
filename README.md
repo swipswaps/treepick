@@ -12,6 +12,8 @@ A Curses based, tree style, path picker. For use as a terminal based file dialog
   echoed back to the screen upon exit.
 * Reset marking and expansion.
 
+## CLI USAGE
+
 ```
 USAGE: treepick [-h] [-a] [path]
 
@@ -23,6 +25,18 @@ path          A valid path.
 OPTIONAL ARGUMENTS:
 -h, --help    Show this help message and exit.
 -a, --hidden  Show all hidden paths too.
+```
+
+## PYTHON USAGE
+
+```python
+from treepick import pick
+
+parent_path = '/path/to/directory'
+
+my_list_of_paths = pick(parent_path)
+
+my_amazing_function(my_list_of_paths)
 ```
 
 ## KEYBINDINGS
