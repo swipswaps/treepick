@@ -5,13 +5,14 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="treepick",
-    version="0.0.5",
+    version="0.0.6",
     author="Toby Slight",
     author_email="tobyslight@gmail.com",
     description="Curses Tree Style Path Picker",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/tslight/treepick",
+    install_requires=['pdu'],
     packages=setuptools.find_packages(),
     classifiers=(
         "Programming Language :: Python :: 3",

@@ -1,10 +1,22 @@
 import argparse
 import curses
+import os
 
 from treepick.pick import pick
 
 
-def get_args():
+def chkpath(path):
+    """
+    Checks if a path exists.
+    """
+    if os.path.exists(path):
+        return path
+    else:
+        msg = "{0} does not exist.".format(path)
+        raise argparse.ArgumentTypeError(msg)
+
+
+def getargs():
     """
     Return a list of valid arguments.
     """
@@ -12,13 +24,13 @@ def get_args():
     Select paths from a directory tree.')
     parser.add_argument("-a", "--hidden", action="store_false",
                         help="Show all hidden paths too.")
-    parser.add_argument("path", type=str, nargs='?',
+    parser.add_argument("path", type=chkpath, nargs='?',
                         default=".", help="A valid path.")
     return parser.parse_args()
 
 
 def main():
-    args = get_args()
+    args = getargs()
     root = args.path
     hidden = args.hidden
     paths = curses.wrapper(pick, root, hidden)

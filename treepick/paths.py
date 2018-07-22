@@ -2,7 +2,7 @@ import os
 import curses
 
 from .color import Color
-from .du import DiskUsage
+from pdu.du import du
 
 
 class Paths:
@@ -24,7 +24,6 @@ class Paths:
         self.marked = False
         self.getsize = False
         self.size = None
-        self.du = DiskUsage()
 
     def listdir(self, path):
         for f in os.listdir(path):
@@ -34,7 +33,7 @@ class Paths:
     def drawline(self, depth, width):
         pad = ' ' * 4 * depth
         mark = self.mark()
-        size = self.hrdu()
+        size = self.calcsize()
         node = self.getnode()
         nodestr = '{}{}{}{}'.format(pad, node, size, mark)
         return nodestr + ' ' * (width - len(nodestr))
@@ -65,12 +64,11 @@ class Paths:
         else:
             return ''
 
-    def hrdu(self):
+    def calcsize(self):
         if self.getsize:
-            bytes_ = self.du.totalsize(self.name)
-            size_ = self.du.convert(bytes_)
+            size = du(self.name)
             # save state as object attribute
-            self.size = " (" + size_ + ")"
+            self.size = " (" + size + ")"
             return self.size
         else:
             if self.size:
