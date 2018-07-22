@@ -4,7 +4,9 @@ A Curses based, tree style, path picker. For use as a terminal based file dialog
 
 ![img](./img/treepick.png "TreePick")
 
-* Pre-order file system traversal from a given point, or `$PWD` if not specified.
+* Pre-order file system traversal from a given point, or `$PWD` if not
+  specified.
+* Support both Vi & Emacs bindings and jumping to next or previous parent.
 * Expand or collapse child nodes one at a time or all at once.
 * Recursively get disk usage of a single node or all expanded nodes.
 * Toggle display of dotfiles.
@@ -32,9 +34,11 @@ OPTIONAL ARGUMENTS:
 ```python
 from treepick import pick
 
+hidden = True
+
 parent_path = '/path/to/directory'
 
-my_list_of_paths = pick(parent_path)
+my_list_of_paths = pick(parent_path, hidden)
 
 my_amazing_function(my_list_of_paths)
 ```
