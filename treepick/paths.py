@@ -2,7 +2,7 @@ import os
 import curses
 
 from .color import Color
-from pdu.du import du
+from pdu import du
 
 
 class Paths:

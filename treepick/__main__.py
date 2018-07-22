@@ -2,7 +2,7 @@ import argparse
 import curses
 import os
 
-from treepick.pick import pick
+from treepick import pick
 
 
 def chkpath(path):
