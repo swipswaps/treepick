@@ -14,6 +14,10 @@ A Curses based, tree style, path picker. For use as a terminal based file dialog
   echoed back to the screen upon exit.
 * Reset marking and expansion.
 
+## INSTALLATION
+
+`pip install treepick`
+
 ## CLI USAGE
 
 ```
