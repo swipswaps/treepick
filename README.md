@@ -2,7 +2,7 @@
 
 A Curses based, tree style, path picker. For use as a terminal based file dialog.
 
-![img](./img/treepick.png "TreePick")
+![img](./treepick.gif "TreePick")
 
 * Pre-order file system traversal from a given point, or `$PWD` if not
   specified.
