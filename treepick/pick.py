@@ -12,7 +12,7 @@ cgitb.enable(format="text")  # https://pymotw.com/2/cgitb/
 
 
 def draw(parent, action, curline, picked, expanded):
-    line = 0
+    line = 1
     for child, depth in parent.traverse():
         if depth == 0:
             continue  # don't draw root node
@@ -108,6 +108,8 @@ def pick(stdscr, root, hidden):
                     child.marked = True
 
         stdscr.erase()  # https://stackoverflow.com/a/24966639 - prevent flashes
+
+        stdscr.addstr(0, 0, "\nTo view available keybindings press '?'\n")
 
         results = draw(parent, action, curline, picked, expanded)
 
