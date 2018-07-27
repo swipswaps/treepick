@@ -5,14 +5,14 @@ import readline
 import sys
 
 from .paths import Paths
-from .keys import parse
+from .keys import showkeys, parse
 
 # Get more detailed traceback reports
 cgitb.enable(format="text")  # https://pymotw.com/2/cgitb/
 
 
 def draw(parent, action, curline, picked, expanded):
-    line = 1
+    line = 0
     for child, depth in parent.traverse():
         if depth == 0:
             continue  # don't draw root node
@@ -106,10 +106,12 @@ def pick(stdscr, root, hidden):
                     child.expand()
                 if child.name in picked:
                     child.marked = True
+        elif action == 'showkeys':
+            showkeys(stdscr)
+            action = None
+            continue
 
         stdscr.erase()  # https://stackoverflow.com/a/24966639 - prevent flashes
-
-        stdscr.addstr(0, 0, "\nTo view available keybindings press '?'\n")
 
         results = draw(parent, action, curline, picked, expanded)
 

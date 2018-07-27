@@ -30,32 +30,6 @@ class Paths:
             if not f.startswith('.'):
                 yield f
 
-    def showkeys(self):
-        msg = '''
-        +-----------------------------------------------------------------------+
-        | Key         | Action                                                  |
-        |:------------|:--------------------------------------------------------|
-        | UP, k, p    | Go up one line.                                         |
-        | DOWN, j, n  | Go down one line.                                       |
-        | RIGHT, l, f | Expand child node, and move down one line (into child). |
-        | LEFT, h, b  | Collapse child node.                                    |
-        | TAB, RET    | Toggle expansion/collapse of child node.                |
-        | PGDN, d, v  | Move down a page of lines at a time.                    |
-        | PGUP, V, u  | Move up a page of lines at a time.                      |
-        | J, N        | Move to next child node, of parent. (needs some TLC!)   |
-        | K, P        | Move to parent node. (also currently pretty broken!)    |
-        | g, <        | Move to first line.                                     |
-        | G, >        | Move to last line.                                      |
-        | m, SPC      | Toggle marking of paths.                                |
-        | .           | Toggle display of dotfiles.                             |
-        | s           | Display total size of path, recursively                 |
-        | S           | Display, totol size of all currently expanded paths.    |
-        | r           | Reset marking and expansion.                            |
-        | q, e, ESC   | Quit and display all marked paths.                      |
-        +-----------------------------------------------------------------------+
-        '''
-        self.scr.addstr(msg)
-
     def header(self):
         self.scr.addstr("\nTo view available keybindings press '?'\n")
 
@@ -68,11 +42,11 @@ class Paths:
         return nodestr + ' ' * (width - len(nodestr))
 
     def drawlines(self, depth, curline, line):
-        offset = max(2, curline - curses.LINES + 10)
+        offset = max(0, curline - curses.LINES + 10)
         y = line - offset
         x = 0
         string = self.drawline(depth - 1, curses.COLS)
-        if 2 <= line - offset < curses.LINES - 1:
+        if 0 <= line - offset < curses.LINES - 1:
             self.scr.addstr(y, x, string)  # paint str at y, x co-ordinates
 
     def getnode(self):

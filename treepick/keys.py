@@ -3,6 +3,38 @@ from os import environ
 environ.setdefault('ESCDELAY', '12')  # otherwise it takes an age!
 
 
+def showkeys(stdscr):
+    msg = '''
+        +-----------------------------------------------------------------------+
+        | Key         | Action                                                  |
+        |:------------|:--------------------------------------------------------|
+        | UP, k, p    | Go up one line.                                         |
+        | DOWN, j, n  | Go down one line.                                       |
+        | RIGHT, l, f | Expand child node, and move down one line (into child). |
+        | LEFT, h, b  | Collapse child node.                                    |
+        | TAB, RET    | Toggle expansion/collapse of child node.                |
+        | PGDN, d, v  | Move down a page of lines at a time.                    |
+        | PGUP, V, u  | Move up a page of lines at a time.                      |
+        | J, N        | Move to next child node, of parent. (needs some TLC!)   |
+        | K, P        | Move to parent node. (also currently pretty broken!)    |
+        | g, <        | Move to first line.                                     |
+        | G, >        | Move to last line.                                      |
+        | m, SPC      | Toggle marking of paths.                                |
+        | .           | Toggle display of dotfiles.                             |
+        | s           | Display total size of path, recursively                 |
+        | S           | Display, totol size of all currently expanded paths.    |
+        | r           | Reset marking and expansion.                            |
+        | q, e, ESC   | Quit and display all marked paths.                      |
+        +-----------------------------------------------------------------------+
+        '''
+    stdscr.erase()  # https://stackoverflow.com/a/24966639 - prevent flashes
+    stdscr.addstr(0, 0, msg)
+    ESC = 27
+    ch = stdscr.getch()
+    if ch == ord('e') or ch == ord('q') or ch == ESC:
+        return
+
+
 def parse(stdscr, curline, line):
     ESC = 27
     action = None
@@ -29,10 +61,12 @@ def parse(stdscr, curline, line):
         action = 'next_parent'
     elif ch == ord('K') or ch == ord('P'):
         action = 'prev_parent'
-    elif ch == ord('s') or ch == ord('?'):
+    elif ch == ord('s'):
         action = 'get_size'
     elif ch == ord('S'):
         action = 'get_size_all'
+    elif ch == ord('?'):
+        action = 'showkeys'
     elif ch == curses.KEY_UP or ch == ord('k') or ch == ord('p'):
         curline -= 1
     elif ch == curses.KEY_DOWN or ch == ord('j') or ch == ord('n'):
