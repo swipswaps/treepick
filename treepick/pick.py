@@ -3,9 +3,7 @@ import cgitb
 import pdb
 import readline
 import sys
-
 from .paths import Paths
-from .keys import showkeys, parse
 
 # Get more detailed traceback reports
 cgitb.enable(format="text")  # https://pymotw.com/2/cgitb/
@@ -76,6 +74,7 @@ def draw(parent, action, curline, picked, expanded):
 
 
 def pick(stdscr, root, hidden):
+    from .keys import parse
     picked = []
     expanded = []
     parent = Paths(stdscr, root, hidden, picked)
@@ -106,10 +105,6 @@ def pick(stdscr, root, hidden):
                     child.expand()
                 if child.name in picked:
                     child.marked = True
-        elif action == 'showkeys':
-            showkeys(stdscr)
-            action = None
-            continue
 
         stdscr.erase()  # https://stackoverflow.com/a/24966639 - prevent flashes
 
