@@ -34,7 +34,7 @@ def show(stdscr):
         ENTER ANY KEY TO RETURN.
 
         '''
-    stdscr.erase()  # https://stackoverflow.com/a/24966639 - prevent flashes
+    stdscr.erase()
     stdscr.addstr(0, 0, msg)
     stdscr.getch()
 
