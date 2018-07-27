@@ -35,6 +35,7 @@ def show(stdscr):
 
         '''
     stdscr.erase()
+    stdscr.attrset(curses.color_pair(0))
     stdscr.addstr(0, 0, msg)
     stdscr.getch()
 
