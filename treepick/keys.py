@@ -5,8 +5,8 @@ ESC = 27
 
 
 def show(stdscr):
+    from textwrap import dedent
     msg = '''
-
         KEYBINDINGS:
 
         +-------------+-----------------------------------------------------+
@@ -32,12 +32,14 @@ def show(stdscr):
         +-------------+-----------------------------------------------------+
 
         ENTER ANY KEY TO RETURN.
-
         '''
+    msg = dedent(msg).strip()
     stdscr.erase()
-    stdscr.attrset(curses.color_pair(0))
-    stdscr.addstr(0, 0, msg)
-    stdscr.getch()
+    max_y, max_x = stdscr.getmaxyx()
+    keys = stdscr.subwin(max_y, max_x, 0, 0)
+    keys.attrset(curses.color_pair(0))
+    keys.addstr(0, 0, msg)
+    keys.getch()
 
 
 def parse(stdscr, curline, line):
