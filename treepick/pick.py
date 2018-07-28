@@ -93,6 +93,11 @@ def pick(stdscr, root, hidden):
             parent = Paths(stdscr, root, hidden, picked)
             parent.expand()
             action = None
+        elif action == 'resize':
+            y, x = stdscr.getmaxyx()
+            stdscr.clear()
+            curses.resizeterm(y, x)
+            stdscr.refresh()
         elif action == 'toggle_hidden':
             if hidden:
                 hidden = False
@@ -110,19 +115,12 @@ def pick(stdscr, root, hidden):
 
         stdscr.erase()  # https://stackoverflow.com/a/24966639 - prevent flashes
 
-        results = draw(parent, action, curline, picked, expanded)
-
-        picked = results[0]
-        expanded = results[1]
-        line = results[2]
-        curline = results[3]
+        picked, expanded, line, curline = draw(
+            parent, action, curline, picked, expanded)
 
         stdscr.refresh()
 
-        results = parse(stdscr, curline, line)
+        action, curline = parse(stdscr, curline, line)
 
-        if results:
-            action = results[0]
-            curline = results[1]
-        else:
+        if action == 'quit':
             return picked

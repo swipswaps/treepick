@@ -35,18 +35,19 @@ def show(stdscr):
         '''
     msg = dedent(msg).strip()
     stdscr.erase()
-    max_y, max_x = stdscr.getmaxyx()
-    keys = stdscr.subwin(max_y, max_x, 0, 0)
-    keys.attrset(curses.color_pair(0))
-    keys.addstr(0, 0, msg)
-    keys.getch()
+    stdscr.attrset(curses.color_pair(0))
+    try:
+        stdscr.addstr(0, 0, msg)
+    except:
+        stdscr.addstr(0, 0, "\nWindow too small. Press any key to return.\n")
+    stdscr.getch()
 
 
 def parse(stdscr, curline, line):
     action = None
     ch = stdscr.getch()
     if ch == ord('q') or ch == ESC:
-        return
+        action = 'quit'
     elif ch == ord('r'):
         action = 'reset'
     elif ch == ord('.'):
@@ -95,5 +96,7 @@ def parse(stdscr, curline, line):
         curline = 4
     elif ch == curses.KEY_END or ch == ord('G') or ch == ord('>'):
         curline = line - 1
+    elif ch == curses.KEY_RESIZE:
+        action = 'resize'
     curline %= line
     return action, curline
