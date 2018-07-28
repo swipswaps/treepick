@@ -95,7 +95,7 @@ def pick(stdscr, root, hidden):
             action = None
         elif action == 'resize':
             y, x = stdscr.getmaxyx()
-            stdscr.clear()
+            stdscr.erase()
             curses.resizeterm(y, x)
             stdscr.refresh()
         elif action == 'toggle_hidden':

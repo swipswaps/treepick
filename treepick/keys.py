@@ -74,8 +74,6 @@ def parse(stdscr, curline, line):
         action = 'get_size_all'
     elif ch == ord('?'):
         show(stdscr)
-    elif ch == curses.KEY_UP or ch == ord('k') or ch == ord('p'):
-        curline -= 1
     elif ch == curses.KEY_DOWN or ch == ord('j') or ch == ord('n'):
         curline += 1
         if curline >= line:
@@ -87,7 +85,7 @@ def parse(stdscr, curline, line):
     elif ch == curses.KEY_PPAGE or ch == ord('u') or ch == ord('V'):
         curline -= curses.LINES
         if curline < 4:
-            curline = line - 1
+            curline = 4
     elif ch == curses.KEY_NPAGE or ch == ord('d') or ch == ord('v'):
         curline += curses.LINES
         if curline >= line:
