@@ -75,20 +75,22 @@ def parse(stdscr, curline, line):
         curline -= 1
     elif ch == curses.KEY_DOWN or ch == ord('j') or ch == ord('n'):
         curline += 1
+        if curline >= line:
+            curline = 4
     elif ch == curses.KEY_UP or ch == ord('k') or ch == ord('p'):
         curline -= 1
-    elif ch == curses.KEY_DOWN or ch == ord('j') or ch == ord('n'):
-        curline += 1
+        if curline < 4:
+            curline = line - 1
     elif ch == curses.KEY_PPAGE or ch == ord('u') or ch == ord('V'):
         curline -= curses.LINES
-        if curline < 0:
-            curline = 0
+        if curline < 4:
+            curline = line - 1
     elif ch == curses.KEY_NPAGE or ch == ord('d') or ch == ord('v'):
         curline += curses.LINES
         if curline >= line:
             curline = line - 1
     elif ch == curses.KEY_HOME or ch == ord('g') or ch == ord('<'):
-        curline = 0
+        curline = 4
     elif ch == curses.KEY_END or ch == ord('G') or ch == ord('>'):
         curline = line - 1
     curline %= line

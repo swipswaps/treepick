@@ -1,16 +1,18 @@
 import os
 import cgitb
+import curses
 import pdb
 import readline
 import sys
 from .paths import Paths
+from .keys import parse
 
 # Get more detailed traceback reports
 cgitb.enable(format="text")  # https://pymotw.com/2/cgitb/
 
 
 def draw(parent, action, curline, picked, expanded):
-    line = 0
+    line = 4  # leave space for header
     for child, depth in parent.traverse():
         if depth == 0:
             continue  # don't draw root node
@@ -74,12 +76,12 @@ def draw(parent, action, curline, picked, expanded):
 
 
 def pick(stdscr, root, hidden):
-    from .keys import parse
+    curses.curs_set(0)  # get rid of cursor
     picked = []
     expanded = []
     parent = Paths(stdscr, root, hidden, picked)
     parent.expand()
-    curline = 0
+    curline = 4
     action = None
 
     while True:

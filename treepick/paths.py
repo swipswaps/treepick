@@ -30,8 +30,12 @@ class Paths:
             if not f.startswith('.'):
                 yield f
 
-    def header(self):
-        self.scr.addstr("\nTo view available keybindings press '?'\n")
+    def drawheader(self):
+        max_y, max_x = self.scr.getmaxyx()
+        header = self.scr.subwin(1, max_x, 0, 0)
+        header.bkgd(curses.color_pair(0))
+        header.addstr("Enter '?' to view keybindings.")
+        header.refresh()
 
     def drawline(self, depth, width):
         pad = ' ' * 4 * depth
@@ -42,11 +46,12 @@ class Paths:
         return nodestr + ' ' * (width - len(nodestr))
 
     def drawlines(self, depth, curline, line):
-        offset = max(0, curline - curses.LINES + 10)
+        offset = max(2, curline - curses.LINES + 10)
         y = line - offset
         x = 0
         string = self.drawline(depth - 1, curses.COLS)
-        if 0 <= line - offset < curses.LINES - 1:
+        self.drawheader()
+        if 2 <= line - offset < curses.LINES - 1:
             self.scr.addstr(y, x, string)  # paint str at y, x co-ordinates
 
     def getnode(self):
@@ -94,7 +99,7 @@ class Paths:
         count until we reach the node corresponding to that index + 1 - ie) the
         next parent.
         '''
-        line = 0
+        line = 4
         count = 0
         if depth > 1:
             curpar = os.path.dirname(os.path.dirname(self.name))
@@ -125,7 +130,7 @@ class Paths:
         Count lines from top of parent until we reach our current path and then
         return that count so that we can set curline to it.
         '''
-        count = 0
+        count = 4
         p = os.path.dirname(self.name)
         # once we hit the parent directory, break, and set the
         # curline to the line number we got to.
