@@ -12,67 +12,51 @@ from .color import Color
 cgitb.enable(format="text")  # https://pymotw.com/2/cgitb/
 
 
-def draw(parent, action, curline, picked, expanded):
+def draw(parent, action, curline, picked, expanded, sized):
     line = 0  # leave space for header
+    getsizeall = False
     for child, depth in parent.traverse():
         if depth == 0:
             continue  # don't draw root node
         if line == curline:
-            # picked line needs to be different than default
-            child.color.curline(child.name)
             if action == 'expand':
-                child.expand()
                 expanded.append(child.name)
-                child.color.default(child.name)
                 curline += 1
             elif action == 'collapse':
-                child.collapse()
-                if child.name in expanded:
+                if child.expanded:
                     expanded.remove(child.name)
             elif action == 'expand_all':
                 for c, d in child.traverse():
                     # only expand one level at a time
                     if d > 1:
                         continue
-                    c.expand()
                     expanded.append(c.name)
             elif action == 'collapse_all':
                 curline = child.collapse_all(parent, curline, depth)
             elif action == 'toggle_expand':
                 if child.expanded:
-                    child.collapse()
                     expanded.remove(child.name)
                 else:
-                    child.expand()
                     expanded.append(child.name)
             elif action == 'toggle_mark':
                 if child.marked:
-                    child.marked = False
                     picked.remove(child.name)
-                    child.color.default(child.name)
                 else:
-                    child.marked = True
                     picked.append(child.name)
-                    child.color.yellow_black()
                 curline += 1
             elif action == 'next_parent':
                 curline += child.nextparent(parent, curline, depth)
             elif action == 'prev_parent':
-                curline = child.prevparent(parent, curline, depth)
+                curline = child.prevparent(parent, curline, depth)[0]
             elif action == 'get_size':
-                child.getsize = True
-                child.color.default(child.name)
+                sized.append(child.name)
                 curline += 1
             elif action == 'get_size_all':
-                parent.drawall(curline, True)
-                child.color.curline(child.name)
+                getsizeall = True
             action = None  # reset action
-        else:
-            child.color.default(child.name)
-        child.drawlines(depth, curline, line)
-        child.getsize = False  # stop computing sizes!
         line += 1  # keep scrolling!
 
+    parent.drawall(curline, getsizeall)
     return picked, expanded, line, curline
 
 
@@ -105,14 +89,15 @@ def body(screen):
 
 
 def pick(screen, root, hidden):
+    expanded = ['root']
     picked = []
-    expanded = []
+    sized = []
     curses.curs_set(0)  # get rid of cursor
     Color(screen, picked)
     header(screen)
     footer(screen)
     win = body(screen)
-    parent = Paths(win, root, hidden, picked)
+    parent = Paths(win, root, hidden, picked, expanded, sized)
     parent.expand()
     curline = 0
     action = None
@@ -123,7 +108,7 @@ def pick(screen, root, hidden):
         if action == 'reset':
             picked = []
             expanded = []
-            parent = Paths(win, root, hidden, picked)
+            parent = Paths(win, root, hidden, picked, expanded, sized)
             parent.expand()
             action = None
         elif action == 'toggle_hidden':
@@ -131,7 +116,7 @@ def pick(screen, root, hidden):
                 hidden = False
             else:
                 hidden = True
-            parent = Paths(win, root, hidden, picked)
+            parent = Paths(win, root, hidden, picked, expanded, sized)
             parent.expand()
             action = None
             # restore expanded & marked state
@@ -144,7 +129,7 @@ def pick(screen, root, hidden):
         win.erase()  # https://stackoverflow.com/a/24966639 - prevent flashes
 
         picked, expanded, line, curline = draw(
-            parent, action, curline, picked, expanded)
+            parent, action, curline, picked, expanded, sized)
 
         win.refresh()
 

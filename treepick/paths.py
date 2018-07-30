@@ -6,11 +6,13 @@ from pdu import du
 
 
 class Paths:
-    def __init__(self, win, name, hidden, picked):
+    def __init__(self, win, name, hidden, picked, expaths, sized):
         self.win = win
         self.name = name
         self.hidden = hidden
         self.picked = picked
+        self.expaths = expaths
+        self.sized = sized
         self.color = Color(self.win, self.picked)
         try:
             if self.hidden:
@@ -46,6 +48,34 @@ class Paths:
         string = self.drawline(depth - 1, max_x)
         if 0 <= line - offset < max_y - 1:
             self.win.addstr(y, x, string)  # paint str at y, x co-ordinates
+
+    def drawall(self, curline, getsizeall=False):
+        '''
+        Skeleton tree drawing function.
+        '''
+        self.win.erase()
+        l = 0
+        for c, d in self.traverse():
+            if d == 0:
+                continue
+            if l == curline:
+                c.color.curline(c.name)
+            else:
+                c.color.default(c.name)
+            if c.name in self.expaths:
+                c.expand()
+            else:
+                c.collapse()
+            if c.name in self.picked:
+                c.marked = True
+            if c.name in self.sized:
+                c.getsize = True
+            if getsizeall:
+                c.getsize = True
+            c.drawlines(d, curline, l)
+            c.getsize = False
+            l += 1
+        self.win.refresh()
 
     def getnode(self):
         if not os.path.isdir(self.name):
@@ -96,7 +126,8 @@ class Paths:
         count = 0
         if depth > 1:
             curpar = os.path.dirname(os.path.dirname(self.name))
-            cpaths = Paths(self.win, curpar, self.hidden, self.picked)
+            cpaths = Paths(self.win, curpar, self.hidden,
+                           self.picked, self.expanded, self.sized)
             curdir = os.path.basename(os.path.dirname(self.name))
             curidx = cpaths.children.index(curdir)
             nextdir = cpaths.children[curidx + 1]
@@ -133,32 +164,14 @@ class Paths:
                     curline -= 1
                     c.drawlines(d, 0, curline)
                     self.color.default(self.name)
+                    p = c
                     break
                 curline += 1
         else:
             curline -= 1
+            p = self
         parent.drawall(curline)
-        return curline
-
-    def drawall(self, curline, getsize=False):
-        '''
-        Skeleton tree drawing function.
-        '''
-        self.win.erase()
-        l = 0
-        for c, d in self.traverse():
-            if d == 0:
-                continue
-            if getsize:
-                c.getsize = True
-            if l == curline:
-                c.color.curline(c.name)
-            else:
-                c.color.default(c.name)
-            c.drawlines(d, curline, l)
-            l += 1
-        self.win.refresh()
-
+        return curline, p
 
     def collapse_all(self, parent, curline, depth):
         if depth > 1:
@@ -177,7 +190,8 @@ class Paths:
             return
         if self.paths is None:
             self.paths = [Paths(
-                self.win, os.path.join(self.name, child), self.hidden, self.picked)
+                self.win, os.path.join(self.name, child),
+                self.hidden, self.picked, self.expanded, self.sized)
                 for child in self.children]
         return self.paths
 
