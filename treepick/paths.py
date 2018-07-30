@@ -123,11 +123,11 @@ class Paths:
         Count lines from top of parent until we reach our current path and then
         return that count so that we can set curline to it.
         '''
-        curline = 0
         p = os.path.dirname(self.name)
         # once we hit the parent directory, break, and set the
         # curline to the line number we got to.
         if depth > 1:
+            curline = 0
             for c, d in parent.traverse():
                 if c.name == p:
                     curline -= 1
@@ -137,9 +137,17 @@ class Paths:
                 curline += 1
         else:
             curline -= 1
+        # if we are not on the root node we need to redraw the whole tree!
+        parent.drawall(curline)
+        return curline
+
+    def drawall(self, curline):
+        '''
+        Skeleton tree drawing function.
+        '''
         self.win.erase()
         l = 0
-        for c, d in parent.traverse():
+        for c, d in self.traverse():
             if d == 0:
                 continue
             if l == curline:
@@ -149,7 +157,7 @@ class Paths:
             c.drawlines(d, curline, l)
             l += 1
         self.win.refresh()
-        return curline
+
 
     def collapse_all(self, parent, curline, depth):
         if depth > 1:
