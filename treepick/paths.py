@@ -118,26 +118,38 @@ class Paths:
                 line += 1
         return count
 
-    def prevparent(self, parent, curline, depth):
+    def prevparent(self, parent, curline, line, depth):
         '''
         Count lines from top of parent until we reach our current path and then
         return that count so that we can set curline to it.
         '''
-        count = 0
+        curline = 0
         p = os.path.dirname(self.name)
         # once we hit the parent directory, break, and set the
         # curline to the line number we got to.
         if depth > 1:
             for c, d in parent.traverse():
                 if c.name == p:
-                    count -= 1
-                    c.drawlines(d, 0, count)
+                    curline -= 1
+                    c.drawlines(d, 0, curline)
                     self.color.default(self.name)
-                    return count, c
-                count += 1
+                    break
+                curline += 1
         else:
             curline -= 1
-            return curline, self
+        self.win.erase()
+        line = 0
+        for c, d in parent.traverse():
+            if depth == 0:
+                continue
+            if line == curline + 1:
+                c.color.curline(c.name)
+            else:
+                c.color.default(c.name)
+            c.drawlines(d, curline, line)
+            line += 1
+        self.win.refresh()
+        return curline
 
     def collapse_all(self, parent, curline, depth):
         if depth > 1:
