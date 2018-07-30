@@ -34,10 +34,9 @@ class Paths:
 
     def drawline(self, depth, width):
         pad = ' ' * 4 * depth
-        mark = self.mark()
         size = self.calcsize()
         node = self.getnode()
-        nodestr = '{}{}{}{}'.format(pad, node, size, mark)
+        nodestr = '{}{}{}'.format(pad, node, size)
         return nodestr + ' ' * (width - len(nodestr))
 
     def drawlines(self, depth, curline, line):
@@ -88,12 +87,6 @@ class Paths:
             return '[?] ' + os.path.basename(self.name) + '/'
         else:
             return '[ ] ' + os.path.basename(self.name) + '/'
-
-    def mark(self):
-        if self.marked:
-            return ' *'
-        else:
-            return ''
 
     def calcsize(self):
         if self.size:

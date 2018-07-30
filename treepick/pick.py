@@ -39,8 +39,8 @@ def draw(parent, action, curline, picked, expanded, sized):
                 else:
                     expanded.add(child.name)
             elif action == 'toggle_mark':
-                if child.marked:
-                    picked.add(child.name)
+                if child.name in picked:
+                    picked.remove(child.name)
                 else:
                     picked.add(child.name)
                 curline += 1
