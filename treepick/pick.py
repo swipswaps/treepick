@@ -6,6 +6,7 @@ import readline
 import sys
 from .paths import Paths
 from .keys import parse
+from .color import Color
 
 # Get more detailed traceback reports
 cgitb.enable(format="text")  # https://pymotw.com/2/cgitb/
@@ -75,21 +76,6 @@ def draw(parent, action, curline, picked, expanded):
     return picked, expanded, line, curline
 
 
-def color():
-    curses.init_pair(1, curses.COLOR_RED, curses.COLOR_BLACK)
-    curses.init_pair(2, curses.COLOR_GREEN, curses.COLOR_BLACK)
-    curses.init_pair(3, curses.COLOR_YELLOW, curses.COLOR_BLACK)
-    curses.init_pair(4, curses.COLOR_BLUE, curses.COLOR_BLACK)
-    curses.init_pair(5, curses.COLOR_MAGENTA, curses.COLOR_BLACK)
-    curses.init_pair(6, curses.COLOR_CYAN, curses.COLOR_BLACK)
-    curses.init_pair(7, curses.COLOR_RED, curses.COLOR_WHITE)
-    curses.init_pair(8, curses.COLOR_GREEN, curses.COLOR_WHITE)
-    curses.init_pair(9, curses.COLOR_YELLOW, curses.COLOR_WHITE)
-    curses.init_pair(10, curses.COLOR_BLUE, curses.COLOR_WHITE)
-    curses.init_pair(11, curses.COLOR_MAGENTA, curses.COLOR_WHITE)
-    curses.init_pair(12, curses.COLOR_CYAN, curses.COLOR_WHITE)
-
-
 def header(screen):
     msg = "Use arrow keys, Vi [h,j,k,l], or Emacs [b,f,p,n] keys to navigate"
     try:
@@ -103,15 +89,11 @@ def header(screen):
 def footer(screen):
     msg = "[SPC] toggle mark, [?] show all keybindings, [q] to quit."
     try:
-        screen.addstr(curses.LINES - 1, 0, msg)
-        screen.chgat(curses.LINES - 1, 1, 5,
-                     curses.A_BOLD | curses.color_pair(3))
-        screen.chgat(curses.LINES - 1, 21, 3,
-                     curses.A_BOLD | curses.color_pair(3))
-        screen.chgat(curses.LINES - 1, 35, 3,
-                     curses.A_BOLD | curses.color_pair(3))
-        screen.chgat(curses.LINES - 1, 48, 3,
-                     curses.A_BOLD | curses.color_pair(3))
+        l = curses.LINES - 1
+        screen.addstr(l, 0, msg)
+        screen.chgat(l, 0, 5, curses.A_BOLD | curses.color_pair(3))
+        screen.chgat(l, 19, 3, curses.A_BOLD | curses.color_pair(3))
+        screen.chgat(l, 45, 3, curses.A_BOLD | curses.color_pair(3))
     except:
         pass
 
@@ -123,15 +105,16 @@ def body(screen):
 
 
 def pick(screen, root, hidden):
+    picked = []
+    expanded = []
     curses.curs_set(0)  # get rid of cursor
-    color()
+    Color(screen, picked)
     header(screen)
     footer(screen)
     win = body(screen)
-    picked = []
-    expanded = []
     parent = Paths(win, root, hidden, picked)
     parent.expand()
+
     curline = 0
     action = None
 

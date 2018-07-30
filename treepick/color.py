@@ -6,31 +6,33 @@ class Color:
     def __init__(self, stdscr, picked):
         self.scr = stdscr
         self.picked = picked
-        curses.init_pair(1, curses.COLOR_WHITE, curses.COLOR_BLUE)
-        curses.init_pair(2, curses.COLOR_BLUE, curses.COLOR_BLACK)
+        curses.init_pair(1, curses.COLOR_RED, curses.COLOR_BLACK)
+        curses.init_pair(2, curses.COLOR_GREEN, curses.COLOR_BLACK)
         curses.init_pair(3, curses.COLOR_YELLOW, curses.COLOR_BLACK)
-        curses.init_pair(4, curses.COLOR_BLACK, curses.COLOR_YELLOW)
-
-    def getcolors(self):
-        curses.start_color()
-        curses.use_default_colors()
-        for i in range(0, curses.COLORS):
-            curses.init_pair(i + 1, i, -1)
+        curses.init_pair(4, curses.COLOR_BLUE, curses.COLOR_BLACK)
+        curses.init_pair(5, curses.COLOR_MAGENTA, curses.COLOR_BLACK)
+        curses.init_pair(6, curses.COLOR_CYAN, curses.COLOR_BLACK)
+        curses.init_pair(7, curses.COLOR_RED, curses.COLOR_WHITE)
+        curses.init_pair(8, curses.COLOR_GREEN, curses.COLOR_WHITE)
+        curses.init_pair(9, curses.COLOR_YELLOW, curses.COLOR_WHITE)
+        curses.init_pair(10, curses.COLOR_BLUE, curses.COLOR_WHITE)
+        curses.init_pair(11, curses.COLOR_MAGENTA, curses.COLOR_WHITE)
+        curses.init_pair(12, curses.COLOR_CYAN, curses.COLOR_WHITE)
 
     def reset(self):
         self.scr.attrset(curses.color_pair(0))
 
     def white_blue(self):
-        self.scr.attrset(curses.color_pair(1) | curses.A_BOLD)
+        self.scr.attrset(curses.color_pair(10) | curses.A_BOLD | curses.A_REVERSE)
 
     def blue_black(self):
-        self.scr.attrset(curses.color_pair(2) | curses.A_BOLD)
+        self.scr.attrset(curses.color_pair(4) | curses.A_BOLD)
 
     def yellow_black(self):
-        self.scr.attrset(curses.color_pair(3))
+        self.scr.attrset(curses.color_pair(3) | curses.A_BOLD | curses.A_REVERSE)
 
     def black_yellow(self):
-        self.scr.attrset(curses.color_pair(4))
+        self.scr.attrset(curses.color_pair(3) | curses.A.BOLD)
 
     def curline(self, path):
         # can't use "in", as we have to catch all descendants.
