@@ -146,7 +146,7 @@ class Paths:
                 c.color.curline(c.name)
             else:
                 c.color.default(c.name)
-            c.drawlines(d, curline, line)
+            c.drawlines(d, curline, l)
             l += 1
         self.win.refresh()
         return curline
