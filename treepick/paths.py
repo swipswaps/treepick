@@ -6,12 +6,12 @@ from pdu import du
 
 
 class Paths:
-    def __init__(self, scr, name, hidden, picked):
-        self.scr = scr
+    def __init__(self, win, name, hidden, picked):
+        self.win = win
         self.name = name
         self.hidden = hidden
         self.picked = picked
-        self.color = Color(self.scr, self.picked)
+        self.color = Color(self.win, self.picked)
         try:
             if self.hidden:
                 self.children = sorted(self.listdir(name))
@@ -30,12 +30,12 @@ class Paths:
             if not f.startswith('.'):
                 yield f
 
-    def drawheader(self):
-        max_y, max_x = self.scr.getmaxyx()
-        header = self.scr.subwin(1, max_x, 0, 0)
-        header.bkgd(curses.color_pair(0))
-        header.addstr("Enter '?' to view keybindings.")
-        header.refresh()
+    # def drawheader(self):
+    #     max_y, max_x = self.win.getmaxyx()
+    #     header = self.win.subwin(1, max_x, 0, 0)
+    #     header.bkgd(curses.color_pair(0))
+    #     header.addstr("Enter '?' to view keybindings.")
+    #     header.refresh()
 
     def drawline(self, depth, width):
         pad = ' ' * 4 * depth
@@ -46,13 +46,14 @@ class Paths:
         return nodestr + ' ' * (width - len(nodestr))
 
     def drawlines(self, depth, curline, line):
-        offset = max(2, curline - curses.LINES + 10)
+        max_y, max_x = self.win.getmaxyx()
+        offset = max(0, curline - max_y + 10)
         y = line - offset
         x = 0
-        string = self.drawline(depth - 1, curses.COLS)
-        self.drawheader()
-        if 2 <= line - offset < curses.LINES - 1:
-            self.scr.addstr(y, x, string)  # paint str at y, x co-ordinates
+        string = self.drawline(depth - 1, max_x)
+        # self.drawheader()
+        if 0 <= line - offset < max_y - 1:
+            self.win.addstr(y, x, string)  # paint str at y, x co-ordinates
 
     def getnode(self):
         if not os.path.isdir(self.name):
@@ -103,7 +104,7 @@ class Paths:
         count = 0
         if depth > 1:
             curpar = os.path.dirname(os.path.dirname(self.name))
-            cpaths = Paths(self.scr, curpar, self.hidden, self.picked)
+            cpaths = Paths(self.win, curpar, self.hidden, self.picked)
             curdir = os.path.basename(os.path.dirname(self.name))
             curidx = cpaths.children.index(curdir)
             nextdir = cpaths.children[curidx + 1]
@@ -163,7 +164,7 @@ class Paths:
             return
         if self.paths is None:
             self.paths = [Paths(
-                self.scr, os.path.join(self.name, child), self.hidden, self.picked)
+                self.win, os.path.join(self.name, child), self.hidden, self.picked)
                 for child in self.children]
         return self.paths
 

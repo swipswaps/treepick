@@ -4,7 +4,7 @@ environ.setdefault('ESCDELAY', '12')  # otherwise it takes an age!
 ESC = 27
 
 
-def show(stdscr):
+def show(win):
     from textwrap import dedent
     msg = '''
         KEYBINDINGS:
@@ -34,18 +34,19 @@ def show(stdscr):
         ENTER ANY KEY TO RETURN.
         '''
     msg = dedent(msg).strip()
-    stdscr.erase()
-    stdscr.attrset(curses.color_pair(0))
+    win.erase()
+    win.attrset(curses.color_pair(0))
     try:
-        stdscr.addstr(0, 0, msg)
+        win.addstr(0, 0, msg)
     except:
-        stdscr.addstr(0, 0, "\nWindow too small. Press any key to return.\n")
-    stdscr.getch()
+        win.addstr(0, 0, "\nWindow too small. Press any key to return.\n")
+    win.getch()
 
 
-def parse(stdscr, curline, line):
+def parse(win, curline, line):
     action = None
-    ch = stdscr.getch()
+    max_y, max_x = win.getmaxyx()
+    ch = win.getch()
     if ch == ord('q') or ch == ESC:
         action = 'quit'
     elif ch == ord('r'):
@@ -73,25 +74,21 @@ def parse(stdscr, curline, line):
     elif ch == ord('S'):
         action = 'get_size_all'
     elif ch == ord('?'):
-        show(stdscr)
+        show(win)
     elif ch == curses.KEY_DOWN or ch == ord('j') or ch == ord('n'):
         curline += 1
-        if curline >= line:
-            curline = 4
     elif ch == curses.KEY_UP or ch == ord('k') or ch == ord('p'):
         curline -= 1
-        if curline < 4:
-            curline = line - 1
     elif ch == curses.KEY_PPAGE or ch == ord('u') or ch == ord('V'):
-        curline -= curses.LINES
-        if curline < 4:
-            curline = 4
+        curline -= max_y
+        if curline < 0:
+            curline = 0
     elif ch == curses.KEY_NPAGE or ch == ord('d') or ch == ord('v'):
-        curline += curses.LINES
+        curline += max_y
         if curline >= line:
             curline = line - 1
     elif ch == curses.KEY_HOME or ch == ord('g') or ch == ord('<'):
-        curline = 4
+        curline = 0
     elif ch == curses.KEY_END or ch == ord('G') or ch == ord('>'):
         curline = line - 1
     elif ch == curses.KEY_RESIZE:

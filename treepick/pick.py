@@ -12,7 +12,7 @@ cgitb.enable(format="text")  # https://pymotw.com/2/cgitb/
 
 
 def draw(parent, action, curline, picked, expanded):
-    line = 4  # leave space for header
+    line = 0  # leave space for header
     for child, depth in parent.traverse():
         if depth == 0:
             continue  # don't draw root node
@@ -75,13 +75,64 @@ def draw(parent, action, curline, picked, expanded):
     return picked, expanded, line, curline
 
 
-def pick(stdscr, root, hidden):
+def color():
+    curses.init_pair(1, curses.COLOR_RED, curses.COLOR_BLACK)
+    curses.init_pair(2, curses.COLOR_GREEN, curses.COLOR_BLACK)
+    curses.init_pair(3, curses.COLOR_YELLOW, curses.COLOR_BLACK)
+    curses.init_pair(4, curses.COLOR_BLUE, curses.COLOR_BLACK)
+    curses.init_pair(5, curses.COLOR_MAGENTA, curses.COLOR_BLACK)
+    curses.init_pair(6, curses.COLOR_CYAN, curses.COLOR_BLACK)
+    curses.init_pair(7, curses.COLOR_RED, curses.COLOR_WHITE)
+    curses.init_pair(8, curses.COLOR_GREEN, curses.COLOR_WHITE)
+    curses.init_pair(9, curses.COLOR_YELLOW, curses.COLOR_WHITE)
+    curses.init_pair(10, curses.COLOR_BLUE, curses.COLOR_WHITE)
+    curses.init_pair(11, curses.COLOR_MAGENTA, curses.COLOR_WHITE)
+    curses.init_pair(12, curses.COLOR_CYAN, curses.COLOR_WHITE)
+
+
+def header(screen):
+    msg = "Use arrow keys, Vi [h,j,k,l], or Emacs [b,f,p,n] keys to navigate"
+    try:
+        screen.addstr(msg)
+        screen.chgat(0, 19, 9, curses.A_BOLD | curses.color_pair(3))
+        screen.chgat(0, 39, 9, curses.A_BOLD | curses.color_pair(3))
+    except:
+        pass
+
+
+def footer(screen):
+    msg = "[SPC] toggle mark, [?] show all keybindings, [q] to quit."
+    try:
+        screen.addstr(curses.LINES - 1, 0, msg)
+        screen.chgat(curses.LINES - 1, 1, 5,
+                     curses.A_BOLD | curses.color_pair(3))
+        screen.chgat(curses.LINES - 1, 21, 3,
+                     curses.A_BOLD | curses.color_pair(3))
+        screen.chgat(curses.LINES - 1, 35, 3,
+                     curses.A_BOLD | curses.color_pair(3))
+        screen.chgat(curses.LINES - 1, 48, 3,
+                     curses.A_BOLD | curses.color_pair(3))
+    except:
+        pass
+
+
+def body(screen):
+    win = curses.newwin(curses.LINES - 3, curses.COLS, 2, 0)
+    screen.refresh()
+    return win
+
+
+def pick(screen, root, hidden):
     curses.curs_set(0)  # get rid of cursor
+    color()
+    header(screen)
+    footer(screen)
+    win = body(screen)
     picked = []
     expanded = []
-    parent = Paths(stdscr, root, hidden, picked)
+    parent = Paths(win, root, hidden, picked)
     parent.expand()
-    curline = 4
+    curline = 0
     action = None
 
     while True:
@@ -90,20 +141,15 @@ def pick(stdscr, root, hidden):
         if action == 'reset':
             picked = []
             expanded = []
-            parent = Paths(stdscr, root, hidden, picked)
+            parent = Paths(win, root, hidden, picked)
             parent.expand()
             action = None
-        elif action == 'resize':
-            y, x = stdscr.getmaxyx()
-            stdscr.erase()
-            curses.resizeterm(y, x)
-            stdscr.refresh()
         elif action == 'toggle_hidden':
             if hidden:
                 hidden = False
             else:
                 hidden = True
-            parent = Paths(stdscr, root, hidden, picked)
+            parent = Paths(win, root, hidden, picked)
             parent.expand()
             action = None
             # restore expanded & marked state
@@ -113,14 +159,14 @@ def pick(stdscr, root, hidden):
                 if child.name in picked:
                     child.marked = True
 
-        stdscr.erase()  # https://stackoverflow.com/a/24966639 - prevent flashes
+        win.erase()  # https://stackoverflow.com/a/24966639 - prevent flashes
 
         picked, expanded, line, curline = draw(
             parent, action, curline, picked, expanded)
 
-        stdscr.refresh()
+        win.refresh()
 
-        action, curline = parse(stdscr, curline, line)
+        action, curline = parse(win, curline, line)
 
         if action == 'quit':
             return picked
