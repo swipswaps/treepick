@@ -137,7 +137,6 @@ class Paths:
                 curline += 1
         else:
             curline -= 1
-        # if we are not on the root node we need to redraw the whole tree!
         parent.drawall(curline)
         return curline
 
