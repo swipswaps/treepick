@@ -15,7 +15,6 @@ cgitb.enable(format="text")  # https://pymotw.com/2/cgitb/
 def draw(parent, action, curline, picked, expanded):
     line = 0  # leave space for header
     for child, depth in parent.traverse():
-        getsize = False
         if depth == 0:
             continue  # don't draw root node
         if line == curline:
@@ -65,8 +64,7 @@ def draw(parent, action, curline, picked, expanded):
                 child.color.default(child.name)
                 curline += 1
             elif action == 'get_size_all':
-                getsize = True
-                parent.drawall(curline, getsize)
+                parent.drawall(curline, True)
                 child.color.curline(child.name)
             action = None  # reset action
         else:
