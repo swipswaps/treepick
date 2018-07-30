@@ -13,14 +13,14 @@ cgitb.enable(format="text")  # https://pymotw.com/2/cgitb/
 
 
 def draw(parent, action, curline, picked, expanded, sized):
-    line = 0  # leave space for header
+    line = 0
     getsizeall = False
     for child, depth in parent.traverse():
         if depth == 0:
             continue  # don't draw root node
         if line == curline:
             if action == 'expand':
-                expanded.append(child.name)
+                expanded.add(child.name)
                 curline += 1
             elif action == 'collapse':
                 if child.expanded:
@@ -30,26 +30,26 @@ def draw(parent, action, curline, picked, expanded, sized):
                     # only expand one level at a time
                     if d > 1:
                         continue
-                    expanded.append(c.name)
+                    expanded.add(c.name)
             elif action == 'collapse_all':
                 curline = child.collapse_all(parent, curline, depth)
             elif action == 'toggle_expand':
                 if child.expanded:
                     expanded.remove(child.name)
                 else:
-                    expanded.append(child.name)
+                    expanded.add(child.name)
             elif action == 'toggle_mark':
                 if child.marked:
-                    picked.remove(child.name)
+                    picked.add(child.name)
                 else:
-                    picked.append(child.name)
+                    picked.add(child.name)
                 curline += 1
             elif action == 'next_parent':
                 curline += child.nextparent(parent, curline, depth)
             elif action == 'prev_parent':
                 curline = child.prevparent(parent, curline, depth)[0]
             elif action == 'get_size':
-                sized.append(child.name)
+                sized.add(child.name)
                 curline += 1
             elif action == 'get_size_all':
                 getsizeall = True
@@ -88,43 +88,42 @@ def body(screen):
     return win
 
 
-def pick(screen, root, hidden):
-    expanded = ['root']
-    picked = []
-    sized = []
+def reset(win, root, hidden):
+    expanded, picked, sized = (set() for i in range(3))
+    parent = Paths(win, root, hidden, picked, expanded, sized)
+    action = None
+    curline = 0
+    return expanded, picked, sized, parent, action, curline
+
+
+def init(screen):
     curses.curs_set(0)  # get rid of cursor
-    Color(screen, picked)
     header(screen)
     footer(screen)
+
+
+def pick(screen, root, hidden):
+    init(screen)
+    Color(screen)
     win = body(screen)
-    parent = Paths(win, root, hidden, picked, expanded, sized)
-    parent.expand()
-    curline = 0
-    action = None
+    expanded, picked, sized, parent, action, curline = reset(win, root, hidden)
 
     while True:
         # to reset or toggle view of dotfiles we need to create a new Path
         # object before erasing the screen & descending into draw function.
         if action == 'reset':
-            picked = []
-            expanded = []
-            parent = Paths(win, root, hidden, picked, expanded, sized)
-            parent.expand()
-            action = None
+            expanded, picked, sized, parent, action, curline = reset(
+                win, root, hidden)
         elif action == 'toggle_hidden':
             if hidden:
                 hidden = False
             else:
                 hidden = True
+            sized = set()  # too costly to keep
             parent = Paths(win, root, hidden, picked, expanded, sized)
-            parent.expand()
             action = None
-            # restore expanded & marked state
-            for child, depth in parent.traverse():
-                if child.name in expanded:
-                    child.expand()
-                if child.name in picked:
-                    child.marked = True
+
+        parent.expand()
 
         win.erase()  # https://stackoverflow.com/a/24966639 - prevent flashes
 

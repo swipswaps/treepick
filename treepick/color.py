@@ -3,7 +3,7 @@ import os
 
 
 class Color:
-    def __init__(self, stdscr, picked):
+    def __init__(self, stdscr, picked=set()):
         self.scr = stdscr
         self.picked = picked
         curses.init_pair(1, curses.COLOR_RED, curses.COLOR_BLACK)
@@ -23,7 +23,8 @@ class Color:
         self.scr.attrset(curses.color_pair(0))
 
     def white_blue(self):
-        self.scr.attrset(curses.color_pair(10) | curses.A_BOLD | curses.A_REVERSE)
+        self.scr.attrset(curses.color_pair(
+            10) | curses.A_BOLD | curses.A_REVERSE)
 
     def blue_black(self):
         self.scr.attrset(curses.color_pair(4) | curses.A_BOLD)

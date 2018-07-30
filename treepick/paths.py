@@ -96,16 +96,15 @@ class Paths:
             return ''
 
     def calcsize(self):
-        if self.getsize:
+        if self.size:
+            return self.size
+        elif self.getsize:
             size = du(self.name)
             # save state as object attribute
             self.size = " (" + size + ")"
             return self.size
         else:
-            if self.size:
-                return self.size
-            else:
-                return ''
+            return ''
 
     def expand(self):
         if os.path.isdir(self.name):
