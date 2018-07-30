@@ -58,7 +58,7 @@ def draw(parent, action, curline, picked, expanded):
             elif action == 'next_parent':
                 curline += child.nextparent(parent, curline, depth)
             elif action == 'prev_parent':
-                curline = child.prevparent(parent, curline, line, depth)
+                curline = child.prevparent(parent, curline, depth)
             elif action == 'get_size':
                 child.getsize = True
                 child.color.default(child.name)
