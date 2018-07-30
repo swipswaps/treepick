@@ -140,7 +140,7 @@ class Paths:
         parent.drawall(curline)
         return curline
 
-    def drawall(self, curline):
+    def drawall(self, curline, getsize):
         '''
         Skeleton tree drawing function.
         '''
@@ -149,6 +149,8 @@ class Paths:
         for c, d in self.traverse():
             if d == 0:
                 continue
+            if getsize:
+                c.getsize = True
             if l == curline:
                 c.color.curline(c.name)
             else:
