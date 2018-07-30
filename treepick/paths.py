@@ -92,7 +92,7 @@ class Paths:
         count until we reach the node corresponding to that index + 1 - ie) the
         next parent.
         '''
-        line = 4
+        line = 0
         count = 0
         if depth > 1:
             curpar = os.path.dirname(os.path.dirname(self.name))
@@ -123,7 +123,7 @@ class Paths:
         Count lines from top of parent until we reach our current path and then
         return that count so that we can set curline to it.
         '''
-        count = 4
+        count = 0
         p = os.path.dirname(self.name)
         # once we hit the parent directory, break, and set the
         # curline to the line number we got to.
