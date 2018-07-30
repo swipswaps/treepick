@@ -142,7 +142,7 @@ class Paths:
         for c, d in parent.traverse():
             if d == 0:
                 continue
-            if l == curline + 1:
+            if l == curline:
                 c.color.curline(c.name)
             else:
                 c.color.default(c.name)
