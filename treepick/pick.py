@@ -114,7 +114,6 @@ def pick(screen, root, hidden):
     win = body(screen)
     parent = Paths(win, root, hidden, picked)
     parent.expand()
-
     curline = 0
     action = None
 

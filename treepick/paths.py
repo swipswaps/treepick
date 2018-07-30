@@ -30,13 +30,6 @@ class Paths:
             if not f.startswith('.'):
                 yield f
 
-    # def drawheader(self):
-    #     max_y, max_x = self.win.getmaxyx()
-    #     header = self.win.subwin(1, max_x, 0, 0)
-    #     header.bkgd(curses.color_pair(0))
-    #     header.addstr("Enter '?' to view keybindings.")
-    #     header.refresh()
-
     def drawline(self, depth, width):
         pad = ' ' * 4 * depth
         mark = self.mark()
@@ -51,7 +44,6 @@ class Paths:
         y = line - offset
         x = 0
         string = self.drawline(depth - 1, max_x)
-        # self.drawheader()
         if 0 <= line - offset < max_y - 1:
             self.win.addstr(y, x, string)  # paint str at y, x co-ordinates
 

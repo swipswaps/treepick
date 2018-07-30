@@ -29,10 +29,10 @@ class Color:
         self.scr.attrset(curses.color_pair(4) | curses.A_BOLD)
 
     def yellow_black(self):
-        self.scr.attrset(curses.color_pair(3) | curses.A_BOLD | curses.A_REVERSE)
+        self.scr.attrset(curses.color_pair(3))
 
     def black_yellow(self):
-        self.scr.attrset(curses.color_pair(3) | curses.A.BOLD)
+        self.scr.attrset(curses.color_pair(3) | curses.A_REVERSE)
 
     def curline(self, path):
         # can't use "in", as we have to catch all descendants.
