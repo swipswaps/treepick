@@ -137,7 +137,8 @@ class Paths:
                 curline += 1
         else:
             curline -= 1
-        parent.drawall(curline)
+        getsize = False
+        parent.drawall(curline, getsize)
         return curline
 
     def drawall(self, curline, getsize):
