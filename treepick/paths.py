@@ -157,7 +157,6 @@ class Paths:
         If we have children, use a list comprehension to instantiate new paths
         objects to traverse.
         '''
-        self.getchildren()
         if self.paths is None:
             self.paths = [Paths(self.win,
                                 os.path.join(self.name, child),
