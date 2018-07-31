@@ -106,7 +106,6 @@ def pick(screen, root, hidden):
     win = curses.newwin(curses.LINES - 3, curses.COLS, 2, 0)
     screen.refresh()
     parent, action, curline = reset(win, root, hidden)
-
     while True:
         # to reset or toggle view of dotfiles we need to create a new Path
         # object before erasing the screen & descending into process function.
