@@ -14,10 +14,8 @@ class Paths:
         self.expanded = expanded
         self.sized = sized
         self.color = Color(self.win, self.picked)
-        self.paths = None
-        self.marked = False
-        self.getsize = False
-        self.size = None
+        self.paths, self.size = (None,)*2
+        self.marked, self.getsize = (False,)*2
         self.getchildren()
 
     def nextparent(self, parent, curline, depth):
