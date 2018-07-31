@@ -32,50 +32,6 @@ class Paths:
             if not f.startswith('.'):
                 yield f
 
-    def drawline(self, depth, width):
-        pad = ' ' * 4 * depth
-        size = self.calcsize()
-        node = self.getnode()
-        nodestr = '{}{}{}'.format(pad, node, size)
-        return nodestr + ' ' * (width - len(nodestr))
-
-    def drawlines(self, depth, curline, line):
-        max_y, max_x = self.win.getmaxyx()
-        offset = max(0, curline - max_y + 10)
-        y = line - offset
-        x = 0
-        string = self.drawline(depth - 1, max_x)
-        if 0 <= line - offset < max_y - 1:
-            self.win.addstr(y, x, string)  # paint str at y, x co-ordinates
-
-    def drawall(self, curline, getsizeall=False):
-        '''
-        Skeleton tree drawing function.
-        '''
-        self.win.erase()
-        l = 0
-        for c, d in self.traverse():
-            if d == 0:
-                continue
-            if l == curline:
-                c.color.curline(c.name)
-            else:
-                c.color.default(c.name)
-            if c.name in self.expaths:
-                c.expand()
-            else:
-                c.collapse()
-            if c.name in self.picked:
-                c.marked = True
-            if c.name in self.sized:
-                c.getsize = True
-            if getsizeall:
-                c.getsize = True
-            c.drawlines(d, curline, l)
-            c.getsize = False
-            l += 1
-        self.win.refresh()
-
     def getnode(self):
         if not os.path.isdir(self.name):
             return '    ' + os.path.basename(self.name)
@@ -154,7 +110,7 @@ class Paths:
             for c, d in parent.traverse():
                 if c.name == p:
                     curline -= 1
-                    c.drawlines(d, 0, curline)
+                    c.drawline(d, 0, curline)
                     self.color.default(self.name)
                     p = c
                     break
@@ -162,7 +118,7 @@ class Paths:
         else:
             curline -= 1
             p = self
-        parent.drawall(curline)
+        parent.drawtree(curline)
         return curline, p
 
     def collapse_all(self, parent, curline, depth):
@@ -172,6 +128,50 @@ class Paths:
             return self.prevparent(parent, curline, depth)[0]
         else:
             return curline
+
+    def mkline(self, depth, width):
+        pad = ' ' * 4 * depth
+        size = self.calcsize()
+        node = self.getnode()
+        nodestr = '{}{}{}'.format(pad, node, size)
+        return nodestr + ' ' * (width - len(nodestr))
+
+    def drawline(self, depth, curline, line):
+        max_y, max_x = self.win.getmaxyx()
+        offset = max(0, curline - max_y + 8)
+        y = line - offset
+        x = 0
+        string = self.mkline(depth - 1, max_x)
+        if 0 <= line - offset < max_y - 1:
+            self.win.addstr(y, x, string)  # paint str at y, x co-ordinates
+
+    def drawtree(self, curline, getsizeall=False):
+        '''
+        Skeleton tree drawing function.
+        '''
+        self.win.erase()
+        l = 0
+        for c, d in self.traverse():
+            if d == 0:
+                continue
+            if l == curline:
+                c.color.curline(c.name)
+            else:
+                c.color.default(c.name)
+            if c.name in self.expaths:
+                c.expand()
+            else:
+                c.collapse()
+            if c.name in self.picked:
+                c.marked = True
+            if c.name in self.sized:
+                c.getsize = True
+            if getsizeall:
+                c.getsize = True
+            c.drawline(d, curline, l)
+            c.getsize = False
+            l += 1
+        self.win.refresh()
 
     def getpaths(self):
         '''

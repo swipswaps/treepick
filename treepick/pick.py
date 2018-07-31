@@ -56,7 +56,7 @@ def draw(parent, action, curline, picked, expanded, sized):
             action = None  # reset action
         line += 1  # keep scrolling!
 
-    parent.drawall(curline, getsizeall)
+    parent.drawtree(curline, getsizeall)
     return picked, expanded, line, curline
 
 
