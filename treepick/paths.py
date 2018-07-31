@@ -84,17 +84,8 @@ class Paths:
                 curline += 1
         else:
             curline -= 1
-            p = self
-        parent.drawtree(curline)
+            p = self.name
         return curline, p
-
-    def collapse_all(self, parent, curline, depth):
-        if depth > 1:
-            self.prevparent(parent, curline, depth)[1].collapse()
-            self.color.curline(self.name)
-            return self.prevparent(parent, curline, depth)[0]
-        else:
-            return curline
 
     def calcsize(self):
         if self.size:

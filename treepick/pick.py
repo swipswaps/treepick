@@ -31,8 +31,10 @@ def draw(parent, action, curline, picked, expanded, sized):
                     if d > 1:
                         continue
                     expanded.add(c.name)
+                curline += 1
             elif action == 'collapse_all':
-                curline = child.collapse_all(parent, curline, depth)
+                curline, p = child.prevparent(parent, curline, depth)
+                expanded.remove(p.name)
             elif action == 'toggle_expand':
                 if child.name in expanded:
                     expanded.remove(child.name)
