@@ -117,14 +117,9 @@ def pick(screen, root, hidden):
             parent, action, curline = reset(win, root, hidden)
         elif action == 'toggle_hidden':
             if parent.hidden:
-                hidden = False
-                parent = Paths(win, root, hidden, parent.picked,
-                               parent.expanded, parent.sized)
+                parent.hidden = False
             else:
-                hidden = True
-                parent = Paths(win, root, hidden, parent.picked,
-                               parent.expanded, parent.sized)
-            action = None
+                parent.hidden = True
         elif action == 'quit':
             return parent.picked
         curline, line = process(parent, action, curline)
