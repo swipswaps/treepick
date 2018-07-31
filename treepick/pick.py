@@ -12,52 +12,55 @@ from .color import Color
 cgitb.enable(format="text")  # https://pymotw.com/2/cgitb/
 
 
-def draw(parent, action, curline, picked, expanded, sized):
+def process(parent, action, curline):
+    '''
+    Traverse parent object & process the action returned from keys.parse
+    '''
     line = 0
     for child, depth in parent.traverse():
         if depth == 0:
-            continue  # don't draw root node
+            continue  # don't process root node
         if line == curline:
             if action == 'expand':
-                expanded.add(child.name)
+                child.expanded.add(child.name)
                 curline += 1
             elif action == 'collapse':
                 if child.expanded:
-                    expanded.remove(child.name)
+                    child.expanded.remove(child.name)
             elif action == 'expand_all':
                 for c, d in child.traverse():
                     # only expand one level at a time
                     if d > 1:
                         continue
-                    expanded.add(c.name)
+                    child.expanded.add(c.name)
                 curline += 1
             elif action == 'collapse_all':
                 curline, p = child.prevparent(parent, curline, depth)
-                expanded.remove(p.name)
+                child.expanded.remove(p.name)
             elif action == 'toggle_expand':
-                if child.name in expanded:
-                    expanded.remove(child.name)
+                if child.name in child.expanded:
+                    child.expanded.remove(child.name)
                 else:
-                    expanded.add(child.name)
+                    child.expanded.add(child.name)
             elif action == 'toggle_mark':
-                if child.name in picked:
-                    picked.remove(child.name)
+                if child.name in child.picked:
+                    child.picked.remove(child.name)
                 else:
-                    picked.add(child.name)
+                    child.picked.add(child.name)
                 curline += 1
             elif action == 'next_parent':
                 curline += child.nextparent(parent, curline, depth)
             elif action == 'prev_parent':
                 curline = child.prevparent(parent, curline, depth)[0]
             elif action == 'get_size':
-                sized.add(child.name)
+                child.sized.add(child.name)
                 curline += 1
             elif action == 'get_size_all':
                 for c, d in parent.traverse():
-                    sized.add(c.name)
+                    child.sized.add(c.name)
             action = None  # reset action
         line += 1  # keep scrolling!
-    return picked, expanded, line, curline
+    return curline, line
 
 
 def header(screen):
@@ -82,19 +85,13 @@ def footer(screen):
         pass
 
 
-def body(screen):
-    win = curses.newwin(curses.LINES - 3, curses.COLS, 2, 0)
-    screen.refresh()
-    return win
-
-
 def reset(win, root, hidden):
     expanded = set(root)
     picked, sized = (set() for i in range(2))
     parent = Paths(win, root, hidden, picked, expanded, sized)
     action = None
     curline = 0
-    return expanded, picked, sized, parent, action, curline
+    return parent, action, curline
 
 
 def init(screen):
@@ -106,31 +103,24 @@ def init(screen):
 def pick(screen, root, hidden):
     init(screen)
     Color(screen)
-    win = body(screen)
-    expanded, picked, sized, parent, action, curline = reset(win, root, hidden)
+    win = curses.newwin(curses.LINES - 3, curses.COLS, 2, 0)
+    screen.refresh()
+    parent, action, curline = reset(win, root, hidden)
 
     while True:
         # to reset or toggle view of dotfiles we need to create a new Path
-        # object before erasing the screen & descending into draw function.
+        # object before erasing the screen & descending into process function.
         if action == 'reset':
-            expanded, picked, sized, parent, action, curline = reset(
-                win, root, hidden)
+            parent, action, curline = reset(win, root, hidden)
         elif action == 'toggle_hidden':
-            if hidden:
-                hidden = False
+            if parent.hidden:
+                parent.hidden = False
             else:
-                hidden = True
-            sized = set()  # too costly to keep
-            parent = Paths(win, root, hidden, picked, expanded, sized)
-            action = None
+                parent.hidden = True
 
-        win.erase()  # https://stackoverflow.com/a/24966639 - prevent flashes
-        picked, expanded, line, curline = draw(
-            parent, action, curline, picked, expanded, sized)
+        curline, line = process(parent, action, curline)
         parent.drawtree(curline)
-        win.refresh()
-
         action, curline = parse(win, curline, line)
 
         if action == 'quit':
-            return picked
+            return parent.picked

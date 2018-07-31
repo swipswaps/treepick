@@ -14,22 +14,11 @@ class Paths:
         self.expanded = expanded
         self.sized = sized
         self.color = Color(self.win, self.picked)
-        try:
-            if self.hidden:
-                self.children = sorted(self.listdir(name))
-            else:
-                self.children = sorted(os.listdir(name))
-        except:
-            self.children = None  # probably permission denied
         self.paths = None
         self.marked = False
         self.getsize = False
         self.size = None
-
-    def listdir(self, path):
-        for f in os.listdir(path):
-            if not f.startswith('.'):
-                yield f
+        self.getchildren()
 
     def nextparent(self, parent, curline, depth):
         '''
@@ -128,7 +117,8 @@ class Paths:
 
     def drawtree(self, curline):
         '''
-        Skeleton tree drawing function.
+        Loop over the object, process path attribute sets, and drawlines based on
+        their current contents.
         '''
         self.win.erase()
         l = 0
@@ -144,15 +134,30 @@ class Paths:
             if c.name in self.sized:
                 c.getsize = True
             c.drawline(d, curline, l)
-            c.getsize = False
+            c.getsize = False  # stop calculating sizes!
             l += 1
         self.win.refresh()
+
+    def listdir(self, path):
+        for f in os.listdir(path):
+            if not f.startswith('.'):
+                yield f
+
+    def getchildren(self):
+        try:
+            if self.hidden:
+                self.children = sorted(self.listdir(self.name))
+            else:
+                self.children = sorted(os.listdir(self.name))
+        except:
+            self.children = None  # probably permission denied
 
     def getpaths(self):
         '''
         If we have children, use a list comprehension to instantiate new paths
         objects to traverse.
         '''
+        self.getchildren()
         if self.children is None:
             return
         if self.paths is None:
