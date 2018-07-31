@@ -37,8 +37,10 @@ def process(parent, action, curline):
                         child.expanded.add(c.name)
                 curline += 1
             elif action == 'collapse_all':
-                curline, p = child.prevparent(parent, curline, depth)
-                child.expanded.remove(p.name)
+                if depth > 1:
+                    curline, p = child.prevparent(parent, curline, depth)
+                    if os.path.isdir(p.name):
+                        child.expanded.remove(p.name)
             elif action == 'toggle_expand':
                 if child.name in child.expanded:
                     child.expanded.remove(child.name)
