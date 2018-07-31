@@ -22,17 +22,19 @@ def process(parent, action, curline):
             continue  # don't process root node
         if line == curline:
             if action == 'expand':
-                child.expanded.add(child.name)
+                if os.path.isdir(child.name):
+                    child.expanded.add(child.name)
                 curline += 1
             elif action == 'collapse':
-                if child.expanded:
+                if child.name in child.expanded:
                     child.expanded.remove(child.name)
             elif action == 'expand_all':
                 for c, d in child.traverse():
                     # only expand one level at a time
                     if d > 1:
                         continue
-                    child.expanded.add(c.name)
+                    if os.path.isdir(c.name):
+                        child.expanded.add(c.name)
                 curline += 1
             elif action == 'collapse_all':
                 curline, p = child.prevparent(parent, curline, depth)
@@ -40,8 +42,10 @@ def process(parent, action, curline):
             elif action == 'toggle_expand':
                 if child.name in child.expanded:
                     child.expanded.remove(child.name)
-                else:
+                elif os.path.isdir(child.name):
                     child.expanded.add(child.name)
+                else:
+                    curline += 1
             elif action == 'toggle_mark':
                 if child.name in child.picked:
                     child.picked.remove(child.name)
