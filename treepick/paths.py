@@ -82,6 +82,7 @@ class Paths:
         elif self.getsize:
             size = du(self.name)
             # save state as object attribute
+            self.size = " (" + size + ")"
             return self.size
         else:
             return ''
@@ -157,16 +158,14 @@ class Paths:
         objects to traverse.
         '''
         self.getchildren()
-        if self.children:
-            if self.paths is None:
-                self.paths = [Paths(self.win,
-                                    os.path.join(self.name, child),
-                                    self.hidden,
-                                    self.picked,
-                                    self.expanded,
-                                    self.sized)
-                              for child in self.children]
-            return self.paths
+        if self.children is None:
+            return
+        if self.paths is None:
+            self.paths = [Paths(
+                self.win, os.path.join(self.name, child),
+                self.hidden, self.picked, self.expanded, self.sized)
+                for child in self.children]
+        return self.paths
 
     def traverse(self):
         '''

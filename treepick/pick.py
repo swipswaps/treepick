@@ -116,11 +116,9 @@ def pick(screen, root, hidden):
                 parent.hidden = False
             else:
                 parent.hidden = True
-            parent.getchildren()
+        elif action == 'quit':
+            return parent.picked
 
         curline, line = process(parent, action, curline)
         parent.drawtree(curline)
         action, curline = parse(win, curline, line)
-
-        if action == 'quit':
-            return parent.picked
