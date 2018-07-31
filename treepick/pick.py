@@ -92,9 +92,7 @@ def footer(screen):
 
 
 def reset(win, root, hidden):
-    expanded = set(root)
-    picked, sized = (set() for i in range(2))
-    parent = Paths(win, root, hidden, picked, expanded, sized)
+    parent = Paths(win, root, hidden, expanded=set(root))
     action = None
     curline = 0
     return parent, action, curline
@@ -119,9 +117,14 @@ def pick(screen, root, hidden):
             parent, action, curline = reset(win, root, hidden)
         elif action == 'toggle_hidden':
             if parent.hidden:
-                parent.hidden = False
+                hidden = False
+                parent = Paths(win, root, hidden, parent.picked,
+                               parent.expanded, parent.sized)
             else:
-                parent.hidden = True
+                hidden = True
+                parent = Paths(win, root, hidden, parent.picked,
+                               parent.expanded, parent.sized)
+            action = None
         elif action == 'quit':
             return parent.picked
         curline, line = process(parent, action, curline)

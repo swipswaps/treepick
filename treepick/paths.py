@@ -6,7 +6,7 @@ from pdu import du
 
 
 class Paths:
-    def __init__(self, win, name, hidden, picked, expanded, sized):
+    def __init__(self, win, name, hidden, picked=set(), expanded=set(), sized=set()):
         self.win = win
         self.name = name
         self.hidden = hidden
