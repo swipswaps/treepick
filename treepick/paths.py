@@ -6,12 +6,12 @@ from pdu import du
 
 
 class Paths:
-    def __init__(self, win, name, hidden, picked, expaths, sized):
+    def __init__(self, win, name, hidden, picked, expanded, sized):
         self.win = win
         self.name = name
         self.hidden = hidden
         self.picked = picked
-        self.expaths = expaths
+        self.expanded = expanded
         self.sized = sized
         self.color = Color(self.win, self.picked)
         try:
@@ -22,7 +22,6 @@ class Paths:
         except:
             self.children = None  # probably permission denied
         self.paths = None
-        self.expanded = False
         self.marked = False
         self.getsize = False
         self.size = None
@@ -31,38 +30,6 @@ class Paths:
         for f in os.listdir(path):
             if not f.startswith('.'):
                 yield f
-
-    def getnode(self):
-        if not os.path.isdir(self.name):
-            return '    ' + os.path.basename(self.name)
-        elif self.expanded:
-            return '[-] ' + os.path.basename(self.name) + '/'
-        elif self.getpaths():
-            return '[+] ' + os.path.basename(self.name) + '/'
-        elif self.children is None:
-            return '[?] ' + os.path.basename(self.name) + '/'
-        else:
-            return '[ ] ' + os.path.basename(self.name) + '/'
-
-    def calcsize(self):
-        if self.size:
-            return self.size
-        elif self.getsize:
-            size = du(self.name)
-            # save state as object attribute
-            self.size = " (" + size + ")"
-            return self.size
-        else:
-            return ''
-
-    def expand(self):
-        if os.path.isdir(self.name):
-            self.expanded = True
-            # self.color.default(self.name)
-
-    def collapse(self):
-        if os.path.isdir(self.name):
-            self.expanded = False
 
     def nextparent(self, parent, curline, depth):
         '''
@@ -129,6 +96,29 @@ class Paths:
         else:
             return curline
 
+    def calcsize(self):
+        if self.size:
+            return self.size
+        elif self.getsize:
+            size = du(self.name)
+            # save state as object attribute
+            self.size = " (" + size + ")"
+            return self.size
+        else:
+            return ''
+
+    def getnode(self):
+        if not os.path.isdir(self.name):
+            return '    ' + os.path.basename(self.name)
+        elif self.name in self.expanded:
+            return '[-] ' + os.path.basename(self.name) + '/'
+        elif self.getpaths():
+            return '[+] ' + os.path.basename(self.name) + '/'
+        elif self.children is None:
+            return '[?] ' + os.path.basename(self.name) + '/'
+        else:
+            return '[ ] ' + os.path.basename(self.name) + '/'
+
     def mkline(self, depth, width):
         pad = ' ' * 4 * depth
         size = self.calcsize()
@@ -158,10 +148,6 @@ class Paths:
                 c.color.curline(c.name)
             else:
                 c.color.default(c.name)
-            if c.name in self.expaths:
-                c.expand()
-            else:
-                c.collapse()
             if c.name in self.picked:
                 c.marked = True
             if c.name in self.sized:
@@ -193,9 +179,7 @@ class Paths:
         '''
         yield self, 0
 
-        if not self.expanded:
-            return
-
-        for child in self.getpaths():
-            for c, depth in child.traverse():
-                yield c, depth + 1
+        if self.name in self.expanded:
+            for child in self.getpaths():
+                for c, depth in child.traverse():
+                    yield c, depth + 1

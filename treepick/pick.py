@@ -34,7 +34,7 @@ def draw(parent, action, curline, picked, expanded, sized):
             elif action == 'collapse_all':
                 curline = child.collapse_all(parent, curline, depth)
             elif action == 'toggle_expand':
-                if child.expanded:
+                if child.name in expanded:
                     expanded.remove(child.name)
                 else:
                     expanded.add(child.name)
@@ -89,7 +89,8 @@ def body(screen):
 
 
 def reset(win, root, hidden):
-    expanded, picked, sized = (set() for i in range(3))
+    expanded = set(root)
+    picked, sized = (set() for i in range(2))
     parent = Paths(win, root, hidden, picked, expanded, sized)
     action = None
     curline = 0
@@ -122,8 +123,6 @@ def pick(screen, root, hidden):
             sized = set()  # too costly to keep
             parent = Paths(win, root, hidden, picked, expanded, sized)
             action = None
-
-        parent.expand()
 
         win.erase()  # https://stackoverflow.com/a/24966639 - prevent flashes
 
