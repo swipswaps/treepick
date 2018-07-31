@@ -14,7 +14,6 @@ cgitb.enable(format="text")  # https://pymotw.com/2/cgitb/
 
 def draw(parent, action, curline, picked, expanded, sized):
     line = 0
-    getsizeall = False
     for child, depth in parent.traverse():
         if depth == 0:
             continue  # don't draw root node
@@ -54,11 +53,10 @@ def draw(parent, action, curline, picked, expanded, sized):
                 sized.add(child.name)
                 curline += 1
             elif action == 'get_size_all':
-                getsizeall = True
+                for c, d in parent.traverse():
+                    sized.add(c.name)
             action = None  # reset action
         line += 1  # keep scrolling!
-
-    parent.drawtree(curline, getsizeall)
     return picked, expanded, line, curline
 
 
@@ -127,10 +125,9 @@ def pick(screen, root, hidden):
             action = None
 
         win.erase()  # https://stackoverflow.com/a/24966639 - prevent flashes
-
         picked, expanded, line, curline = draw(
             parent, action, curline, picked, expanded, sized)
-
+        parent.drawtree(curline)
         win.refresh()
 
         action, curline = parse(win, curline, line)

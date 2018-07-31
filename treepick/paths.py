@@ -126,7 +126,7 @@ class Paths:
         if 0 <= line - offset < max_y - 1:
             self.win.addstr(y, x, string)  # paint str at y, x co-ordinates
 
-    def drawtree(self, curline, getsizeall=False):
+    def drawtree(self, curline):
         '''
         Skeleton tree drawing function.
         '''
@@ -142,8 +142,6 @@ class Paths:
             if c.name in self.picked:
                 c.marked = True
             if c.name in self.sized:
-                c.getsize = True
-            if getsizeall:
                 c.getsize = True
             c.drawline(d, curline, l)
             c.getsize = False
