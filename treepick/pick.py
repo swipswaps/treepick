@@ -116,6 +116,7 @@ def pick(screen, root, hidden):
                 parent.hidden = False
             else:
                 parent.hidden = True
+            parent.getchildren()
 
         curline, line = process(parent, action, curline)
         parent.drawtree(curline)
