@@ -39,10 +39,10 @@ def show(win):
     win.getch()
 
 
-def parse(win, curline, line):
+def parse(screen, win, curline, line):
     action = None
     max_y, max_x = win.getmaxyx()
-    ch = win.getch()
+    ch = screen.getch()
     if ch == ord('q') or ch == ESC:
         action = 'quit'
     elif ch == ord('r'):

@@ -6,7 +6,7 @@ from pdu import du
 
 
 class Paths:
-    def __init__(self, win, name, hidden, picked=set(), expanded=set(), sized={}):
+    def __init__(self, win, name, hidden, picked=set(), expanded=set(), sized=dict()):
         self.win = win
         self.name = name
         self.hidden = hidden
@@ -94,7 +94,7 @@ class Paths:
         pad = ' ' * 4 * depth
         node = self.getnode()
         if os.path.abspath(self.name) in self.sized:
-            size = str(self.sized[os.path.abspath(self.name)] or '')
+            size = self.sized[os.path.abspath(self.name)]
         else:
             size = ''
         nodestr = '{}{}{}'.format(pad, node, size)
@@ -163,13 +163,14 @@ class Paths:
         objects to traverse.
         '''
         self.children = self.getchildren()
-        return [Paths(self.win,
-                      os.path.join(self.name, child),
-                      self.hidden,
-                      self.picked,
-                      self.expanded,
-                      self.sized)
-                for child in self.children]
+        if self.children:
+            return [Paths(self.win,
+                          os.path.join(self.name, child),
+                          self.hidden,
+                          self.picked,
+                          self.expanded,
+                          self.sized)
+                    for child in self.children]
 
     def traverse(self):
         '''

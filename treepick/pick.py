@@ -29,20 +29,21 @@ def process(parent, action, curline):
                 if child.name in child.expanded:
                     child.expanded.remove(child.name)
             elif action == 'expand_all':
-                for c, d in child.traverse():
-                    # only expand one level at a time
-                    if d > 1:
-                        continue
-                    if os.path.isdir(c.name):
-                        child.expanded.add(c.name)
+                if os.path.isdir(child.name):
+                    child.expanded.add(child.name)
+                for c in child.children:
+                    if os.path.isdir(child.name + "/" + c):
+                        child.expanded.add(child.name + "/" + c)
                 curline += 1
             elif action == 'collapse_all':
-                for c, d in child.traverse():
-                    if c.name in child.expanded and os.path.isdir(c.name):
-                        child.expanded.remove(c.name)
                 if depth > 1:
                     curline, p = child.prevparent(parent, curline, depth)
                     child.expanded.remove(p.name)
+                    for x in list(child.expanded):  # iterate over copy
+                        parent = os.path.abspath(p.name)
+                        path = os.path.abspath(x)
+                        if path.startswith(parent):
+                            child.expanded.remove(x)
             elif action == 'toggle_expand':
                 if child.name in child.expanded:
                     child.expanded.remove(child.name)
@@ -110,8 +111,8 @@ def pick(screen, root, hidden):
     init(screen)
     Color(screen)
     win = curses.newwin(curses.LINES - 3, curses.COLS, 2, 0)
-    screen.refresh()
     parent, action, curline = reset(win, root, hidden)
+    screen.refresh()
     while True:
         # to reset or toggle view of dotfiles we need to create a new Path
         # object before erasing the screen & descending into process function.
@@ -126,4 +127,4 @@ def pick(screen, root, hidden):
             return parent.picked
         curline, line = process(parent, action, curline)
         parent.drawtree(curline)
-        action, curline = parse(win, curline, line)
+        action, curline = parse(screen, win, curline, line)
