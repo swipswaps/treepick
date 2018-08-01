@@ -14,8 +14,8 @@ class Paths:
         self.expanded = expanded
         self.sized = sized
         self.color = Color(self.win, self.picked)
-        self.paths, self.size = (None,)*2
-        self.marked, self.getsize = (False,)*2
+        self.paths = None
+        self.marked = False
         self.children = self.getchildren()
 
     def nextparent(self, parent, curline, depth):
@@ -163,7 +163,7 @@ class Paths:
         objects to traverse.
         '''
         self.children = self.getchildren()
-        if self.children:
+        if self.children or not self.paths:
             return [Paths(self.win,
                           os.path.join(self.name, child),
                           self.hidden,

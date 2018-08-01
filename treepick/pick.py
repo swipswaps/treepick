@@ -95,7 +95,7 @@ def footer(screen):
 
 
 def reset(win, root, hidden):
-    parent = Paths(win, root, hidden, expanded=set(root))
+    parent = Paths(win, root, hidden, expanded=set(root), sized=dict())
     action = None
     curline = 0
     return parent, action, curline
