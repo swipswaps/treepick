@@ -16,7 +16,7 @@ class Paths:
         self.color = Color(self.win, self.picked)
         self.paths, self.size = (None,)*2
         self.marked, self.getsize = (False,)*2
-        self.getchildren()
+        self.children = self.getchildren()
 
     def nextparent(self, parent, curline, depth):
         '''
@@ -144,26 +144,25 @@ class Paths:
     def getchildren(self):
         try:
             if self.hidden:
-                self.children = sorted(self.listdir(self.name))
+                return sorted(self.listdir(self.name))
             else:
-                self.children = sorted(os.listdir(self.name))
+                return sorted(os.listdir(self.name))
         except:
-            self.children = None  # probably permission denied
+            return None  # probably permission denied
 
     def getpaths(self):
         '''
         If we have children, use a list comprehension to instantiate new paths
         objects to traverse.
         '''
-        if self.paths is None:
-            self.paths = [Paths(self.win,
-                                os.path.join(self.name, child),
-                                self.hidden,
-                                self.picked,
-                                self.expanded,
-                                self.sized)
-                          for child in self.children]
-        return self.paths
+        self.children = self.getchildren()
+        return [Paths(self.win,
+                      os.path.join(self.name, child),
+                      self.hidden,
+                      self.picked,
+                      self.expanded,
+                      self.sized)
+                for child in self.children]
 
     def traverse(self):
         '''
