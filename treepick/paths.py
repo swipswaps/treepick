@@ -18,6 +18,10 @@ class Paths:
         self.marked = False
         self.children = self.getchildren()
 
+    ###########################################################################
+    #                           LINE JUMPING METHODS                          #
+    ###########################################################################
+
     def nextparent(self, parent, curline, depth):
         '''
         Get index of current parent directory, in the context of it's traversal,
@@ -28,12 +32,7 @@ class Paths:
         count = 0
         if depth > 1:
             curpar = os.path.dirname(os.path.dirname(self.name))
-            cpaths = Paths(self.win,
-                           curpar,
-                           self.hidden,
-                           self.picked,
-                           self.expanded,
-                           self.sized)
+            cpaths = Paths(self.win, curpar, self.hidden)
             curdir = os.path.basename(os.path.dirname(self.name))
             curidx = cpaths.children.index(curdir)
             nextdir = cpaths.children[curidx + 1]
@@ -77,6 +76,10 @@ class Paths:
             curline -= 1
             p = self.name
         return curline, p
+
+    ###########################################################################
+    #                       CURSES LINE DRAWING METHODS                       #
+    ###########################################################################
 
     def getnode(self):
         if not os.path.isdir(self.name):
@@ -133,7 +136,7 @@ class Paths:
         self.win.refresh()
 
     ###########################################################################
-    #                   PATH OBJECT INSTANTIATION FUNCTIONS                   #
+    #                    PATH OBJECT INSTANTIATION METHODS                    #
     ###########################################################################
 
     def listdir(self, path):
