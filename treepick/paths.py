@@ -125,8 +125,9 @@ class Paths:
                 c.color.default(c.name)
             if c.name in self.picked:
                 c.marked = True
-            if os.path.abspath(c.name) in self.sized:
-                self.sized[os.path.abspath(c.name)] = " (" + du(c.name) + ")"
+            path = os.path.abspath(c.name)
+            if path in self.sized and not self.sized[path]:
+                self.sized[path] = " (" + du(c.name) + ")"
             c.drawline(d, curline, l)
             l += 1
         self.win.refresh()

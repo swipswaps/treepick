@@ -65,7 +65,7 @@ def process(parent, action, curline):
                 curline += 1
             elif action == 'get_size_all':
                 for c, d in parent.traverse():
-                    child.sized[os.path.abspath(child.name)] = None
+                    child.sized[os.path.abspath(c.name)] = None
             action = None  # reset action
         line += 1  # keep scrolling!
     return curline, line
