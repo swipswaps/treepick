@@ -37,10 +37,12 @@ def process(parent, action, curline):
                         child.expanded.add(c.name)
                 curline += 1
             elif action == 'collapse_all':
+                for c, d in child.traverse():
+                    if c.name in child.expanded and os.path.isdir(c.name):
+                        child.expanded.remove(c.name)
                 if depth > 1:
                     curline, p = child.prevparent(parent, curline, depth)
-                    if os.path.isdir(p.name):
-                        child.expanded.remove(p.name)
+                    child.expanded.remove(p.name)
             elif action == 'toggle_expand':
                 if child.name in child.expanded:
                     child.expanded.remove(child.name)
@@ -59,11 +61,11 @@ def process(parent, action, curline):
             elif action == 'prev_parent':
                 curline = child.prevparent(parent, curline, depth)[0]
             elif action == 'get_size':
-                child.sized.add(child.name)
+                child.sized[os.path.abspath(child.name)] = None
                 curline += 1
             elif action == 'get_size_all':
                 for c, d in parent.traverse():
-                    child.sized.add(c.name)
+                    child.sized[os.path.abspath(child.name)] = None
             action = None  # reset action
         line += 1  # keep scrolling!
     return curline, line
@@ -122,7 +124,6 @@ def pick(screen, root, hidden):
                 parent.hidden = True
         elif action == 'quit':
             return parent.picked
-        else:
-            curline, line = process(parent, action, curline)
+        curline, line = process(parent, action, curline)
         parent.drawtree(curline)
         action, curline = parse(win, curline, line)

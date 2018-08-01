@@ -6,7 +6,7 @@ from pdu import du
 
 
 class Paths:
-    def __init__(self, win, name, hidden, picked=set(), expanded=set(), sized=set()):
+    def __init__(self, win, name, hidden, picked=set(), expanded=set(), sized={}):
         self.win = win
         self.name = name
         self.hidden = hidden
@@ -28,8 +28,12 @@ class Paths:
         count = 0
         if depth > 1:
             curpar = os.path.dirname(os.path.dirname(self.name))
-            cpaths = Paths(self.win, curpar, self.hidden,
-                           self.picked, self.expanded, self.sized)
+            cpaths = Paths(self.win,
+                           curpar,
+                           self.hidden,
+                           self.picked,
+                           self.expanded,
+                           self.sized)
             curdir = os.path.basename(os.path.dirname(self.name))
             curidx = cpaths.children.index(curdir)
             nextdir = cpaths.children[curidx + 1]
@@ -74,17 +78,6 @@ class Paths:
             p = self.name
         return curline, p
 
-    def calcsize(self):
-        if self.size:
-            return self.size
-        elif self.getsize:
-            size = du(self.name)
-            # save state as object attribute
-            self.size = " (" + size + ")"
-            return self.size
-        else:
-            return ''
-
     def getnode(self):
         if not os.path.isdir(self.name):
             return '    ' + os.path.basename(self.name)
@@ -99,8 +92,11 @@ class Paths:
 
     def mkline(self, depth, width):
         pad = ' ' * 4 * depth
-        size = self.calcsize()
         node = self.getnode()
+        if os.path.abspath(self.name) in self.sized:
+            size = str(self.sized[os.path.abspath(self.name)] or '')
+        else:
+            size = ''
         nodestr = '{}{}{}'.format(pad, node, size)
         return nodestr + ' ' * (width - len(nodestr))
 
@@ -129,19 +125,29 @@ class Paths:
                 c.color.default(c.name)
             if c.name in self.picked:
                 c.marked = True
-            if c.name in self.sized:
-                c.getsize = True
+            if os.path.abspath(c.name) in self.sized:
+                self.sized[os.path.abspath(c.name)] = " (" + du(c.name) + ")"
             c.drawline(d, curline, l)
-            c.getsize = False  # stop calculating sizes!
             l += 1
         self.win.refresh()
 
+    ###########################################################################
+    #                   PATH OBJECT INSTANTIATION FUNCTIONS                   #
+    ###########################################################################
+
     def listdir(self, path):
+        '''
+        Return a list of all non dotfiles in a given directory.
+        '''
         for f in os.listdir(path):
             if not f.startswith('.'):
                 yield f
 
     def getchildren(self):
+        '''
+        Create list of paths to be used to instantiate path objects for traversal,
+        based on whether or not hidden attribute is set.
+        '''
         try:
             if self.hidden:
                 return sorted(self.listdir(self.name))
