@@ -31,9 +31,9 @@ def process(parent, action, curline):
             elif action == 'expand_all':
                 if os.path.isdir(child.name):
                     child.expanded.add(child.name)
-                for c in child.children:
-                    if os.path.isdir(child.name + "/" + c):
-                        child.expanded.add(child.name + "/" + c)
+                    for c in child.children:
+                        if os.path.isdir(child.name + "/" + c):
+                            child.expanded.add(child.name + "/" + c)
                 curline += 1
             elif action == 'collapse_all':
                 if depth > 1:

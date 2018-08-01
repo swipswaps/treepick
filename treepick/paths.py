@@ -177,7 +177,6 @@ class Paths:
         Recursive generator that lazily unfolds the filesystem.
         '''
         yield self, 0
-
         if self.name in self.expanded:
             for child in self.getpaths():
                 for c, depth in child.traverse():
