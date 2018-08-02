@@ -75,4 +75,4 @@ my_amazing_function(my_list_of_paths)
 
 - Support window resizing
 - Different colors for sizes and marks
-- fix permission exception handling in my du package
+- Fix permission exception handling in my du package
