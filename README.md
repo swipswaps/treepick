@@ -59,6 +59,7 @@ my_amazing_function(my_list_of_paths)
 | PGUP, u, V   | Jump up a page of lines.                              |
 | g, <         | Jump to first line.                                   |
 | G, >         | Jump to last line.                                    |
+
 | EXPANSION    | ACTION                                                |
 | :----------- | :---------------------------------------------------- |
 | RIGHT, l, f  | Expand and step into directory.                       |
@@ -66,6 +67,7 @@ my_amazing_function(my_list_of_paths)
 | LEFT, h, b   | Collapse directory.                                   |
 | L, F         | Expand directory and child directories.               |
 | H, B         | Jump to parent directory and collapse all.            |
+
 | MISC         | ACTION                                                |
 | :----------- | :---------------------------------------------------- |
 | m, SPC       | Toggle marking of paths.                              |
