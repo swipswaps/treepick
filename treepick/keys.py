@@ -7,21 +7,28 @@ ESC = 27
 def show(win):
     from textwrap import dedent
     msg = '''
-        UP, k, p    : Go up one line.
-        DOWN, j, n  : Go down one line.
-        RIGHT, l, f : Expand directory, and move down one line.
-        LEFT, h, b  : Collapse directory.
+
+        UP, k, p    : Step up one line.
+        DOWN, j, n  : Step down one line.
+        K, P        : Jump to previous parent directory.
+        J, N        : Jump to next parent directory.
+        PGDN, d, v  : Jump down a page of lines.
+        PGUP, u, V  : Jump up a page of lines.
+        g, <        : Jump to first line.
+        G, >        : Jump to last line.
+
+        RIGHT, l, f : Expand and step into directory.
         TAB, RET    : Toggle expansion/collapse of directory.
-        PGDN, d, v  : Move down a page of lines.
-        PGUP, u, V  : Move up a page of lines.
-        J, N        : Move to next parent directory.
-        K, P        : Move to parent parent directory.
-        g, <        : Move to first line.
-        G, >        : Move to last line.
+        LEFT, h, b  : Collapse directory.
+        L, F        : Expand directory and child directories.
+        H, B        : Jump to parent directory and collapse all.
+
         m, SPC      : Toggle marking of paths.
         .           : Toggle display of dotfiles.
+
         s           : Display total size of path, recursively
         S           : Display totol size of all currently expanded paths.
+
         r           : Reset marking and expansion.
         q, ESC      : Quit and display all marked paths.
 
