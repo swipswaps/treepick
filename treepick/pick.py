@@ -100,8 +100,10 @@ def pick(screen, root, hidden):
             parent, action, curline = reset(win, root, hidden)
         elif action == 'toggle_hidden':
             if parent.hidden:
+                parent.paths = None  # this needs to be reset otherwise we use the old objects
                 parent.hidden = False
             else:
+                parent.paths = None
                 parent.hidden = True
         elif action == 'quit':
             return parent.picked
