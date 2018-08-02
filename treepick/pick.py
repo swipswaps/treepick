@@ -22,7 +22,7 @@ def process(parent, action, curline):
             continue  # don't process root node
         if line == curline:
             if action == 'expand':
-                if os.path.isdir(child.name):
+                if os.path.isdir(child.name) and child.children:
                     child.expanded.add(child.name)
                 curline += 1
             elif action == 'collapse':

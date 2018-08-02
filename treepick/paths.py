@@ -166,14 +166,17 @@ class Paths:
         objects to traverse.
         '''
         self.children = self.getchildren()
-        if self.children or not self.paths:
-            return [Paths(self.win,
-                          os.path.join(self.name, child),
-                          self.hidden,
-                          self.picked,
-                          self.expanded,
-                          self.sized)
-                    for child in self.children]
+        if self.children is None:
+            return
+        if self.paths is None:
+            self.paths = [Paths(self.win,
+                                os.path.join(self.name, child),
+                                self.hidden,
+                                self.picked,
+                                self.expanded,
+                                self.sized)
+                          for child in self.children]
+        return self.paths
 
     def traverse(self):
         '''
