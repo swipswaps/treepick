@@ -19,6 +19,41 @@ class Paths:
         self.children = self.getchildren()
 
     ###########################################################################
+    #                       EXPAND AND COLLAPSE METHODS                       #
+    ###########################################################################
+
+    def expand(self, curline, recurse=False, toggle=False):
+        if os.path.isdir(self.name) and self.children and recurse:
+            self.expanded.add(self.name)
+            for c, d in self.traverse():
+                if d < 2 and os.path.isdir(c.name) and c.children:
+                    self.expanded.add(c.name)
+            curline += 1
+        elif os.path.isdir(self.name) and self.children:
+            if toggle:
+                if self.name in self.expanded:
+                    self.expanded.remove(self.name)
+                else:
+                    self.expanded.add(self.name)
+            else:
+                self.expanded.add(self.name)
+                curline += 1
+        return curline
+
+    def collapse(self, parent, curline, depth, recurse=False):
+        if depth > 1 and recurse:
+            curline, p = self.prevparent(parent, curline, depth)
+            self.expanded.remove(p)
+            for x in list(self.expanded):  # iterate over copy
+                par = os.path.abspath(p)
+                path = os.path.abspath(x)
+                if path.startswith(par):
+                    self.expanded.remove(x)
+        elif self.name in self.expanded:
+            self.expanded.remove(self.name)
+        return curline
+
+    ###########################################################################
     #                           LINE JUMPING METHODS                          #
     ###########################################################################
 
@@ -42,7 +77,7 @@ class Paths:
                     curline += 1
                     if os.path.isdir(c.name):
                         break
-                line += 1
+                    line += 1
         return curline
 
     def prevparent(self, parent, curline, depth):
@@ -63,7 +98,7 @@ class Paths:
             for c, d in parent.traverse():
                 if line <= curline and os.path.isdir(c.name):
                     lastdir = os.path.basename(c.name)
-                line += 1
+                    line += 1
             if lastdir != '.':
                 curline = parent.children.index(lastdir)
         return curline, pdir
@@ -91,7 +126,7 @@ class Paths:
             size = self.sized[os.path.abspath(self.name)]
         else:
             size = ''
-        nodestr = '{}{}{}'.format(pad, node, size)
+            nodestr = '{}{}{}'.format(pad, node, size)
         return nodestr + ' ' * (width - len(nodestr))
 
     def drawline(self, depth, curline, line):
@@ -111,6 +146,7 @@ class Paths:
         self.win.erase()
         l = 0
         for c, d in self.traverse():
+            path = os.path.abspath(c.name)
             if d == 0:
                 continue
             if l == curline:
@@ -119,7 +155,6 @@ class Paths:
                 c.color.default(c.name)
             if c.name in self.picked:
                 c.marked = True
-            path = os.path.abspath(c.name)
             if path in self.sized and not self.sized[path]:
                 self.sized[path] = " (" + du(c.name) + ")"
             c.drawline(d, curline, l)

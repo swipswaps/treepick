@@ -22,35 +22,15 @@ def process(parent, action, curline):
             continue  # don't process root node
         if line == curline:
             if action == 'expand':
-                if os.path.isdir(child.name) and child.children:
-                    child.expanded.add(child.name)
-                curline += 1
-            elif action == 'collapse':
-                if child.name in child.expanded:
-                    child.expanded.remove(child.name)
+                curline = child.expand(curline)
             elif action == 'expand_all':
-                if os.path.isdir(child.name) and child.children:
-                    child.expanded.add(child.name)
-                    for c, d in child.traverse():
-                        if d < 2 and os.path.isdir(c.name) and c.children:
-                            child.expanded.add(c.name)
-                curline += 1
-            elif action == 'collapse_all':
-                if depth > 1:
-                    curline, p = child.prevparent(parent, curline, depth)
-                    child.expanded.remove(p)
-                    for x in list(child.expanded):  # iterate over copy
-                        parent = os.path.abspath(p)
-                        path = os.path.abspath(x)
-                        if path.startswith(parent):
-                            child.expanded.remove(x)
+                curline = child.expand(curline, recurse=True)
             elif action == 'toggle_expand':
-                if child.name in child.expanded:
-                    child.expanded.remove(child.name)
-                elif os.path.isdir(child.name):
-                    child.expanded.add(child.name)
-                else:
-                    curline += 1
+                curline = child.expand(curline, toggle=True)
+            elif action == 'collapse':
+                curline = child.collapse(parent, curline, depth)
+            elif action == 'collapse_all':
+                curline = child.collapse(parent, curline, depth, recurse=True)
             elif action == 'toggle_mark':
                 if child.name in child.picked:
                     child.picked.remove(child.name)
