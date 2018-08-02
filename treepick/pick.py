@@ -38,9 +38,9 @@ def process(parent, action, curline):
             elif action == 'collapse_all':
                 if depth > 1:
                     curline, p = child.prevparent(parent, curline, depth)
-                    child.expanded.remove(p.name)
+                    child.expanded.remove(p)
                     for x in list(child.expanded):  # iterate over copy
-                        parent = os.path.abspath(p.name)
+                        parent = os.path.abspath(p)
                         path = os.path.abspath(x)
                         if path.startswith(parent):
                             child.expanded.remove(x)
