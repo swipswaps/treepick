@@ -31,11 +31,11 @@ class Paths:
         '''
         pdir = os.path.dirname(self.name)
         pobj = Paths(self.win, pdir, self.hidden)
-        if depth > 1:
+        if depth > 1:  # can't jump to parent of root node!
             curpath = os.path.basename(self.name)
             curindex = pobj.children.index(curpath)
             curline += len(pobj.children) - curindex
-        else:
+        else:  # otherwise just skip to next directory
             line = 0
             for c, d in parent.traverse():
                 if line > curline + 1:
@@ -47,16 +47,17 @@ class Paths:
 
     def prevparent(self, parent, curline, depth):
         '''
-        Count lines from top of parent until we reach our current path and then
-        return that count so that we can set curline to it.
+        Use the same method as nextparent to find out current place in child
+        directory, then subtract the index of that place from our current line -
+        ie) jump to the first element of the parent_path.children list.
         '''
         pdir = os.path.dirname(self.name)
         pobj = Paths(self.win, pdir, self.hidden)
-        if depth > 1:
+        if depth > 1:  # can't jump to parent of root node!
             curpath = os.path.basename(self.name)
             curindex = pobj.children.index(curpath)
             curline -= curindex + 1
-        else:
+        else:  # otherwise jus skip to previous directory
             pdir = self.name
             line = 0
             for c, d in parent.traverse():
