@@ -24,16 +24,25 @@ class Paths:
 
     def nextparent(self, parent, curline, depth):
         '''
-        Get index of current parent directory, in the context of it's traversal,
-        count until we reach the node corresponding to that index + 1 - ie) the
-        next parent.
+        Find index of current path in the context of our parents traversal by
+        instantiating an object of the pqrent. Find the size of it's children
+        and subtract our index from that to calculate how many lines we need to
+        jump to get to the end of the current child.
         '''
+        pdir = os.path.dirname(self.name)
+        pobj = Paths(self.win, pdir, self.hidden)
         if depth > 1:
-            p = os.path.dirname(self.name)
-            pobj = Paths(self.win, p, self.hidden, self.expanded)
-            curdir = os.path.basename(self.name)
-            curidx = pobj.children.index(curdir)
-            curline += len(pobj.children) - curidx
+            curpath = os.path.basename(self.name)
+            curindex = pobj.children.index(curpath)
+            curline += len(pobj.children) - curindex
+        else:
+            line = 0
+            for c, d in parent.traverse():
+                if line > curline + 1:
+                    curline += 1
+                    if os.path.isdir(c.name):
+                        break
+                line += 1
         return curline
 
     def prevparent(self, parent, curline, depth):
