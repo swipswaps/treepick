@@ -93,6 +93,7 @@ def pick(screen, root, hidden):
     win = curses.newwin(curses.LINES - 3, curses.COLS, 2, 0)
     parent, action, curline = reset(win, root, hidden)
     screen.refresh()
+    lasthidden = None
     while True:
         # to reset or toggle view of dotfiles we need to create a new Path
         # object before erasing the screen & descending into process function.
@@ -100,11 +101,28 @@ def pick(screen, root, hidden):
             parent, action, curline = reset(win, root, hidden)
         elif action == 'toggle_hidden':
             if parent.hidden:
+                # keep two copies of record so we can restore from state when re-hiding
+                curpath, lastpath = (parent.children[curline],)*2
                 parent.paths = None  # this needs to be reset otherwise we use the old objects
                 parent.hidden = False
+                parent.drawtree(curline)
+                curline = parent.children.index(curpath)
+                if lasthidden in parent.children:
+                    curline = parent.children.index(lasthidden)
+                else:
+                    curline = parent.children.index(curpath)
             else:
+                # keep two copies of record so we can restore from state
+                curpath, lasthidden = (parent.children[curline],)*2
                 parent.paths = None
                 parent.hidden = True
+                parent.drawtree(curline)
+                if curpath in parent.children:
+                    curline = parent.children.index(curpath)
+                else:
+                    curline = parent.children.index(lastpath)
+            action = None
+            continue
         elif action == 'quit':
             return parent.picked
         curline, line = process(parent, action, curline)
