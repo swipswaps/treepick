@@ -26,8 +26,8 @@ class Paths:
         '''
         Find index of current path in the context of our parents traversal by
         instantiating an object of the pqrent. Find the size of it's children
-        and subtract our index from that to calculate how many lines we need to
-        jump to get to the end of the current child.
+        and subtract our index from that, to calculate how many lines we need to
+        jump to get to the end of current list or children.
         '''
         pdir = os.path.dirname(self.name)
         pobj = Paths(self.win, pdir, self.hidden)
@@ -50,23 +50,22 @@ class Paths:
         Count lines from top of parent until we reach our current path and then
         return that count so that we can set curline to it.
         '''
-        p = os.path.dirname(self.name)
-        # once we hit the parent directory, break, and set the
-        # curline to the line number we got to.
+        pdir = os.path.dirname(self.name)
+        pobj = Paths(self.win, pdir, self.hidden)
         if depth > 1:
-            curline = 0
-            for c, d in parent.traverse():
-                if c.name == p:
-                    curline -= 1
-                    c.drawline(d, 0, curline)
-                    self.color.default(self.name)
-                    p = c
-                    break
-                curline += 1
+            curpath = os.path.basename(self.name)
+            curindex = pobj.children.index(curpath)
+            curline -= curindex + 1
         else:
-            curline -= 1
-            p = self.name
-        return curline, p
+            pdir = self.name
+            line = 0
+            for c, d in parent.traverse():
+                if line <= curline and os.path.isdir(c.name):
+                    lastdir = os.path.basename(c.name)
+                line += 1
+            if lastdir != '.':
+                curline = parent.children.index(lastdir)
+        return curline, pdir
 
     ###########################################################################
     #                       CURSES LINE DRAWING METHODS                       #
