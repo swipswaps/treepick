@@ -25,7 +25,6 @@ def show(win):
 
         m, SPC      : Toggle marking of paths.
         .           : Toggle display of dotfiles.
-
         s           : Display total size of path, recursively
         S           : Display totol size of all currently expanded paths.
 
@@ -39,7 +38,7 @@ def show(win):
     win.attrset(curses.color_pair(0))
     try:
         win.addstr(0, 0, msg)
-        win.chgat(18, 0, curses.color_pair(3) | curses.A_BOLD)
+        win.chgat(23, 0, curses.color_pair(3) | curses.A_BOLD)
     except:
         win.addstr(0, 0, "Window too small. Press any key to return.")
         win.chgat(0, 0, curses.color_pair(1) | curses.A_BOLD)

@@ -49,22 +49,29 @@ my_amazing_function(my_list_of_paths)
 
 ## KEYBINDINGS
 
-| Key         | Action                                                  |
-|:------------|:--------------------------------------------------------|
-| UP, k, p    | Go up one line.                                         |
-| DOWN, j, n  | Go down one line.                                       |
-| RIGHT, l, f | Expand child node, and move down one line (into child). |
-| LEFT, h, b  | Collapse child node.                                    |
-| TAB, RET    | Toggle expansion/collapse of child node.                |
-| PGDN, d, v  | Move down a page of lines at a time.                    |
-| PGUP, V, u  | Move up a page of lines at a time.                      |
-| J, N        | Move to next child node, of parent. (needs some TLC!)   |
-| K, P        | Move to parent node. (also currently pretty broken!)    |
-| g, <        | Move to first line.                                     |
-| G, >        | Move to last line.                                      |
-| m, SPC      | Toggle marking of paths.                                |
-| .           | Toggle display of dotfiles.                             |
-| s           | Display total size of path, recursively                 |
-| S           | Display, totol size of all currently expanded paths.    |
-| r           | Reset marking and expansion.                            |
-| q, e, ESC   | Quit and display all marked paths.                      |
+| KEY          | Action                                                |
+| :----------- | :---------------------------------------------------- |
+| UP, k, p     | Step up one line.                                     |
+| DOWN, j, n   | Step down one line.                                   |
+| K, P         | Jump to previous parent directory.                    |
+| J, N         | Jump to next parent directory.                        |
+| PGDN, d, v   | Jump down a page of lines.                            |
+| PGUP, u, V   | Jump up a page of lines.                              |
+| g, <         | Jump to first line.                                   |
+| G, >         | Jump to last line.                                    |
+| RIGHT, l, f  | Expand and step into directory.                       |
+| TAB, RET     | Toggle expansion/collapse of directory.               |
+| LEFT, h, b   | Collapse directory.                                   |
+| L, F         | Expand directory and child directories.               |
+| H, B         | Jump to parent directory and collapse all.            |
+| m, SPC       | Toggle marking of paths.                              |
+| .            | Toggle display of dotfiles.                           |
+| s            | Display total size of path, recursively               |
+| S            | Display totol size of all currently expanded paths.   |
+| r            | Reset marking and expansion.                          |
+| q, ESC       | Quit and display all marked paths.                    |
+
+## TODO
+
+- Support window resizing
+- Different colors for sizes and marks
