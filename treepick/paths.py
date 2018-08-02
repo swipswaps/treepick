@@ -28,31 +28,13 @@ class Paths:
         count until we reach the node corresponding to that index + 1 - ie) the
         next parent.
         '''
-        line = 0
-        count = 0
         if depth > 1:
-            curpar = os.path.dirname(os.path.dirname(self.name))
-            cpaths = Paths(self.win, curpar, self.hidden, self.expanded)
-            curdir = os.path.basename(os.path.dirname(self.name))
-            curidx = cpaths.children.index(curdir)
-            # we need to check if we are in the last child otherwise index will
-            # be out of range.
-            nextdir = cpaths.children[curidx + 1]
-            for c, d in parent.traverse():
-                if os.path.basename(c.name) == nextdir:
-                    break
-                if line > curline:
-                    count += 1
-                line += 1
-        else:
-            # if we're in root then skip to next dir
-            for c, d in parent.traverse():
-                if line > curline + 1:
-                    count += 1
-                    if os.path.isdir(c.name):
-                        break
-                line += 1
-        return count
+            p = os.path.dirname(self.name)
+            pobj = Paths(self.win, p, self.hidden, self.expanded)
+            curdir = os.path.basename(self.name)
+            curidx = pobj.children.index(curdir)
+            curline += len(pobj.children) - curidx
+        return curline
 
     def prevparent(self, parent, curline, depth):
         '''

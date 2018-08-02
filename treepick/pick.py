@@ -58,7 +58,7 @@ def process(parent, action, curline):
                     child.picked.add(child.name)
                 curline += 1
             elif action == 'next_parent':
-                curline += child.nextparent(parent, curline, depth)
+                curline = child.nextparent(parent, curline, depth)
             elif action == 'prev_parent':
                 curline = child.prevparent(parent, curline, depth)[0]
             elif action == 'get_size':
