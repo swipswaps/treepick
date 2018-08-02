@@ -126,7 +126,11 @@ class Paths:
             size = self.sized[os.path.abspath(self.name)]
         else:
             size = ''
-            nodestr = '{}{}{}'.format(pad, node, size)
+        if self.name in self.picked:
+            mark = ' *'
+        else:
+            mark = ''
+        nodestr = '{}{}{}{}'.format(pad, node, size, mark)
         return nodestr + ' ' * (width - len(nodestr))
 
     def drawline(self, depth, curline, line):
