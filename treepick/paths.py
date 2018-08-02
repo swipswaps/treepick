@@ -32,22 +32,22 @@ class Paths:
         count = 0
         if depth > 1:
             curpar = os.path.dirname(os.path.dirname(self.name))
-            cpaths = Paths(self.win, curpar, self.hidden)
+            cpaths = Paths(self.win, curpar, self.hidden, self.expanded)
             curdir = os.path.basename(os.path.dirname(self.name))
             curidx = cpaths.children.index(curdir)
+            # we need to check if we are in the last child otherwise index will
+            # be out of range.
             nextdir = cpaths.children[curidx + 1]
             for c, d in parent.traverse():
                 if os.path.basename(c.name) == nextdir:
                     break
                 if line > curline:
-                    self.color.default(self.name)
                     count += 1
                 line += 1
         else:
             # if we're in root then skip to next dir
             for c, d in parent.traverse():
                 if line > curline + 1:
-                    self.color.default(self.name)
                     count += 1
                     if os.path.isdir(c.name):
                         break
