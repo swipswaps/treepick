@@ -34,7 +34,7 @@ def show(win):
     win.attrset(curses.color_pair(0))
     try:
         win.addstr(0, 0, msg)
-        win.chgat(23, 0, curses.color_pair(3) | curses.A_BOLD)
+        win.chgat(20, 0, curses.color_pair(3) | curses.A_BOLD)
     except:
         win.addstr(0, 0, "Window too small. Press any key to return.")
         win.chgat(0, 0, curses.color_pair(1) | curses.A_BOLD)
@@ -55,9 +55,9 @@ def parse(screen, win, curline, line):
         action = 'expand'
     elif ch == curses.KEY_LEFT or ch == ord('h') or ch == ord('b'):
         action = 'collapse'
-    elif ch == ord('L') or ch == ord('F'):
+    elif ch == curses.KEY_SRIGHT or ch == ord('L') or ch == ord('F'):
         action = 'expand_all'
-    elif ch == ord('H') or ch == ord('B'):
+    elif ch == curses.KEY_SLEFT or ch == ord('H') or ch == ord('B'):
         action = 'collapse_all'
     elif ch == ord('\t') or ch == ord('\n'):
         action = 'toggle_expand'
@@ -71,7 +71,7 @@ def parse(screen, win, curline, line):
         action = 'get_size'
     elif ch == ord('S'):
         action = 'get_size_all'
-    elif ch == ord('?'):
+    elif ch == curses.KEY_F1 or ch == ord('?'):
         show(win)
     elif ch == curses.KEY_DOWN or ch == ord('j') or ch == ord('n'):
         curline += 1
