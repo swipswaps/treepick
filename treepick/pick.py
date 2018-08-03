@@ -34,7 +34,7 @@ def process(parent, action, curline):
             elif action == 'toggle_pick':
                 curline = child.pick(curline)
             elif action == 'pickall':
-                curline = child.pick(curline, p=parent, pickall=True)
+                curline = child.pick(curline, parent)
             elif action == 'nextparent':
                 curline = child.nextparent(parent, curline, depth)
             elif action == 'prevparent':

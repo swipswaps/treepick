@@ -57,9 +57,9 @@ class Paths:
     #                              PICKING NODES                              #
     ###########################################################################
 
-    def pick(self, curline, p=None, pickall=False):
-        if pickall:
-            for c, d in p.traverse():
+    def pick(self, curline, parent=None):
+        if parent:
+            for c, d in parent.traverse():
                 if c.name in self.picked:
                     self.picked.remove(c.name)
                 else:
