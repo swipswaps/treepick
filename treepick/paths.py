@@ -54,6 +54,25 @@ class Paths:
         return curline
 
     ###########################################################################
+    #                              PICKING NODES                              #
+    ###########################################################################
+
+    def pick(self, curline, p=None, pickall=False):
+        if pickall:
+            for c, d in p.traverse():
+                if c.name in self.picked:
+                    self.picked.remove(c.name)
+                else:
+                    self.picked.add(c.name)
+        else:
+            if self.name in self.picked:
+                self.picked.remove(self.name)
+            else:
+                self.picked.add(self.name)
+            curline += 1
+        return curline
+
+    ###########################################################################
     #                           LINE JUMPING METHODS                          #
     ###########################################################################
 

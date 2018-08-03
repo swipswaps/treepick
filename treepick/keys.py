@@ -62,15 +62,17 @@ def parse(screen, win, curline, line):
     elif ch == ord('\t') or ch == ord('\n'):
         action = 'toggle_expand'
     elif ch == ord('m') or ch == ord(' '):
-        action = 'toggle_mark'
+        action = 'toggle_pick'
+    elif ch == ord('M'):
+        action = 'pickall'
     elif ch == ord('J') or ch == ord('N'):
-        action = 'next_parent'
+        action = 'nextparent'
     elif ch == ord('K') or ch == ord('P'):
-        action = 'prev_parent'
+        action = 'prevparent'
     elif ch == ord('s'):
-        action = 'get_size'
+        action = 'getsize'
     elif ch == ord('S'):
-        action = 'get_size_all'
+        action = 'getsizeall'
     elif ch == curses.KEY_F1 or ch == ord('?'):
         show(win)
     elif ch == curses.KEY_DOWN or ch == ord('j') or ch == ord('n'):

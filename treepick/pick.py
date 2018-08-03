@@ -31,20 +31,18 @@ def process(parent, action, curline):
                 curline = child.collapse(parent, curline, depth)
             elif action == 'collapse_all':
                 curline = child.collapse(parent, curline, depth, recurse=True)
-            elif action == 'toggle_mark':
-                if child.name in child.picked:
-                    child.picked.remove(child.name)
-                else:
-                    child.picked.add(child.name)
-                curline += 1
-            elif action == 'next_parent':
+            elif action == 'toggle_pick':
+                curline = child.pick(curline)
+            elif action == 'pickall':
+                curline = child.pick(curline, p=parent, pickall=True)
+            elif action == 'nextparent':
                 curline = child.nextparent(parent, curline, depth)
-            elif action == 'prev_parent':
+            elif action == 'prevparent':
                 curline = child.prevparent(parent, curline, depth)[0]
-            elif action == 'get_size':
+            elif action == 'getsize':
                 child.sized[os.path.abspath(child.name)] = None
                 curline += 1
-            elif action == 'get_size_all':
+            elif action == 'getsizeall':
                 for c, d in parent.traverse():
                     child.sized[os.path.abspath(c.name)] = None
             action = None  # reset action
