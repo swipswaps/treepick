@@ -39,7 +39,7 @@ class Color:
         # can't use "in", as we have to catch all descendants.
         self.white_blue()
         for p in self.picked:
-            if path.startswith(p):
+            if p == path or path.startswith(p + os.sep):
                 self.black_yellow()
 
     def default(self, path):
@@ -49,5 +49,5 @@ class Color:
         else:
             self.reset()
         for p in self.picked:
-            if path.startswith(p):
+            if p == path or path.startswith(p + os.sep):
                 self.yellow_black()
