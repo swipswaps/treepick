@@ -9,7 +9,6 @@ def chkpath(path):
     """
     Checks if a path exists.
     """
-    path = os.path.expanduser(path)
     if os.path.exists(path):
         return path
     else:
