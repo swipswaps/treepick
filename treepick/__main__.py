@@ -31,7 +31,7 @@ def getargs():
 
 def main():
     args = getargs()
-    root = args.path
+    root = os.path.abspath(os.path.expanduser(args.path))
     hidden = args.hidden
     paths = curses.wrapper(pick, root, hidden)
     print("\n".join(paths))
