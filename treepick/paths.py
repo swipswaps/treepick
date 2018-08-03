@@ -123,6 +123,19 @@ class Paths:
         return curline, pdir
 
     ###########################################################################
+    #                         SIZE CALCULATING METHODS                        #
+    ###########################################################################
+
+    def getsize(self, curline, parent, sizeall=False):
+        if sizeall:
+            for c, d in parent.traverse():
+                self.sized[os.path.abspath(c.name)] = None
+        else:
+            self.sized[os.path.abspath(self.name)] = None
+            curline += 1
+        return curline
+
+    ###########################################################################
     #                       CURSES LINE DRAWING METHODS                       #
     ###########################################################################
 
