@@ -108,9 +108,13 @@ class Paths:
         pdir = os.path.dirname(self.name)
         pobj = Paths(self.win, pdir, self.hidden)
         if depth > 1:  # can't jump to parent of root node!
-            curpath = os.path.basename(self.name)
-            curindex = pobj.children.index(curpath)
-            curline -= curindex + 1
+            curpath = os.path.abspath(self.name)
+            for c, d in parent.traverse():
+                cpath = os.path.abspath(c.name)
+                if cpath == curpath:
+                    break
+                if cpath.startswith(pdir):
+                    curline -= 1
         else:  # otherwise jus skip to previous directory
             pdir = self.name
             line = 0
