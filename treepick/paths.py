@@ -84,11 +84,15 @@ class Paths:
         jump to get to the end of current list or children.
         '''
         pdir = os.path.dirname(self.name)
-        pobj = Paths(self.win, pdir, self.hidden)
         if depth > 1:  # can't jump to parent of root node!
-            curpath = os.path.abspath(self.name)
-            curindex = pobj.children.index(curpath)
-            curline += len(pobj.children) - curindex
+            line = 0
+            for c, d in parent.traverse():
+                import pdb
+                pdb.set_trace()
+                cpath = os.path.abspath(c.name)
+                if line > curline and cpath.startswith(pdir):
+                    curline += 1
+                line += 1
         else:  # otherwise just skip to next directory
             line = 0
             for c, d in parent.traverse():
@@ -106,7 +110,6 @@ class Paths:
         ie) jump to the first element of the parent_path.children list.
         '''
         pdir = os.path.dirname(self.name)
-        pobj = Paths(self.win, pdir, self.hidden)
         if depth > 1:  # can't jump to parent of root node!
             curpath = os.path.abspath(self.name)
             for c, d in parent.traverse():
