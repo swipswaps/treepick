@@ -121,10 +121,8 @@ class Paths:
             for c, d in parent.traverse():
                 if c.name == self.name:
                     break
-                if os.path.isdir(c.name) and c.name in parent.children:
-                    lastdir = c.name
-            if lastdir != parent.name:
-                curline = parent.children.index(lastdir)
+                if os.path.isdir(c.name) and c.name in parent.children[0:]:
+                    curline = parent.children.index(c.name)
         return curline, pdir
 
     ###########################################################################
