@@ -65,6 +65,7 @@ my_amazing_function(my_list_of_paths)
 | L, F         | Expand directory and child directories.               |
 | H, B         | Jump to parent directory and collapse all.            |
 | m, SPC       | Toggle marking of paths.                              |
+| M            | Toggle marking of all currently expanded paths.       |
 | .            | Toggle display of dotfiles.                           |
 | s            | Display total size of path, recursively               |
 | S            | Display totol size of all currently expanded paths.   |
