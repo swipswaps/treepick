@@ -80,17 +80,15 @@ class Paths:
 
     def nextparent(self, parent, curline, depth):
         '''
-        Find index of current path in the context of our parents traversal by
-        instantiating an object of the pqrent. Find the size of it's children
-        and subtract our index from that, to calculate how many lines we need
-        to jump to get to the end of current list or children.
+        Add lines to current line by traversing the grandparent object again
+        and once we reach our current line counting every line that is prefixed
+        with the parent directory.
         '''
         pdir = os.path.dirname(self.name)
         if depth > 1:  # can't jump to parent of root node!
             line = 0
             for c, d in parent.traverse():
-                cpath = os.path.abspath(c.name)
-                if line > curline and cpath.startswith(pdir):
+                if line > curline and c.name.startswith(pdir + os.sep):
                     curline += 1
                 line += 1
         else:  # otherwise just skip to next directory
@@ -105,9 +103,8 @@ class Paths:
 
     def prevparent(self, parent, curline, depth):
         '''
-        Use the same method as nextparent to find out current place in child
-        directory, then subtract the index of that place from our current line
-        ie) jump to the first element of the parent_path.children list.
+        Subtract lines from our curline if the name of a node is prefixed with
+        the parent directory when traversing the grandparent object.
         '''
         pdir = os.path.dirname(self.name)
         if depth > 1:  # can't jump to parent of root node!
