@@ -111,20 +111,18 @@ class Paths:
         '''
         pdir = os.path.dirname(self.name)
         if depth > 1:  # can't jump to parent of root node!
-            curpath = os.path.abspath(self.name)
             for c, d in parent.traverse():
-                cpath = os.path.abspath(c.name)
-                if cpath == curpath:
+                if c.name == self.name:
                     break
-                if cpath.startswith(pdir):
+                if c.name.startswith(pdir):
                     curline -= 1
         else:  # otherwise jus skip to previous directory
             pdir = self.name
-            line = 0
             for c, d in parent.traverse():
-                if line <= curline and os.path.isdir(c.name):
-                    lastdir = os.path.abspath(c.name)
-                    line += 1
+                if c.name == self.name:
+                    break
+                if os.path.isdir(c.name) and c.name in parent.children:
+                    lastdir = c.name
             if lastdir != parent.name:
                 curline = parent.children.index(lastdir)
         return curline, pdir
