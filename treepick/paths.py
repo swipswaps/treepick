@@ -86,7 +86,7 @@ class Paths:
         pdir = os.path.dirname(self.name)
         pobj = Paths(self.win, pdir, self.hidden)
         if depth > 1:  # can't jump to parent of root node!
-            curpath = os.path.basename(self.name)
+            curpath = os.path.abspath(self.name)
             curindex = pobj.children.index(curpath)
             curline += len(pobj.children) - curindex
         else:  # otherwise just skip to next directory
@@ -120,9 +120,9 @@ class Paths:
             line = 0
             for c, d in parent.traverse():
                 if line <= curline and os.path.isdir(c.name):
-                    lastdir = os.path.basename(c.name)
+                    lastdir = os.path.abspath(c.name)
                     line += 1
-            if lastdir != '.':
+            if lastdir != parent.name:
                 curline = parent.children.index(lastdir)
         return curline, pdir
 
@@ -215,14 +215,18 @@ class Paths:
 
     def getchildren(self):
         '''
-        Create list of paths to be used to instantiate path objects for traversal,
-        based on whether or not hidden attribute is set.
+        Create list of absolute paths to be used to instantiate path objects for
+        traversal, based on whether or not hidden attribute is set.
         '''
         try:
             if self.hidden:
-                return sorted(self.listdir(self.name))
+                return [os.path.join(self.name, child)
+                        for child in sorted(self.listdir(self.name))]
+                # return sorted(self.listdir(self.name))
             else:
-                return sorted(os.listdir(self.name))
+                return [os.path.join(self.name, child)
+                        for child in sorted(os.listdir(self.name))]
+                # return sorted(os.listdir(self.name))
         except:
             return None  # probably permission denied
 
