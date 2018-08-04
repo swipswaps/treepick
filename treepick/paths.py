@@ -100,7 +100,7 @@ class Paths:
                     curline += 1
                     if os.path.isdir(c.name):
                         break
-                    line += 1
+                line += 1
         return curline
 
     def prevparent(self, parent, curline, depth):
