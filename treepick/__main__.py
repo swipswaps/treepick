@@ -24,6 +24,8 @@ def getargs():
     Select paths from a directory tree.')
     parser.add_argument("-a", "--hidden", action="store_false",
                         help="Show all hidden paths too.")
+    parser.add_argument("-r", "--relative", action="store_true",
+                        help="Output relative paths.")
     parser.add_argument("path", type=chkpath, nargs='?',
                         default=".", help="A valid path.")
     return parser.parse_args()
@@ -33,7 +35,8 @@ def main():
     args = getargs()
     root = os.path.abspath(os.path.expanduser(args.path))
     hidden = args.hidden
-    paths = curses.wrapper(pick, root, hidden)
+    relative = args.relative
+    paths = curses.wrapper(pick, root, hidden, relative)
     print("\n".join(paths))
 
 

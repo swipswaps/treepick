@@ -228,7 +228,7 @@ class Paths:
                 return [os.path.join(self.name, child)
                         for child in sorted(os.listdir(self.name))]
                 # return sorted(os.listdir(self.name))
-        except:
+        except OSError:
             return None  # probably permission denied
 
     def getpaths(self):

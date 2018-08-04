@@ -1,9 +1,6 @@
 import os
 import cgitb
 import curses
-import pdb
-import readline
-import sys
 from .paths import Paths
 from .keys import parse
 from .color import Color
@@ -54,19 +51,19 @@ def header(screen):
         screen.addstr(msg)
         screen.chgat(0, 19, 9, curses.A_BOLD | curses.color_pair(3))
         screen.chgat(0, 39, 9, curses.A_BOLD | curses.color_pair(3))
-    except:
+    except curses.error:
         pass
 
 
 def footer(screen):
     msg = "[SPC] toggle mark, [?] show all keybindings, [q] to quit."
     try:
-        l = curses.LINES - 1
-        screen.addstr(l, 0, msg)
-        screen.chgat(l, 0, 5, curses.A_BOLD | curses.color_pair(3))
-        screen.chgat(l, 19, 3, curses.A_BOLD | curses.color_pair(3))
-        screen.chgat(l, 45, 3, curses.A_BOLD | curses.color_pair(3))
-    except:
+        line = curses.LINES - 1
+        screen.addstr(line, 0, msg)
+        screen.chgat(line, 0, 5, curses.A_BOLD | curses.color_pair(3))
+        screen.chgat(line, 19, 3, curses.A_BOLD | curses.color_pair(3))
+        screen.chgat(line, 45, 3, curses.A_BOLD | curses.color_pair(3))
+    except curses.error:
         pass
 
 
@@ -83,7 +80,7 @@ def init(screen):
     footer(screen)
 
 
-def pick(screen, root, hidden):
+def pick(screen, root, hidden, relative):
     init(screen)
     Color(screen)
     win = curses.newwin(curses.LINES - 3, curses.COLS, 2, 0)
@@ -97,9 +94,11 @@ def pick(screen, root, hidden):
             parent, action, curline = reset(win, root, hidden)
         elif action == 'toggle_hidden':
             if parent.hidden:
-                # keep two copies of record so we can restore from state when re-hiding
+                # keep two copies of record so we can restore from state when
+                # re-hiding
                 curpath, lastpath = (parent.children[curline],)*2
-                parent.paths = None  # this needs to be reset otherwise we use the old objects
+                # this needs to be reset otherwise we use the old objects
+                parent.paths = None
                 parent.hidden = False
                 parent.drawtree(curline)
                 curline = parent.children.index(curpath)
@@ -120,6 +119,8 @@ def pick(screen, root, hidden):
             action = None
             continue
         elif action == 'quit':
+            if relative:
+                return [p[len(root + os.sep):] for p in parent.picked]
             return parent.picked
         curline, line = process(parent, action, curline)
         parent.drawtree(curline)
