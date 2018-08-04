@@ -52,7 +52,7 @@ def header(screen):
         screen.chgat(0, 19, 9, curses.A_BOLD | curses.color_pair(3))
         screen.chgat(0, 39, 9, curses.A_BOLD | curses.color_pair(3))
     except curses.error:
-        pass
+        screen.addstr("Window too small.")
 
 
 def footer(screen):
@@ -64,7 +64,7 @@ def footer(screen):
         screen.chgat(line, 19, 3, curses.A_BOLD | curses.color_pair(3))
         screen.chgat(line, 45, 3, curses.A_BOLD | curses.color_pair(3))
     except curses.error:
-        pass
+        screen.addstr("Window too small.")
 
 
 def reset(win, root, hidden):
@@ -78,11 +78,11 @@ def init(screen):
     curses.curs_set(0)  # get rid of cursor
     header(screen)
     footer(screen)
+    Color(screen)
 
 
 def pick(screen, root, hidden, relative):
     init(screen)
-    Color(screen)
     win = curses.newwin(curses.LINES - 3, curses.COLS, 2, 0)
     parent, action, curline = reset(win, root, hidden)
     screen.refresh()
