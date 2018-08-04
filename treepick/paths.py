@@ -87,8 +87,6 @@ class Paths:
         if depth > 1:  # can't jump to parent of root node!
             line = 0
             for c, d in parent.traverse():
-                import pdb
-                pdb.set_trace()
                 cpath = os.path.abspath(c.name)
                 if line > curline and cpath.startswith(pdir):
                     curline += 1
