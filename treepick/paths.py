@@ -1,12 +1,12 @@
 import os
-import curses
 
 from .color import Color
 from pdu import du
 
 
 class Paths:
-    def __init__(self, win, name, hidden, picked=set(), expanded=set(), sized=dict()):
+    def __init__(self, win, name, hidden,
+                 picked=set(), expanded=set(), sized=dict()):
         self.win = win
         self.name = name
         self.hidden = hidden
