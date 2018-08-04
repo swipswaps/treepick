@@ -60,6 +60,8 @@ class Paths:
     def pick(self, curline, parent=None):
         if parent:
             for c, d in parent.traverse():
+                if d == 0:
+                    continue
                 if c.name in self.picked:
                     self.picked.remove(c.name)
                 else:
@@ -80,8 +82,8 @@ class Paths:
         '''
         Find index of current path in the context of our parents traversal by
         instantiating an object of the pqrent. Find the size of it's children
-        and subtract our index from that, to calculate how many lines we need to
-        jump to get to the end of current list or children.
+        and subtract our index from that, to calculate how many lines we need
+        to jump to get to the end of current list or children.
         '''
         pdir = os.path.dirname(self.name)
         if depth > 1:  # can't jump to parent of root node!
@@ -104,7 +106,7 @@ class Paths:
     def prevparent(self, parent, curline, depth):
         '''
         Use the same method as nextparent to find out current place in child
-        directory, then subtract the index of that place from our current line -
+        directory, then subtract the index of that place from our current line
         ie) jump to the first element of the parent_path.children list.
         '''
         pdir = os.path.dirname(self.name)
@@ -181,16 +183,16 @@ class Paths:
 
     def drawtree(self, curline):
         '''
-        Loop over the object, process path attribute sets, and drawlines based on
-        their current contents.
+        Loop over the object, process path attribute sets, and drawlines based
+        on their current contents.
         '''
         self.win.erase()
-        l = 0
+        line = 0
         for c, d in self.traverse():
             path = os.path.abspath(c.name)
             if d == 0:
                 continue
-            if l == curline:
+            if line == curline:
                 c.color.curline(c.name)
             else:
                 c.color.default(c.name)
@@ -198,8 +200,8 @@ class Paths:
                 c.marked = True
             if path in self.sized and not self.sized[path]:
                 self.sized[path] = " (" + du(c.name) + ")"
-            c.drawline(d, curline, l)
-            l += 1
+            c.drawline(d, curline, line)
+            line += 1
         self.win.refresh()
 
     ###########################################################################
