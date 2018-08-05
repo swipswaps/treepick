@@ -122,6 +122,7 @@ class Paths:
                 if os.path.isdir(c.name) and c.name in parent.children[0:]:
                     curline = line
                 line += 1
+            curline -= 1
         return curline, pdir
 
     ###########################################################################
