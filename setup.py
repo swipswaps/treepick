@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="treepick",
-    version="0.1.0",
+    version="0.1.1",
     author="Toby Slight",
     author_email="tobyslight@gmail.com",
     description="Curses Tree Style Path Picker",
