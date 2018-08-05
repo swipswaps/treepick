@@ -1,4 +1,5 @@
 import os
+import curses
 
 from .color import Color
 from pdu import du
@@ -96,7 +97,7 @@ class Paths:
             for c, d in parent.traverse():
                 if line > curline + 1:
                     curline += 1
-                    if os.path.isdir(c.name):
+                    if os.path.isdir(c.name) and c.name in parent.children:
                         break
                 line += 1
         return curline
@@ -123,6 +124,8 @@ class Paths:
                     curline = line
                 line += 1
             curline -= 1
+            if curline < 0:
+                curline = curses.LINES - 1
         return curline, pdir
 
     ###########################################################################
