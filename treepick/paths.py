@@ -115,11 +115,13 @@ class Paths:
                     curline -= 1
         else:  # otherwise jus skip to previous directory
             pdir = self.name
+            line = 0
             for c, d in parent.traverse():
                 if c.name == self.name:
                     break
                 if os.path.isdir(c.name) and c.name in parent.children[0:]:
-                    curline = parent.children.index(c.name)
+                    curline = line
+                line += 1
         return curline, pdir
 
     ###########################################################################
