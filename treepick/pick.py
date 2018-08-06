@@ -130,7 +130,11 @@ def pick(screen, root, hidden, relative):
             init(screen, win=win, resize=True)
         elif action == 'quit':
             if relative:
-                return [p[len(root + os.sep):] for p in parent.picked]
+                if root.endswith(os.path.sep):
+                    length = len(root)
+                else:
+                    length = len(root + os.path.sep)
+                return [p[length:] for p in parent.picked]
             return parent.picked
         curline, line = process(parent, action, curline)
         parent.drawtree(curline)
