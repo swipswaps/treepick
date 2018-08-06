@@ -220,8 +220,8 @@ class Paths:
 
     def getchildren(self):
         '''
-        Create list of absolute paths to be used to instantiate path objects for
-        traversal, based on whether or not hidden attribute is set.
+        Create list of absolute paths to be used to instantiate path objects
+        for traversal, based on whether or not hidden attribute is set.
         '''
         try:
             if self.hidden:
