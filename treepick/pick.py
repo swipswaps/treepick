@@ -67,8 +67,9 @@ def footer(screen, y):
         pass
 
 
-def reset(win, root, hidden):
-    parent = Paths(win, root, hidden, expanded=set([root]), sized=dict())
+def reset(win, root, hidden, picked):
+    parent = Paths(win, root, hidden, picked=picked,
+                   expanded=set([root]), sized=dict())
     action = None
     curline = 0
     return parent, action, curline
@@ -89,15 +90,15 @@ def init(screen, win=None, resize=False):
     return win
 
 
-def pick(screen, root, hidden, relative):
+def pick(screen, root, hidden, relative, picked=set()):
     win = init(screen)
-    parent, action, curline = reset(win, root, hidden)
+    parent, action, curline = reset(win, root, hidden, picked)
     lasthidden = None
     while True:
         # to reset or toggle view of dotfiles we need to create a new Path
         # object before erasing the screen & descending into process function.
         if action == 'reset':
-            parent, action, curline = reset(win, root, hidden)
+            parent, action, curline = reset(win, root, hidden, picked)
         elif action == 'toggle_hidden':
             if parent.hidden:
                 # keep two copies of record so we can restore from state when
