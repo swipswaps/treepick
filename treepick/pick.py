@@ -52,19 +52,19 @@ def header(screen):
         screen.chgat(0, 19, 9, curses.A_BOLD | curses.color_pair(3))
         screen.chgat(0, 39, 9, curses.A_BOLD | curses.color_pair(3))
     except curses.error:
-        screen.addstr("Window too small.")
+        pass
 
 
-def footer(screen):
+def footer(screen, y):
     msg = "[SPC] toggle mark, [?] show all keybindings, [q] to quit."
     try:
-        line = curses.LINES - 1
+        line = y - 1
         screen.addstr(line, 0, msg)
         screen.chgat(line, 0, 5, curses.A_BOLD | curses.color_pair(3))
         screen.chgat(line, 19, 3, curses.A_BOLD | curses.color_pair(3))
         screen.chgat(line, 45, 3, curses.A_BOLD | curses.color_pair(3))
     except curses.error:
-        screen.addstr("Window too small.")
+        pass
 
 
 def reset(win, root, hidden):
@@ -74,18 +74,24 @@ def reset(win, root, hidden):
     return parent, action, curline
 
 
-def init(screen):
+def init(screen, win=None, resize=False):
     curses.curs_set(0)  # get rid of cursor
+    y, x = screen.getmaxyx()
     header(screen)
-    footer(screen)
+    footer(screen, y)
     Color(screen)
+    if resize:
+        win.resize(y - 3, x)
+    else:
+        win = curses.newwin(y - 3, x, 2, 0)
+    screen.refresh()
+    win.refresh()
+    return win
 
 
 def pick(screen, root, hidden, relative):
-    init(screen)
-    win = curses.newwin(curses.LINES - 3, curses.COLS, 2, 0)
+    win = init(screen)
     parent, action, curline = reset(win, root, hidden)
-    screen.refresh()
     lasthidden = None
     while True:
         # to reset or toggle view of dotfiles we need to create a new Path
@@ -118,6 +124,10 @@ def pick(screen, root, hidden, relative):
                     curline = parent.children.index(lastpath)
             action = None
             continue
+        elif action == 'resize':
+            screen.erase()
+            win.erase()
+            init(screen, win=win, resize=True)
         elif action == 'quit':
             if relative:
                 return [p[len(root + os.sep):] for p in parent.picked]

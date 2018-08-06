@@ -177,7 +177,10 @@ class Paths:
         x = 0
         string = self.mkline(depth - 1, max_x)
         if 0 <= line - offset < max_y - 1:
-            self.win.addstr(y, x, string)  # paint str at y, x co-ordinates
+            try:
+                self.win.addstr(y, x, string)  # paint str at y, x co-ordinates
+            except curses.error:
+                pass
 
     def drawtree(self, curline):
         '''
