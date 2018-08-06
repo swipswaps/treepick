@@ -74,7 +74,7 @@ my_amazing_function(my_list_of_paths)
 
 ## TODO
 
-- [ ] Support window resizing.
+- [x] ~~Support window resizing.~~
 - [ ] Different colors for sizes and marks.
 - [x] ~~Fix permission exception handling in my du package.~~
 - [x] ~~Retain traversal position when toggling hidden directories.~~
