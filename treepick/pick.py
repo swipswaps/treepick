@@ -94,7 +94,7 @@ def pick(screen, root, hidden=True, relative=False, picked=[]):
     picked = [root + p for p in picked]
     win = init(screen)
     parent, action, curline = reset(win, root, hidden, picked)
-    lasthidden = None
+    lastpath, lasthidden = (None,)*2
     while True:
         # to reset or toggle view of dotfiles we need to create a new Path
         # object before erasing the screen & descending into process function.
@@ -110,7 +110,7 @@ def pick(screen, root, hidden=True, relative=False, picked=[]):
                 parent.hidden = False
                 parent.drawtree(curline)
                 curline = parent.children.index(curpath)
-                if lasthidden in parent.children:
+                if lastpath and lasthidden in parent.children:
                     curline = parent.children.index(lasthidden)
                 else:
                     curline = parent.children.index(curpath)
@@ -122,7 +122,7 @@ def pick(screen, root, hidden=True, relative=False, picked=[]):
                 parent.drawtree(curline)
                 if curpath in parent.children:
                     curline = parent.children.index(curpath)
-                else:
+                elif lastpath:
                     curline = parent.children.index(lastpath)
             action = None
             continue
