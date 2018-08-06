@@ -93,11 +93,11 @@ class Paths:
                     curline += 1
                 line += 1
         else:  # otherwise just skip to next directory
-            line = 0
+            line = -1  # skip hidden parent node
             for c, d in parent.traverse():
-                if line > curline + 1:
+                if line > curline:
                     curline += 1
-                    if os.path.isdir(c.name) and c.name in parent.children:
+                    if os.path.isdir(c.name) and c.name in parent.children[0:]:
                         break
                 line += 1
         return curline
@@ -116,7 +116,9 @@ class Paths:
                     curline -= 1
         else:  # otherwise jus skip to previous directory
             pdir = self.name
-            line = -1  # otherwise our curline doesn't change!
+            # - 1 otherwise hidden parent node throws count off & our
+            # curline doesn't change!
+            line = -1
             for c, d in parent.traverse():
                 if c.name == self.name:
                     break
