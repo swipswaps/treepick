@@ -7,26 +7,26 @@ ESC = 27
 def show(win):
     from textwrap import dedent
     msg = '''
-        UP, k, p    : Step up one line.
-        DOWN, j, n  : Step down one line.
-        K, P        : Jump to previous parent directory.
-        J, N        : Jump to next parent directory.
-        PGDN, d, v  : Jump down a page of lines.
-        PGUP, u, V  : Jump up a page of lines.
-        g, <        : Jump to first line.
-        G, >        : Jump to last line.
-        RIGHT, l, f : Expand and step into directory.
-        TAB, RET    : Toggle expansion/collapse of directory.
-        LEFT, h, b  : Collapse directory.
-        L, F        : Expand directory and child directories.
-        H, B        : Jump to parent directory and collapse all.
-        m, SPC      : Toggle marking of paths.
-        M           : Toggle marking of all currently expanded paths.
-        .           : Toggle display of dotfiles.
-        s           : Display total size of path, recursively
-        S           : Display totol size of all currently expanded paths.
-        r           : Reset marking and expansion.
-        q, ESC      : Quit and display all marked paths.
+        UP, k, p          : Step up one line.
+        DOWN, j, n        : Step down one line.
+        K, P              : Jump to previous parent directory.
+        J, N              : Jump to next parent directory.
+        PGDN, d, v        : Jump down a page of lines.
+        PGUP, u, V        : Jump up a page of lines.
+        g, <              : Jump to first line.
+        G, >              : Jump to last line.
+        RIGHT, l, f       : Expand and step into directory.
+        TAB, RET          : Toggle expansion/collapse of directory.
+        LEFT, h, b        : Collapse directory.
+        SHIFT RIGHT, L, F : Expand directory and child directories.
+        SHIFT LEFT, H, B  : Jump to parent directory and collapse all.
+        m, SPC            : Toggle marking of paths.
+        M                 : Toggle marking of all currently expanded paths.
+        .                 : Toggle display of dotfiles.
+        s                 : Display total size of path, recursively
+        S                 : Display totol size of all currently expanded paths.
+        r                 : Reset marking and expansion.
+        q, ESC            : Quit and display all marked paths.
 
         ENTER ANY KEY TO RETURN.
         '''
@@ -35,7 +35,7 @@ def show(win):
     win.attrset(curses.color_pair(0))
     try:
         win.addstr(0, 0, msg)
-        win.chgat(20, 0, curses.color_pair(3) | curses.A_BOLD)
+        win.chgat(21, 0, curses.color_pair(3) | curses.A_BOLD)
     except curses.error:
         win.addstr(0, 0, "Window too small. Press any key to return.")
         win.chgat(0, 0, curses.color_pair(1) | curses.A_BOLD)
