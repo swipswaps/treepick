@@ -48,7 +48,7 @@ def parse(screen, win, curline, line):
     ch = screen.getch()
     if ch == ord('q') or ch == ESC:
         action = 'quit'
-    elif ch == ord('r'):
+    elif ch == curses.KEY_F5 or ch == ord('r'):
         action = 'reset'
     elif ch == ord('.'):
         action = 'toggle_hidden'
