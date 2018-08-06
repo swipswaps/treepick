@@ -90,7 +90,8 @@ def init(screen, win=None, resize=False):
     return win
 
 
-def pick(screen, root, hidden, relative, picked=set()):
+def pick(screen, root, hidden=True, relative=False, picked=[]):
+    picked = [root + p for p in picked]
     win = init(screen)
     parent, action, curline = reset(win, root, hidden, picked)
     lasthidden = None

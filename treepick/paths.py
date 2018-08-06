@@ -1,5 +1,6 @@
 import os
 import curses
+import fnmatch
 
 from .color import Color
 from pdu import du
@@ -7,7 +8,7 @@ from pdu import du
 
 class Paths:
     def __init__(self, win, name, hidden,
-                 picked=set(), expanded=set(), sized=dict()):
+                 picked=[], expanded=set(), sized=dict()):
         self.win = win
         self.name = name
         self.hidden = hidden
@@ -66,12 +67,12 @@ class Paths:
                 if c.name in self.picked:
                     self.picked.remove(c.name)
                 else:
-                    self.picked.add(c.name)
+                    self.picked.append(c.name)
         else:
             if self.name in self.picked:
                 self.picked.remove(self.name)
             else:
-                self.picked.add(self.name)
+                self.picked.append(self.name)
             curline += 1
         return curline
 
@@ -197,7 +198,7 @@ class Paths:
                 c.color.curline(c.name)
             else:
                 c.color.default(c.name)
-            if c.name in self.picked:
+            if fnmatch.filter(self.picked, c.name):
                 c.marked = True
             if path in self.sized and not self.sized[path]:
                 self.sized[path] = " (" + du(c.name) + ")"
