@@ -138,13 +138,13 @@ class Paths:
         return curline, pdir
 
     def find(self, curline, string):
-        line = 0
+        matches = []
         for c, d in self.traverse():
             if (fnmatch.fnmatch(c.name, string) or
                     fnmatch.fnmatch(os.path.basename(c.name), string)):
-                curline = self.children.index(c.name)
-            line += 1
-        return curline
+                matches.append(self.children.index(c.name))
+        curline = matches[0]
+        return curline, matches
 
     ###########################################################################
     #                         SIZE CALCULATING METHODS                        #

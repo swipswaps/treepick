@@ -183,7 +183,7 @@ def pick(screen, root, hidden=True, relative=False, picked=[]):
             continue
         elif action == 'find':
             string = txtbox(screen, footer, "Find: ").strip()
-            curline = parent.find(curline, string)
+            curline, matches = parent.find(curline, string)
         elif action == 'match':
             globs = txtbox(screen, footer, "Match: ").strip().split()
             parent.pick(curline, parent, globs)
