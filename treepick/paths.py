@@ -59,8 +59,8 @@ class Paths:
     #                              PICKING NODES                              #
     ###########################################################################
 
-    def pick(self, curline, parent=None, match=None):
-        if parent and not match:
+    def pick(self, curline, parent=None, globs=[]):
+        if parent and not globs:
             for c, d in parent.traverse():
                 if d == 0:
                     continue
@@ -68,14 +68,15 @@ class Paths:
                     self.picked.remove(c.name)
                 else:
                     self.picked.append(c.name)
-        elif parent and match:
+        elif parent and globs:
             for c, d in parent.traverse():
-                if (fnmatch.fnmatch(c.name, match) or
-                        fnmatch.fnmatch(os.path.basename(c.name), match)):
-                    if c.name in self.picked:
-                        self.picked.remove(c.name)
-                    else:
-                        self.picked.append(c.name)
+                for g in globs:
+                    if (fnmatch.fnmatch(c.name, g) or
+                            fnmatch.fnmatch(os.path.basename(c.name), g)):
+                        if c.name in self.picked:
+                            self.picked.remove(c.name)
+                        else:
+                            self.picked.append(c.name)
         else:
             if self.name in self.picked:
                 self.picked.remove(self.name)

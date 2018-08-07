@@ -185,8 +185,8 @@ def pick(screen, root, hidden=True, relative=False, picked=[]):
             string = txtbox(screen, footer, "Find: ").strip()
             curline = parent.find(curline, string)
         elif action == 'match':
-            string = txtbox(screen, footer, "Match: ").strip()
-            parent.pick(curline, parent, string)
+            globs = txtbox(screen, footer, "Match: ").strip().split()
+            parent.pick(curline, parent, globs)
         elif action == 'resize':
             screen.erase()
             win.erase()
