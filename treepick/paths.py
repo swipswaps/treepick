@@ -1,6 +1,7 @@
 import os
 import curses
 import fnmatch
+import re
 
 from .color import Color
 from pdu import du
@@ -59,14 +60,19 @@ class Paths:
     #                              PICKING NODES                              #
     ###########################################################################
 
-    def pick(self, curline, parent=None):
-        if parent:
+    def pick(self, curline, parent=None, match=None):
+        if parent and not match:
             for c, d in parent.traverse():
                 if d == 0:
                     continue
                 if c.name in self.picked:
                     self.picked.remove(c.name)
                 else:
+                    self.picked.append(c.name)
+        elif parent and match:
+            for c, d in parent.traverse():
+                if (fnmatch.fnmatch(c.name, match) or
+                        fnmatch.fnmatch(os.path.basename(c.name), match)):
                     self.picked.append(c.name)
         else:
             if self.name in self.picked:
@@ -167,7 +173,7 @@ class Paths:
         if self.name in self.picked:
             mark = ' *'
         else:
-            mark = ''
+            mark = '  '
         sizelen = len(size) - 1
         nodelen = len(pad + node) + 1
         nodestr = '{}{}{}{}'.format(pad, node, size, mark)
@@ -182,7 +188,7 @@ class Paths:
         if 0 <= line - offset < max_y - 1:
             try:
                 self.win.addstr(y, x, string)  # paint str at y, x co-ordinates
-                if sizelen > 0:
+                if sizelen > 0 and line != curline:
                     self.win.chgat(y, sizech, sizelen,
                                    curses.A_BOLD | curses.color_pair(5))
             except curses.error:

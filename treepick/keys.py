@@ -75,6 +75,10 @@ def parse(screen, win, curline, line):
         action = 'getsize'
     elif ch == ord('S'):
         action = 'getsizeall'
+    elif ch == ord('/'):
+        action = 'find'
+    elif ch == ord(':'):
+        action = 'match'
     elif ch == curses.KEY_F1 or ch == ord('?'):
         show(win)
     elif ch == curses.KEY_F2 or ch == ord('i'):

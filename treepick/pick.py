@@ -9,7 +9,7 @@ from .color import Color
 cgitb.enable(format="text")  # https://pymotw.com/2/cgitb/
 
 
-def process(parent, action, curline):
+def process(screen, parent, action, curline):
     '''
     Traverse parent object & process the action returned from keys.parse
     '''
@@ -40,6 +40,9 @@ def process(parent, action, curline):
                 curline = child.getsize(curline, parent)
             elif action == 'getsizeall':
                 curline = child.getsize(curline, parent, sizeall=True)
+            elif action == 'find':
+                string = txtbox(screen, "Find: ")
+                curline = child.search(curline, string)
             action = None  # reset action
         line += 1  # keep scrolling!
     return curline, line
@@ -96,6 +99,24 @@ def footer(screen, y):
         pass
 
 
+def txtbox(screen, win, prompt):
+    from curses.textpad import Textbox
+    y, x = screen.getmaxyx()
+    l = len(prompt)
+    blanknum = x - (l + 1)
+    blanks = " " * blanknum
+    prompt = prompt + blanks
+    screen.addstr(y - 1, 0, prompt)
+    curses.curs_set(1)
+    screen.refresh()
+    tb = screen.subwin(y - 1, l)
+    box = Textbox(tb)
+    box.edit()
+    init(screen)
+    curses.curs_set(0)
+    return box.gather()
+
+
 def reset(win, root, hidden, picked):
     parent = Paths(win, root, hidden, picked=picked,
                    expanded=set([root]), sized=dict())
@@ -105,6 +126,7 @@ def reset(win, root, hidden, picked):
 
 
 def init(screen, win=None, resize=False):
+    screen.erase()
     curses.curs_set(0)  # get rid of cursor
     y, x = screen.getmaxyx()
     header(screen)
@@ -155,6 +177,12 @@ def pick(screen, root, hidden=True, relative=False, picked=[]):
                     curline = parent.children.index(lastpath)
             action = None
             continue
+        elif action == 'match':
+            string = txtbox(screen, win, "Match: ")
+            import pdb
+            pdb.set_trace()
+            parent.pick(curline, parent, string)
+            parent.drawtree(curline)
         elif action == 'resize':
             screen.erase()
             win.erase()
@@ -163,6 +191,6 @@ def pick(screen, root, hidden=True, relative=False, picked=[]):
             showpicks(win, get_picked(relative, root, parent.picked))
         elif action == 'quit':
             return get_picked(relative, root, parent.picked)
-        curline, line = process(parent, action, curline)
+        curline, line = process(screen, parent, action, curline)
         parent.drawtree(curline)
         action, curline = parse(screen, win, curline, line)
