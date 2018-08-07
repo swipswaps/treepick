@@ -59,14 +59,18 @@ def showpicks(win, picked):
     win.erase()
     win.attrset(curses.color_pair(0))
     try:
-        win.addstr(0, 0, "Picked Paths:")
-        win.chgat(0, 0, curses.color_pair(3) | curses.A_BOLD)
-        win.addstr(2, 0, "\n".join(picked))
+        if picked:
+            win.addstr(0, 0, "Picked Paths:")
+            win.chgat(0, 0, curses.color_pair(3) | curses.A_BOLD)
+            win.addstr(2, 0, "\n".join(picked))
+        else:
+            win.addstr(1, 0, "You haven't picked anything yet!")
+            win.chgat(1, 0, curses.color_pair(1) | curses.A_BOLD)
         win.addstr(len(picked) + 3, 0, "Press any key to return.")
         win.chgat(len(picked) + 3, 0, curses.color_pair(3) | curses.A_BOLD)
-        win.getch()
     except curses.error:
         pass
+    win.getch()
 
 
 def header(screen):
