@@ -77,7 +77,7 @@ def showpicks(win, picked):
     win.getch()
 
 
-def header(screen, y, x):
+def mkheader(screen, y, x):
     Color(screen)
     header = curses.newwin(0, x, 0, 0)
     msg = "Use arrow keys, Vi [h,j,k,l], or Emacs [b,f,p,n] keys to navigate"
@@ -89,9 +89,10 @@ def header(screen, y, x):
         pass
     screen.refresh()
     header.refresh()
+    return header
 
 
-def footer(screen, y, x):
+def mkfooter(screen, y, x):
     Color(screen)
     footer = curses.newwin(0, x, y - 1, 0)
     msg = "[SPC] toggle mark, [?] show all keybindings, [q] to quit."
@@ -104,22 +105,20 @@ def footer(screen, y, x):
         pass
     screen.refresh()
     footer.refresh()
+    return footer
 
 
-def txtbox(screen, win, prompt):
+def txtbox(screen, footer, prompt):
     from curses.textpad import Textbox
     y, x = screen.getmaxyx()
-    l = len(prompt)
-    blanknum = x - (l + 1)
-    blanks = " " * blanknum
-    prompt = prompt + blanks
-    screen.addstr(y - 1, 0, prompt)
+    footer.erase()
+    footer.addstr(prompt)
     curses.curs_set(1)
-    screen.refresh()
-    tb = screen.subwin(y - 1, l)
+    footer.refresh()
+    length = len(prompt)
+    tb = footer.subwin(y - 1, length)
     box = Textbox(tb)
     box.edit()
-    init(screen)
     curses.curs_set(0)
     return box.gather()
 
@@ -136,20 +135,20 @@ def init(screen, win=None, resize=False):
     screen.erase()
     curses.curs_set(0)  # get rid of cursor
     y, x = screen.getmaxyx()
-    header(screen, y, x)
-    footer(screen, y, x)
+    header = mkheader(screen, y, x)
+    footer = mkfooter(screen, y, x)
     if resize:
         win.resize(y - 3, x)
     else:
         win = curses.newwin(y - 3, x, 2, 0)
     screen.refresh()
     win.refresh()
-    return win
+    return header, win, footer
 
 
 def pick(screen, root, hidden=True, relative=False, picked=[]):
     picked = [root + p for p in picked]
-    win = init(screen)
+    header, win, footer = init(screen)
     parent, action, curline = reset(win, root, hidden, picked)
     lastpath, lasthidden = (None,)*2
     while True:
@@ -184,9 +183,7 @@ def pick(screen, root, hidden=True, relative=False, picked=[]):
             action = None
             continue
         elif action == 'match':
-            string = txtbox(screen, win, "Match: ")
-            import pdb
-            pdb.set_trace()
+            string = txtbox(screen, footer, "Match: ")
             parent.pick(curline, parent, string)
             parent.drawtree(curline)
         elif action == 'resize':
