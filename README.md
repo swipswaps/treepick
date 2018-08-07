@@ -66,15 +66,18 @@ my_amazing_function(my_list_of_paths)
 | SHIFT LEFT, H, B   | Jump to parent directory and collapse all.            |
 | m, SPC             | Toggle marking of paths.                              |
 | M                  | Toggle marking of all currently expanded paths.       |
+| F2, i              | View all currently picked paths.                      |
 | .                  | Toggle display of dotfiles.                           |
 | s                  | Display total size of path, recursively               |
 | S                  | Display totol size of all currently expanded paths.   |
 | r                  | Reset marking and expansion.                          |
+| F1, ?              | View all keybindings.                                 |
 | q, ESC             | Quit and display all marked paths.                    |
 
 ## TODO
 
 - [x] ~~Support window resizing.~~
-- [ ] Different colors for sizes and marks.
+- [x] ~~Page for viewing all current picks~~
 - [x] ~~Fix permission exception handling in my du package.~~
 - [x] ~~Retain traversal position when toggling hidden directories.~~
+- [ ] Different colors for sizes and marks.
