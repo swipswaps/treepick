@@ -1,7 +1,6 @@
 import os
 import curses
 import fnmatch
-import re
 
 from .color import Color
 from pdu import du
@@ -73,7 +72,10 @@ class Paths:
             for c, d in parent.traverse():
                 if (fnmatch.fnmatch(c.name, match) or
                         fnmatch.fnmatch(os.path.basename(c.name), match)):
-                    self.picked.append(c.name)
+                    if c.name in self.picked:
+                        self.picked.remove(c.name)
+                    else:
+                        self.picked.append(c.name)
         else:
             if self.name in self.picked:
                 self.picked.remove(self.name)
@@ -133,6 +135,15 @@ class Paths:
                     curline = line
                 line += 1
         return curline, pdir
+
+    def find(self, curline, string):
+        line = 0
+        for c, d in self.traverse():
+            if (fnmatch.fnmatch(c.name, string) or
+                    fnmatch.fnmatch(os.path.basename(c.name), string)):
+                curline = self.children.index(c.name)
+            line += 1
+        return curline
 
     ###########################################################################
     #                         SIZE CALCULATING METHODS                        #

@@ -40,9 +40,6 @@ def process(screen, parent, action, curline):
                 curline = child.getsize(curline, parent)
             elif action == 'getsizeall':
                 curline = child.getsize(curline, parent, sizeall=True)
-            elif action == 'find':
-                string = txtbox(screen, "Find: ")
-                curline = child.search(curline, string)
             action = None  # reset action
         line += 1  # keep scrolling!
     return curline, line
@@ -110,16 +107,18 @@ def mkfooter(screen, y, x):
 
 def txtbox(screen, footer, prompt):
     from curses.textpad import Textbox
+    length = len(prompt)
     y, x = screen.getmaxyx()
     footer.erase()
     footer.addstr(prompt)
+    footer.chgat(0, 0, length, curses.A_BOLD | curses.color_pair(3))
     curses.curs_set(1)
     footer.refresh()
-    length = len(prompt)
     tb = footer.subwin(y - 1, length)
     box = Textbox(tb)
     box.edit()
     curses.curs_set(0)
+    mkfooter(screen, y, x)
     return box.gather()
 
 
@@ -182,10 +181,12 @@ def pick(screen, root, hidden=True, relative=False, picked=[]):
                     curline = parent.children.index(lastpath)
             action = None
             continue
+        elif action == 'find':
+            string = txtbox(screen, footer, "Find: ").strip()
+            curline = parent.find(curline, string)
         elif action == 'match':
-            string = txtbox(screen, footer, "Match: ")
+            string = txtbox(screen, footer, "Match: ").strip()
             parent.pick(curline, parent, string)
-            parent.drawtree(curline)
         elif action == 'resize':
             screen.erase()
             win.erase()
