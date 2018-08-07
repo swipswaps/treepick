@@ -22,23 +22,24 @@ def show(win):
         SHIFT LEFT, H, B  : Jump to parent directory and collapse all.
         m, SPC            : Toggle marking of paths.
         M                 : Toggle marking of all currently expanded paths.
+        F2, i             : View a list of all marked paths.
         .                 : Toggle display of dotfiles.
         s                 : Display total size of path, recursively
         S                 : Display totol size of all currently expanded paths.
         r                 : Reset marking and expansion.
+        F1, ?             : View this help page.
         q, ESC            : Quit and display all marked paths.
-
-        ENTER ANY KEY TO RETURN.
         '''
     msg = dedent(msg).strip()
+    lc = len(msg.splitlines())
     win.erase()
     win.attrset(curses.color_pair(0))
     try:
         win.addstr(0, 0, msg)
-        win.chgat(21, 0, curses.color_pair(3) | curses.A_BOLD)
+        win.addstr(lc + 1, 0, "Press any key to return.")
+        win.chgat(lc + 1, 0, curses.color_pair(3) | curses.A_BOLD)
     except curses.error:
-        win.addstr(0, 0, "Window too small. Press any key to return.")
-        win.chgat(0, 0, curses.color_pair(1) | curses.A_BOLD)
+        pass
     win.getch()
 
 
@@ -76,6 +77,8 @@ def parse(screen, win, curline, line):
         action = 'getsizeall'
     elif ch == curses.KEY_F1 or ch == ord('?'):
         show(win)
+    elif ch == curses.KEY_F2 or ch == ord('i'):
+        action = 'showpicks'
     elif ch == curses.KEY_DOWN or ch == ord('j') or ch == ord('n'):
         curline += 1
     elif ch == curses.KEY_UP or ch == ord('k') or ch == ord('p'):

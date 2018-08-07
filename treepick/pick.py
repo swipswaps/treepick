@@ -45,6 +45,30 @@ def process(parent, action, curline):
     return curline, line
 
 
+def get_picked(relative, root, picked):
+    if relative:
+        if root.endswith(os.path.sep):
+            length = len(root)
+        else:
+            length = len(root + os.path.sep)
+        return [p[length:] for p in picked]
+    return picked
+
+
+def showpicks(win, picked):
+    win.erase()
+    win.attrset(curses.color_pair(0))
+    try:
+        win.addstr(0, 0, "Picked Paths:")
+        win.chgat(0, 0, curses.color_pair(3) | curses.A_BOLD)
+        win.addstr(2, 0, "\n".join(picked))
+        win.addstr(len(picked) + 3, 0, "Press any key to return.")
+        win.chgat(len(picked) + 3, 0, curses.color_pair(3) | curses.A_BOLD)
+        win.getch()
+    except curses.error:
+        pass
+
+
 def header(screen):
     msg = "Use arrow keys, Vi [h,j,k,l], or Emacs [b,f,p,n] keys to navigate"
     try:
@@ -130,14 +154,10 @@ def pick(screen, root, hidden=True, relative=False, picked=[]):
             screen.erase()
             win.erase()
             init(screen, win=win, resize=True)
+        elif action == 'showpicks':
+            showpicks(win, get_picked(relative, root, parent.picked))
         elif action == 'quit':
-            if relative:
-                if root.endswith(os.path.sep):
-                    length = len(root)
-                else:
-                    length = len(root + os.path.sep)
-                return [p[length:] for p in parent.picked]
-            return parent.picked
+            return get_picked(relative, root, parent.picked)
         curline, line = process(parent, action, curline)
         parent.drawtree(curline)
         action, curline = parse(screen, win, curline, line)
