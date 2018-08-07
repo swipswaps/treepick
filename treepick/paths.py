@@ -143,7 +143,13 @@ class Paths:
             if (fnmatch.fnmatch(c.name, string) or
                     fnmatch.fnmatch(os.path.basename(c.name), string)):
                 matches.append(self.children.index(c.name))
-        curline = matches[0]
+        for i in range(len(matches) - 1):
+            if curline < matches[i]:
+                curline = matches[i+1]
+                break
+            else:
+                curline = matches[i]
+                break
         return curline, matches
 
     ###########################################################################

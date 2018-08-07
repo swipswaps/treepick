@@ -22,7 +22,9 @@ def show(win):
         SHIFT LEFT, H, B  : Jump to parent directory and collapse all.
         m, SPC            : Toggle marking of paths.
         M                 : Toggle marking of all currently expanded paths.
+        :                 : Toggle marking of paths based on entered globs.
         F2, i             : View a list of all marked paths.
+        /                 : Search for an entered string.
         .                 : Toggle display of dotfiles.
         s                 : Display total size of path, recursively
         S                 : Display totol size of all currently expanded paths.
