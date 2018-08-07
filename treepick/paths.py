@@ -184,7 +184,6 @@ class Paths:
                 pass
 
     def drawtree(self, curline):
-        from re import match
         '''
         Loop over the object, process path attribute sets, and drawlines based
         on their current contents.
@@ -201,10 +200,6 @@ class Paths:
                 c.color.default(c.name)
             if fnmatch.filter(self.picked, c.name):
                 c.marked = True
-            for p in self.picked:
-                regex = fnmatch.translate(p)
-                if match(regex, c.name) or match(regex, os.path.basename(c.name)):
-                    c.marked = True
             if path in self.sized and not self.sized[path]:
                 self.sized[path] = " (" + du(c.name) + ")"
             c.drawline(d, curline, line)

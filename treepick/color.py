@@ -1,4 +1,5 @@
 import curses
+import fnmatch
 import os
 
 
@@ -39,7 +40,10 @@ class Color:
         # can't use "in", as we have to catch all descendants.
         self.white_blue()
         for p in self.picked:
-            if p == path or path.startswith(p + os.sep):
+            if (p == path or
+                path.startswith(p + os.sep) or
+                    fnmatch.fnmatch(path, p) or
+                    fnmatch.fnmatch(os.path.basename(path), p)):
                 self.black_yellow()
 
     def default(self, path):
@@ -49,5 +53,8 @@ class Color:
         else:
             self.reset()
         for p in self.picked:
-            if p == path or path.startswith(p + os.sep):
+            if (p == path or
+                path.startswith(p + os.sep) or
+                    fnmatch.fnmatch(path, p) or
+                    fnmatch.fnmatch(os.path.basename(path), p)):
                 self.yellow_black()
