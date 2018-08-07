@@ -77,26 +77,33 @@ def showpicks(win, picked):
     win.getch()
 
 
-def header(screen):
+def header(screen, y, x):
+    Color(screen)
+    header = curses.newwin(0, x, 0, 0)
     msg = "Use arrow keys, Vi [h,j,k,l], or Emacs [b,f,p,n] keys to navigate"
     try:
-        screen.addstr(msg)
-        screen.chgat(0, 19, 9, curses.A_BOLD | curses.color_pair(3))
-        screen.chgat(0, 39, 9, curses.A_BOLD | curses.color_pair(3))
+        header.addstr(0, 0, msg)
+        header.chgat(0, 19, 9, curses.A_BOLD | curses.color_pair(3))
+        header.chgat(0, 39, 9, curses.A_BOLD | curses.color_pair(3))
     except curses.error:
         pass
+    screen.refresh()
+    header.refresh()
 
 
-def footer(screen, y):
+def footer(screen, y, x):
+    Color(screen)
+    footer = curses.newwin(0, x, y - 1, 0)
     msg = "[SPC] toggle mark, [?] show all keybindings, [q] to quit."
     try:
-        line = y - 1
-        screen.addstr(line, 0, msg)
-        screen.chgat(line, 0, 5, curses.A_BOLD | curses.color_pair(3))
-        screen.chgat(line, 19, 3, curses.A_BOLD | curses.color_pair(3))
-        screen.chgat(line, 45, 3, curses.A_BOLD | curses.color_pair(3))
+        footer.addstr(0, 0, msg)
+        footer.chgat(0, 0, 5, curses.A_BOLD | curses.color_pair(3))
+        footer.chgat(0, 19, 3, curses.A_BOLD | curses.color_pair(3))
+        footer.chgat(0, 45, 3, curses.A_BOLD | curses.color_pair(3))
     except curses.error:
         pass
+    screen.refresh()
+    footer.refresh()
 
 
 def txtbox(screen, win, prompt):
@@ -129,9 +136,8 @@ def init(screen, win=None, resize=False):
     screen.erase()
     curses.curs_set(0)  # get rid of cursor
     y, x = screen.getmaxyx()
-    header(screen)
-    footer(screen, y)
-    Color(screen)
+    header(screen, y, x)
+    footer(screen, y, x)
     if resize:
         win.resize(y - 3, x)
     else:
