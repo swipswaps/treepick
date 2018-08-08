@@ -139,9 +139,11 @@ class Paths:
 
     def find(self, curline, string, jump=False):
         matches = []
+        line = -1
         for c, d in self.traverse():
             if string in c.name:
-                matches.append(self.children.index(c.name))
+                matches.append(line)
+            line += 1
         if matches:
             curline = matches[0]
         return curline, matches
