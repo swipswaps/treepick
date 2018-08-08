@@ -53,6 +53,9 @@ class Paths:
                     self.expanded.remove(x)
         elif self.name in self.expanded:
             self.expanded.remove(self.name)
+        elif depth > 1 and not os.path.isdir(self.name):
+            curline, p = self.prevparent(parent, curline, depth)
+            self.expanded.remove(p)
         return curline
 
     ###########################################################################
@@ -145,7 +148,7 @@ class Paths:
                 matches.append(line)
             line += 1
         if matches:
-            curline = matches[0]
+            curline = self.findnext(curline, matches)
         return curline, matches
 
     def findnext(self, curline, matches):
