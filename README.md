@@ -4,16 +4,6 @@ A Curses based, tree style, path picker. For use as a terminal based file dialog
 
 ![img](./treepick.gif "TreePick")
 
-* Pre-order file system traversal from a given point, or `$PWD` if not
-  specified.
-* Support both Vi & Emacs bindings and jumping to next or previous parent.
-* Expand or collapse child nodes one at a time or all at once.
-* Recursively get disk usage of a single node or all expanded nodes.
-* Toggle display of dotfiles.
-* Toggle marking of files that can then be piped into another program or simply
-  echoed back to the screen upon exit.
-* Reset marking and expansion.
-
 ## INSTALLATION
 
 `pip install treepick`
@@ -21,16 +11,17 @@ A Curses based, tree style, path picker. For use as a terminal based file dialog
 ## CLI USAGE
 
 ```
-USAGE: treepick [-h] [-a] [path]
+usage: treepick [-h] [-a] [-r] [path]
 
 Select paths from a directory tree.
 
-POSITIONAL ARGUMENTS:
-path          A valid path.
+positional arguments:
+  path            A valid path.
 
-OPTIONAL ARGUMENTS:
--h, --help    Show this help message and exit.
--a, --hidden  Show all hidden paths too.
+optional arguments:
+  -h, --help      show this help message and exit
+  -a, --hidden    Show all hidden paths too.
+  -r, --relative  Output relative paths.
 ```
 
 ## PYTHON USAGE
