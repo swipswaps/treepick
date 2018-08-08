@@ -110,11 +110,6 @@ def mkfooter(screen, y, x):
     return footer
 
 
-def esc_to_quit(x):
-    if x == 27:
-        return 7
-
-
 def txtbox(screen, footer, prompt):
     from curses.textpad import Textbox
     length = len(prompt)
@@ -126,7 +121,7 @@ def txtbox(screen, footer, prompt):
     footer.refresh()
     tb = footer.subwin(y - 1, length)
     box = Textbox(tb)
-    box.edit(esc_to_quit)
+    box.edit()
     curses.curs_set(0)
     mkfooter(screen, y, x)
     return box.gather()
