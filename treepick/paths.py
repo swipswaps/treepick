@@ -196,7 +196,8 @@ class Paths:
 
     def mkline(self, depth, width):
         pad = ' ' * 4 * depth
-        node = self.getnode()
+        path = self.getnode()
+        node = pad + path
         if os.path.abspath(self.name) in self.sized:
             size = self.sized[os.path.abspath(self.name)]
         else:
@@ -205,22 +206,25 @@ class Paths:
             mark = ' *'
         else:
             mark = '  '
-        sizelen = len(size) - 1
-        nodelen = len(pad + node) + 1
-        nodestr = '{}{}{}{}'.format(pad, node, size, mark)
-        return sizelen, nodelen, nodestr + ' ' * (width - len(nodestr))
+        node = node + mark
+        sizelen = len(size)
+        nodelen = len(node)
+        x = self.win.getmaxyx()[1]
+        sizepad = x - sizelen
+        nodestr = '{:<{w}}{:>}'.format(node, size, w=sizepad)
+        return sizelen, sizepad, nodestr + ' ' * (width - len(nodestr))
 
     def drawline(self, depth, curline, line):
         max_y, max_x = self.win.getmaxyx()
         offset = max(0, curline - max_y + 8)
         y = line - offset
         x = 0
-        sizelen, sizech, string = self.mkline(depth - 1, max_x)
+        sizelen, sizepad, string = self.mkline(depth - 1, max_x)
         if 0 <= line - offset < max_y - 1:
             try:
                 self.win.addstr(y, x, string)  # paint str at y, x co-ordinates
                 if sizelen > 0 and line != curline:
-                    self.win.chgat(y, sizech, sizelen,
+                    self.win.chgat(y, sizepad, sizelen,
                                    curses.A_BOLD | curses.color_pair(5))
             except curses.error:
                 pass
