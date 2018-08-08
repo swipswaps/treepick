@@ -137,20 +137,28 @@ class Paths:
                 line += 1
         return curline, pdir
 
-    def find(self, curline, string):
+    def find(self, curline, string, jump=False):
         matches = []
         for c, d in self.traverse():
-            if (fnmatch.fnmatch(c.name, string) or
-                    fnmatch.fnmatch(os.path.basename(c.name), string)):
+            if string in c.name:
                 matches.append(self.children.index(c.name))
-        for i in range(len(matches) - 1):
-            if curline < matches[i]:
-                curline = matches[i+1]
-                break
-            else:
-                curline = matches[i]
-                break
+        if matches:
+            curline = matches[0]
         return curline, matches
+
+    def findnext(self, curline, matches):
+        for m in range(len(matches)):
+            if curline <= matches[m]:
+                if m < len(matches) - 1:
+                    return matches[m+1]
+                return matches[0]
+        return curline
+
+    def findprev(self, curline, matches):
+        for m in range(len(matches)):
+            if curline <= matches[m]:
+                return matches[m-1]
+        return curline
 
     ###########################################################################
     #                         SIZE CALCULATING METHODS                        #

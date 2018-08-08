@@ -150,6 +150,7 @@ def pick(screen, root, hidden=True, relative=False, picked=[]):
     header, win, footer = init(screen)
     parent, action, curline = reset(win, root, hidden, picked)
     lastpath, lasthidden = (None,)*2
+    matches = []
     while True:
         # to reset or toggle view of dotfiles we need to create a new Path
         # object before erasing the screen & descending into process function.
@@ -183,10 +184,16 @@ def pick(screen, root, hidden=True, relative=False, picked=[]):
             continue
         elif action == 'find':
             string = txtbox(screen, footer, "Find: ").strip()
-            curline, matches = parent.find(curline, string)
+            if string:
+                curline, matches = parent.find(curline, string)
+        elif action == 'findnext':
+            curline = parent.findnext(curline, matches)
+        elif action == 'findprev':
+            curline = parent.findprev(curline, matches)
         elif action == 'match':
             globs = txtbox(screen, footer, "Match: ").strip().split()
-            parent.pick(curline, parent, globs)
+            if globs:
+                parent.pick(curline, parent, globs)
         elif action == 'resize':
             screen.erase()
             win.erase()
