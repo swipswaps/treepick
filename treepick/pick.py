@@ -77,7 +77,7 @@ def showpicks(win, picked):
 def mkheader(screen, y, x):
     Color(screen)
     header = curses.newwin(0, x, 0, 0)
-    msg = "[left, down, up, right] or [h,j,k,l] to navigate."
+    msg = "[h, j, k, l] moves, [SPC/v] picks/all, [s/S] shows size/all, [TAB] expands"
     startch = [i for i, ltr in enumerate(msg) if ltr == "["]
     endch = [i for i, ltr in enumerate(msg) if ltr == "]"]
     try:
@@ -95,7 +95,7 @@ def mkheader(screen, y, x):
 def mkfooter(screen, y, x):
     Color(screen)
     footer = curses.newwin(0, x, y - 1, 0)
-    msg = "[SPC] toggle mark, [?] show all keybindings, [q] to quit."
+    msg = "[?] shows all keys, [:] glob picks, [/] find, [p] view picks, [q] quits"
     startch = [i for i, ltr in enumerate(msg) if ltr == "["]
     endch = [i for i, ltr in enumerate(msg) if ltr == "]"]
     try:
