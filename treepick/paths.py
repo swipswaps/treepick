@@ -153,10 +153,10 @@ class Paths:
 
     def findnext(self, curline, matches):
         for m in range(len(matches)):
-            if curline <= matches[m]:
-                if m < len(matches) - 1:
-                    return matches[m+1]
+            if curline == matches[len(matches) - 1]:
                 return matches[0]
+            elif curline < matches[m]:
+                return matches[m]
         return curline
 
     def findprev(self, curline, matches):
