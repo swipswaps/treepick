@@ -59,19 +59,18 @@ my_amazing_function(my_list_of_paths)
 | PGUP, b            | Jump up a page of lines.                              |
 | HOME, g            | Jump to first line.                                   |
 | END, G             | Jump to last line.                                    |
-| RIGHT, l           | Expand and step into directory.                       |
 | TAB, RET           | Toggle expansion/collapse of directory.               |
+| RIGHT, l           | Expand and step into directory.                       |
 | LEFT, h            | Collapse directory.                                   |
 | SHIFT RIGHT, L     | Expand directory and child directories.               |
 | SHIFT LEFT, H      | Jump to parent directory and collapse all.            |
 | SPC                | Toggle picking of paths.                              |
 | v                  | Toggle picking of all currently expanded paths.       |
 | :                  | Toggle picking based on entered globs.                |
-| /                  | Search for substring in currently expanded paths.     |
+| p                  | View all currently picked paths.                      |
+| /                  | Search for string in currently expanded paths.        |
 | n                  | Jump to next occurrence of search string.             |
 | N                  | Jump to previous occurrence of search string.         |
-| :                  | Toggle picking of all currently expanded paths.       |
-| p                  | View all currently picked paths.                      |
 | .                  | Toggle display of dotfiles.                           |
 | s                  | Display total size of path, recursively               |
 | S                  | Display totol size of all currently expanded paths.   |
@@ -85,4 +84,6 @@ my_amazing_function(my_list_of_paths)
 - [x] ~~Page for viewing all current picks~~
 - [x] ~~Fix permission exception handling in my du package.~~
 - [x] ~~Retain traversal position when toggling hidden directories.~~
-- [ ] Different colors for sizes and marks.
+- [x] ~~Different colors for sizes.~~
+- [x] ~~Prompt to pick via entered globs.~~
+- [x] ~~Search for string and navigate results.~~
