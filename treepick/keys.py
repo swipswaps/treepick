@@ -7,28 +7,30 @@ ESC = 27
 def show(win):
     from textwrap import dedent
     msg = '''
-        UP, k, p          : Step up one line.
-        DOWN, j, n        : Step down one line.
-        K, P              : Jump to previous parent directory.
-        J, N              : Jump to next parent directory.
-        PGDN, d, v        : Jump down a page of lines.
-        PGUP, u, V        : Jump up a page of lines.
-        g, <              : Jump to first line.
-        G, >              : Jump to last line.
-        RIGHT, l, f       : Expand and step into directory.
+        UP, k             : Step up one line.
+        DOWN, j           : Step down one line.
+        K                 : Jump to previous parent directory.
+        J                 : Jump to next parent directory.
+        PGDN, f           : Jump down a page of lines.
+        PGUP, b           : Jump up a page of lines.
+        HOME, g           : Jump to first line.
+        END, G            : Jump to last line.
+        RIGHT, l          : Expand and step into directory.
         TAB, RET          : Toggle expansion/collapse of directory.
-        LEFT, h, b        : Collapse directory.
-        SHIFT RIGHT, L, F : Expand directory and child directories.
-        SHIFT LEFT, H, B  : Jump to parent directory and collapse all.
-        m, SPC            : Toggle marking of paths.
-        M                 : Toggle marking of all currently expanded paths.
-        :                 : Toggle marking of paths based on entered globs.
-        F2, i             : View a list of all marked paths.
+        LEFT, h           : Collapse directory.
+        SHIFT RIGHT, L    : Expand directory and child directories.
+        SHIFT LEFT, H     : Jump to parent directory and collapse all.
+        SPC               : Toggle picking of paths.
+        v                 : Toggle picking of all currently expanded paths.
+        :                 : Toggle picking of paths based on entered globs.
+        p                 : View a list of all picked paths.
         /                 : Search for an entered string.
+        n                 : Jump to next occurrence of last search string.
+        N                 : Jump to previous occurrence of last search string.
         .                 : Toggle display of dotfiles.
         s                 : Display total size of path, recursively
         S                 : Display totol size of all currently expanded paths.
-        r                 : Reset marking and expansion.
+        F5, r             : Reset marking and expansion.
         F1, ?             : View this help page.
         q, ESC            : Quit and display all marked paths.
         '''

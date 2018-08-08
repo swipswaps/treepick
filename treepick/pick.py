@@ -77,11 +77,14 @@ def showpicks(win, picked):
 def mkheader(screen, y, x):
     Color(screen)
     header = curses.newwin(0, x, 0, 0)
-    msg = "Use arrow keys, Vi [h,j,k,l], or Emacs [b,f,p,n] keys to navigate"
+    msg = "[left, down, up, right] or [h,j,k,l] to navigate."
+    startch = [i for i, ltr in enumerate(msg) if ltr == "["]
+    endch = [i for i, ltr in enumerate(msg) if ltr == "]"]
     try:
         header.addstr(0, 0, msg)
-        header.chgat(0, 19, 9, curses.A_BOLD | curses.color_pair(3))
-        header.chgat(0, 39, 9, curses.A_BOLD | curses.color_pair(3))
+        for i in range(len(startch)):
+            header.chgat(0, startch[i], endch[i] - startch[i] + 1,
+                         curses.A_BOLD | curses.color_pair(3))
     except curses.error:
         pass
     screen.refresh()
@@ -93,11 +96,13 @@ def mkfooter(screen, y, x):
     Color(screen)
     footer = curses.newwin(0, x, y - 1, 0)
     msg = "[SPC] toggle mark, [?] show all keybindings, [q] to quit."
+    startch = [i for i, ltr in enumerate(msg) if ltr == "["]
+    endch = [i for i, ltr in enumerate(msg) if ltr == "]"]
     try:
         footer.addstr(0, 0, msg)
-        footer.chgat(0, 0, 5, curses.A_BOLD | curses.color_pair(3))
-        footer.chgat(0, 19, 3, curses.A_BOLD | curses.color_pair(3))
-        footer.chgat(0, 45, 3, curses.A_BOLD | curses.color_pair(3))
+        for i in range(len(startch)):
+            footer.chgat(0, startch[i], endch[i] - startch[i] + 1,
+                         curses.A_BOLD | curses.color_pair(3))
     except curses.error:
         pass
     screen.refresh()
