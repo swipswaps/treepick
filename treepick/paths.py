@@ -137,7 +137,7 @@ class Paths:
                 line += 1
         return curline, pdir
 
-    def find(self, curline, string, jump=False):
+    def find(self, curline, string):
         matches = []
         line = -1
         for c, d in self.traverse():
