@@ -12,7 +12,7 @@ from .color import Color
 cgitb.enable(format="text")  # https://pymotw.com/2/cgitb/
 
 
-def process_child(parent, action, curline):
+def process(parent, action, curline):
     '''
     Traverse parent object & process the action returned from keys.parse
     '''
@@ -210,6 +210,6 @@ def pick(screen, root, hidden=True, relative=False, picked=[]):
             showpicks(win, get_picked(relative, root, parent.picked))
         elif action == 'quit':
             return get_picked(relative, root, parent.picked)
-        curline, line = process(screen, parent, action, curline)
+        curline, line = process(parent, action, curline)
         parent.drawtree(curline)
         action, curline = parse(screen, win, curline, line)
