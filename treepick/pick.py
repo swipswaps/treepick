@@ -12,7 +12,7 @@ from .color import Color
 cgitb.enable(format="text")  # https://pymotw.com/2/cgitb/
 
 
-def process(screen, parent, action, curline):
+def process_child(parent, action, curline):
     '''
     Traverse parent object & process the action returned from keys.parse
     '''
