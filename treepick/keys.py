@@ -1,3 +1,6 @@
+# Copyright (c) 2018, Toby Slight. All rights reserved.
+# ISC License (ISCL) - see LICENSE file for details.
+
 import curses
 from os import environ
 environ.setdefault('ESCDELAY', '12')  # otherwise it takes an age!
