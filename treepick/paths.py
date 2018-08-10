@@ -22,6 +22,37 @@ class Paths:
         self.paths = None
         self.marked = False
         self.children = self.getchildren()
+        self.lastpath, self.lasthidden = (None,)*2
+
+    ###########################################################################
+    #                          SHOW OR HIDE DOTFILES                          #
+    ###########################################################################
+
+    def toggle_hidden(self, curline):
+        if self.hidden:
+            # keep two copies of record so we can restore from state when
+            # re-hiding
+            curpath, self.lastpath = (self.children[curline],)*2
+            # this needs to be reset otherwise we use the old objects
+            self.paths = None
+            self.hidden = False
+            self.drawtree(curline)
+            curline = self.children.index(curpath)
+            if self.lastpath and self.lasthidden in self.children:
+                curline = self.children.index(self.lasthidden)
+            else:
+                curline = self.children.index(curpath)
+        else:
+            # keep two copies of record so we can restore from state
+            curpath, self.lasthidden = (self.children[curline],)*2
+            self.paths = None
+            self.hidden = True
+            self.drawtree(curline)
+            if curpath in self.children:
+                curline = self.children.index(curpath)
+            elif self.lastpath:
+                curline = self.children.index(self.lastpath)
+        return curline
 
     ###########################################################################
     #                       EXPAND AND COLLAPSE METHODS                       #
@@ -211,7 +242,6 @@ class Paths:
             mark = '  '
         node = node + mark
         sizelen = len(size)
-        nodelen = len(node)
         x = self.win.getmaxyx()[1]
         sizepad = x - sizelen
         nodestr = '{:<{w}}{:>}'.format(node, size, w=sizepad)

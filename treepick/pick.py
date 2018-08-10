@@ -157,7 +157,6 @@ def pick(screen, root, hidden=True, relative=False, picked=[]):
     picked = [root + p for p in picked]
     header, win, footer = init(screen)
     parent, action, curline = reset(win, root, hidden, picked)
-    lastpath, lasthidden = (None,)*2
     matches = []
     while True:
         # to reset or toggle view of dotfiles we need to create a new Path
@@ -165,29 +164,7 @@ def pick(screen, root, hidden=True, relative=False, picked=[]):
         if action == 'reset':
             parent, action, curline = reset(win, root, hidden, picked=[])
         elif action == 'toggle_hidden':
-            if parent.hidden:
-                # keep two copies of record so we can restore from state when
-                # re-hiding
-                curpath, lastpath = (parent.children[curline],)*2
-                # this needs to be reset otherwise we use the old objects
-                parent.paths = None
-                parent.hidden = False
-                parent.drawtree(curline)
-                curline = parent.children.index(curpath)
-                if lastpath and lasthidden in parent.children:
-                    curline = parent.children.index(lasthidden)
-                else:
-                    curline = parent.children.index(curpath)
-            else:
-                # keep two copies of record so we can restore from state
-                curpath, lasthidden = (parent.children[curline],)*2
-                parent.paths = None
-                parent.hidden = True
-                parent.drawtree(curline)
-                if curpath in parent.children:
-                    curline = parent.children.index(curpath)
-                elif lastpath:
-                    curline = parent.children.index(lastpath)
+            curline = parent.toggle_hidden(curline)
             action = None
             continue
         elif action == 'find':
