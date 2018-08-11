@@ -43,6 +43,12 @@ def process(parent, action, curline):
                 curline = child.getsize(curline, parent)
             elif action == 'getsizeall':
                 curline = child.getsize(curline, parent, sizeall=True)
+            elif action == 'recenter':
+                center = int(parent.win.getmaxyx()[0]/2) - 1
+                if curline > center:
+                    curline = center
+                    line = center
+                    parent.pad = center
             action = None  # reset action
         line += 1  # keep scrolling!
     return curline, line
@@ -163,8 +169,6 @@ def pick(screen, root, hidden=True, relative=False, picked=[]):
         # object before erasing the screen & descending into process function.
         if action == 'reset':
             parent, action, curline = reset(win, root, hidden, picked=[])
-        elif action == 'recenter':
-            parent.scrollpad = int(win.getmaxyx()[0]/2)
         elif action == 'toggle_hidden':
             curline = parent.toggle_hidden(curline)
             action = None
