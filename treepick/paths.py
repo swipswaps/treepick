@@ -23,7 +23,6 @@ class Paths:
         self.marked = False
         self.children = self.getchildren()
         self.lastpath, self.lasthidden = (None,)*2
-        self.pad = 3
 
     ###########################################################################
     #                          SHOW OR HIDE DOTFILES                          #
@@ -248,9 +247,9 @@ class Paths:
         nodestr = '{:<{w}}{:>}'.format(node, size, w=sizepad)
         return sizelen, sizepad, nodestr + ' ' * (width - len(nodestr))
 
-    def drawline(self, depth, curline, line, pad):
+    def drawline(self, depth, curline, line):
         max_y, max_x = self.win.getmaxyx()
-        offset = max(0, curline - max_y + pad)
+        offset = max(0, curline - max_y + 3)
         y = line - offset
         x = 0
         sizelen, sizepad, string = self.mkline(depth - 1, max_x)
@@ -282,7 +281,7 @@ class Paths:
                 c.marked = True
             if path in self.sized and not self.sized[path]:
                 self.sized[path] = " [" + du(c.name) + "]"
-            c.drawline(d, curline, line, self.pad)
+            c.drawline(d, curline, line)
             line += 1
         self.win.refresh()
 
