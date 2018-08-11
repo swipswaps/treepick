@@ -110,6 +110,8 @@ def parse(screen, win, curline, line):
         curline = 0
     elif ch == curses.KEY_END or ch == ord('G'):
         curline = line - 1
+    elif ch == ord('z'):
+        action = 'recenter'
     elif ch == curses.KEY_RESIZE:
         action = 'resize'
     curline %= line

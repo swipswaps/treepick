@@ -23,6 +23,7 @@ class Paths:
         self.marked = False
         self.children = self.getchildren()
         self.lastpath, self.lasthidden = (None,)*2
+        self.scrollpad = 4
 
     ###########################################################################
     #                          SHOW OR HIDE DOTFILES                          #
@@ -36,6 +37,7 @@ class Paths:
             # this needs to be reset otherwise we use the old objects
             self.paths = None
             self.hidden = False
+            self.scrollpad = int(self.win.getmaxyx()[0]/2)
             self.drawtree(curline)
             curline = self.children.index(curpath)
             if self.lastpath and self.lasthidden in self.children:
@@ -47,6 +49,7 @@ class Paths:
             curpath, self.lasthidden = (self.children[curline],)*2
             self.paths = None
             self.hidden = True
+            self.scrollpad = int(self.win.getmaxyx()[0]/2)
             self.drawtree(curline)
             if curpath in self.children:
                 curline = self.children.index(curpath)
@@ -247,9 +250,9 @@ class Paths:
         nodestr = '{:<{w}}{:>}'.format(node, size, w=sizepad)
         return sizelen, sizepad, nodestr + ' ' * (width - len(nodestr))
 
-    def drawline(self, depth, curline, line):
+    def drawline(self, depth, curline, line, scrollpad):
         max_y, max_x = self.win.getmaxyx()
-        offset = max(0, curline - max_y + 8)
+        offset = max(0, curline - max_y + scrollpad)
         y = line - offset
         x = 0
         sizelen, sizepad, string = self.mkline(depth - 1, max_x)
@@ -281,8 +284,9 @@ class Paths:
                 c.marked = True
             if path in self.sized and not self.sized[path]:
                 self.sized[path] = " [" + du(c.name) + "]"
-            c.drawline(d, curline, line)
+            c.drawline(d, curline, line, self.scrollpad)
             line += 1
+        self.scrollpad = 4
         self.win.refresh()
 
     ###########################################################################

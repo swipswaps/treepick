@@ -163,6 +163,8 @@ def pick(screen, root, hidden=True, relative=False, picked=[]):
         # object before erasing the screen & descending into process function.
         if action == 'reset':
             parent, action, curline = reset(win, root, hidden, picked=[])
+        elif action == 'recenter':
+            parent.scrollpad = int(win.getmaxyx()[0]/2)
         elif action == 'toggle_hidden':
             curline = parent.toggle_hidden(curline)
             action = None
