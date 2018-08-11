@@ -158,7 +158,6 @@ def pick(screen, root, hidden=True, relative=False, picked=[]):
     header, win, footer = init(screen)
     parent, action, curline = reset(win, root, hidden, picked)
     matches = []
-    recenter = False
     while True:
         # to reset or toggle view of dotfiles we need to create a new Path
         # object before erasing the screen & descending into process function.
