@@ -165,8 +165,6 @@ def pick(screen, root, hidden=True, relative=False, picked=[]):
             parent, action, curline = reset(win, root, hidden, picked=[])
         elif action == 'toggle_hidden':
             curline = parent.toggle_hidden(curline)
-            action = None
-            continue
         elif action == 'find':
             string = txtbox(screen, footer, "Find: ").strip()
             if string:
