@@ -5,20 +5,17 @@ import os
 import curses
 import fnmatch
 
-from .color import Color
 from pdu import du
 
 
 class Paths:
-    def __init__(self, win, name, hidden,
+    def __init__(self, name, hidden,
                  picked=[], expanded=set(), sized=dict()):
-        self.win = win
         self.name = name
         self.hidden = hidden
         self.picked = picked
         self.expanded = expanded
         self.sized = sized
-        self.color = Color(self.win, self.picked)
         self.paths = None
         self.marked = False
         self.children = self.getchildren()
@@ -242,48 +239,49 @@ class Paths:
             mark = '  '
         node = node + mark
         sizelen = len(size)
-        x = self.win.getmaxyx()[1]
-        sizepad = x - sizelen
+        sizepad = width - sizelen
         nodestr = '{:<{w}}{:>}'.format(node, size, w=sizepad)
         return sizelen, sizepad, nodestr + ' ' * (width - len(nodestr))
 
-    def drawline(self, depth, curline, line):
-        max_y, max_x = self.win.getmaxyx()
+    def drawline(self, depth, curline, line, win):
+        max_y, max_x = win.getmaxyx()
         offset = max(0, curline - max_y + 3)
         y = line - offset
         x = 0
         sizelen, sizepad, string = self.mkline(depth - 1, max_x)
         if 0 <= line - offset < max_y - 1:
             try:
-                self.win.addstr(y, x, string)  # paint str at y, x co-ordinates
+                win.addstr(y, x, string)  # paint str at y, x co-ordinates
                 if sizelen > 0 and line != curline:
-                    self.win.chgat(y, sizepad, sizelen,
-                                   curses.A_BOLD | curses.color_pair(5))
+                    win.chgat(y, sizepad, sizelen,
+                              curses.A_BOLD | curses.color_pair(5))
             except curses.error:
                 pass
 
-    def drawtree(self, curline):
+    def drawtree(self, curline, scr):
         '''
         Loop over the object, process path attribute sets, and drawlines based
         on their current contents.
         '''
-        self.win.erase()
+        scr.win.erase()
         line = 0
         for c, d in self.traverse():
             path = os.path.abspath(c.name)
             if d == 0:
                 continue
             if line == curline:
-                c.color.curline(c.name)
+                scr.color.curline(c.name)
+                scr.mkheader(c.name)
+                scr.mkfooter(c.name)
             else:
-                c.color.default(c.name)
+                scr.color.default(c.name)
             if fnmatch.filter(self.picked, c.name):
                 c.marked = True
             if path in self.sized and not self.sized[path]:
                 self.sized[path] = " [" + du(c.name) + "]"
-            c.drawline(d, curline, line)
+            c.drawline(d, curline, line, scr.win)
             line += 1
-        self.win.refresh()
+        scr.win.refresh()
 
     ###########################################################################
     #                    PATH OBJECT INSTANTIATION METHODS                    #
@@ -323,8 +321,7 @@ class Paths:
         if self.children is None:
             return
         if self.paths is None:
-            self.paths = [Paths(self.win,
-                                os.path.join(self.name, child),
+            self.paths = [Paths(os.path.join(self.name, child),
                                 self.hidden,
                                 self.picked,
                                 self.expanded,

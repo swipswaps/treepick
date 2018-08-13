@@ -3,10 +3,9 @@
 
 import os
 import cgitb
-import curses
 from .paths import Paths
 from .keys import parse
-from .color import Color
+from .screen import Screen
 
 # Get more detailed traceback reports
 cgitb.enable(format="text")  # https://pymotw.com/2/cgitb/
@@ -58,117 +57,28 @@ def get_picked(relative, root, picked):
     return picked
 
 
-def showpicks(win, picked):
-    win.erase()
-    win.attrset(curses.color_pair(0))
-    try:
-        if picked:
-            win.chgat(0, 0, curses.color_pair(3) | curses.A_BOLD)
-            win.addstr(0, 0, "\n".join(picked))
-            win.addstr(len(picked) + 1, 0, "Press any key to return.")
-            win.chgat(len(picked) + 1, 0, curses.color_pair(3) | curses.A_BOLD)
-        else:
-            win.addstr(0, 0, "You haven't picked anything yet!")
-            win.chgat(0, 0, curses.color_pair(1) | curses.A_BOLD)
-            win.addstr(2, 0, "Press any key to return.")
-            win.chgat(2, 0, curses.color_pair(3) | curses.A_BOLD)
-    except curses.error:
-        pass
-    win.getch()
-
-
-def mkheader(screen, y, x):
-    Color(screen)
-    header = curses.newwin(0, x, 0, 0)
-    msg = "[hjkl/HJKL] move/jump [SPC/v/:] "
-    msg += "pick/all/glob [s/S] size/all [TAB] expand"
-    startch = [i for i, ltr in enumerate(msg) if ltr == "["]
-    endch = [i for i, ltr in enumerate(msg) if ltr == "]"]
-    try:
-        header.addstr(0, 0, msg)
-        for i in range(len(startch)):
-            header.chgat(0, startch[i], endch[i] - startch[i] + 1,
-                         curses.A_BOLD | curses.color_pair(3))
-    except curses.error:
-        pass
-    screen.refresh()
-    header.refresh()
-    return header
-
-
-def mkfooter(screen, y, x):
-    Color(screen)
-    footer = curses.newwin(0, x, y - 1, 0)
-    msg = "[?] show keys [.] toggle hidden [/] find"
-    msg += " [p] view picks [r] reset [q] quit"
-    startch = [i for i, ltr in enumerate(msg) if ltr == "["]
-    endch = [i for i, ltr in enumerate(msg) if ltr == "]"]
-    try:
-        footer.addstr(0, 0, msg)
-        for i in range(len(startch)):
-            footer.chgat(0, startch[i], endch[i] - startch[i] + 1,
-                         curses.A_BOLD | curses.color_pair(3))
-    except curses.error:
-        pass
-    screen.refresh()
-    footer.refresh()
-    return footer
-
-
-def txtbox(screen, footer, prompt):
-    from curses.textpad import Textbox
-    length = len(prompt)
-    y, x = screen.getmaxyx()
-    footer.erase()
-    footer.addstr(prompt)
-    footer.chgat(0, 0, length, curses.A_BOLD | curses.color_pair(3))
-    curses.curs_set(1)
-    footer.refresh()
-    tb = footer.subwin(y - 1, length)
-    box = Textbox(tb)
-    box.edit()
-    curses.curs_set(0)
-    mkfooter(screen, y, x)
-    return box.gather()
-
-
-def reset(win, root, hidden, picked):
-    parent = Paths(win, root, hidden, picked=picked,
+def reset(stdscr, root, hidden, picked):
+    scr = Screen(stdscr, picked)
+    parent = Paths(root, hidden, picked=picked,
                    expanded=set([root]), sized=dict())
     action = None
     curline = 0
-    return parent, action, curline
+    return scr, parent, action, curline
 
 
-def init(screen, win=None, resize=False):
-    screen.erase()
-    curses.curs_set(0)  # get rid of cursor
-    y, x = screen.getmaxyx()
-    header = mkheader(screen, y, x)
-    footer = mkfooter(screen, y, x)
-    if resize:
-        win.resize(y - 3, x)
-    else:
-        win = curses.newwin(y - 3, x, 2, 0)
-    screen.refresh()
-    win.refresh()
-    return header, win, footer
-
-
-def pick(screen, root, hidden=True, relative=False, picked=[]):
+def pick(stdscr, root, hidden=True, relative=False, picked=[]):
     picked = [root + p for p in picked]
-    header, win, footer = init(screen)
-    parent, action, curline = reset(win, root, hidden, picked)
+    scr, parent, action, curline = reset(stdscr, root, hidden, picked)
     matches = []
     while True:
         # to reset or toggle view of dotfiles we need to create a new Path
         # object before erasing the screen & descending into process function.
         if action == 'reset':
-            parent, action, curline = reset(win, root, hidden, picked=[])
+            parent, action, curline = reset(stdscr, root, hidden, picked=[])
         elif action == 'toggle_hidden':
             curline = parent.toggle_hidden(curline)
         elif action == 'find':
-            string = txtbox(screen, footer, "Find: ").strip()
+            string = parent.txtbox("Find: ").strip()
             if string:
                 curline, matches = parent.find(curline, string)
         elif action == 'findnext':
@@ -176,17 +86,15 @@ def pick(screen, root, hidden=True, relative=False, picked=[]):
         elif action == 'findprev':
             curline = parent.findprev(curline, matches)
         elif action == 'match':
-            globs = txtbox(screen, footer, "Pick: ").strip().split()
+            globs = parent.txtbox("Pick: ").strip().split()
             if globs:
                 parent.pick(curline, parent, globs)
         elif action == 'resize':
-            screen.erase()
-            win.erase()
-            init(screen, win=win, resize=True)
+            parent.resize()
         elif action == 'showpicks':
-            showpicks(win, get_picked(relative, root, parent.picked))
+            scr.showpicks()
         elif action == 'quit':
             return get_picked(relative, root, parent.picked)
         curline, line = process(parent, action, curline)
-        parent.drawtree(curline)
-        action, curline = parse(screen, win, curline, line)
+        parent.drawtree(curline, scr)
+        action, curline = parse(stdscr, scr.win, curline, line)
