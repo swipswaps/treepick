@@ -76,7 +76,7 @@ def pick(stdscr, root, hidden=True, relative=False, picked=[]):
         if action == 'reset':
             parent, action, curline = reset(stdscr, root, hidden, picked=[])
         elif action == 'toggle_hidden':
-            curline = scr.toggle_hidden(curline, scr)
+            curline = parent.toggle_hidden(curline, scr)
         elif action == 'find':
             string = scr.txtbox("Find: ").strip()
             if string:
