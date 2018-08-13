@@ -7,7 +7,7 @@ environ.setdefault('ESCDELAY', '12')  # otherwise it takes an age!
 ESC = 27
 
 
-def show(win):
+def show(screen):
     from textwrap import dedent
     msg = '''
         UP, k             : Step up one line.
@@ -39,15 +39,27 @@ def show(win):
         '''
     msg = dedent(msg).strip()
     lc = len(msg.splitlines())
-    win.erase()
-    win.attrset(curses.color_pair(0))
+    keypad = curses.newpad(curses.LINES, curses.COLS)
+
     try:
-        win.addstr(0, 0, msg)
-        win.addstr(lc + 1, 0, "Press any key to return.")
-        win.chgat(lc + 1, 0, curses.color_pair(3) | curses.A_BOLD)
+        keypad.addstr(0, 0, msg)
+        keypad.addstr(lc + 1, 0, "Press any key to return.")
+        keypad.chgat(lc + 1, 0, curses.color_pair(3) | curses.A_BOLD)
     except curses.error:
         pass
-    win.getch()
+
+    pos = 0
+    keypad.refresh(pos, 0, 0, 0, curses.LINES - 1, curses.COLS - 1)
+
+    if keypad.getch() == ord('j'):
+        pos += 1
+        keypad.refresh(pos, 0, 0, 0, curses.LINES - 1, curses.COLS - 1)
+    if keypad.getch() == ord('k'):
+        pos -= 1
+        keypad.refresh(pos, 0, 0, 0, curses.LINES - 1, curses.COLS - 1)
+
+    screen.erase()
+    screen.refresh()
 
 
 def parse(screen, win, curline, line):
@@ -91,7 +103,7 @@ def parse(screen, win, curline, line):
     elif ch == ord(':'):
         action = 'match'
     elif ch == curses.KEY_F1 or ch == ord('?'):
-        show(win)
+        show(screen)
     elif ch == curses.KEY_F2 or ch == ord('p'):
         action = 'showpicks'
     elif ch == curses.KEY_DOWN or ch == ord('j'):
