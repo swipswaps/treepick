@@ -76,7 +76,7 @@ class Screen:
                               curses.color_pair(2))
             self.footer.chgat(0, len(usergroup) + 1, len(mdate),
                               curses.A_BOLD | curses.color_pair(3))
-            self.footer.chgat(0, len(usergroup) + len(mdate) + 1, len(mode) + 1,
+            self.footer.chgat(0, len(usergroup) + len(mdate) + 2, len(mode),
                               curses.A_BOLD | curses.color_pair(6))
             self.footer.chgat(0, len(usergroup) + len(mdate) + len(mode) + 2,
                               curses.A_BOLD | curses.color_pair(5))
