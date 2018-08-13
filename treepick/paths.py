@@ -38,7 +38,7 @@ class Paths:
             if self.lastpath and self.lasthidden in self.children:
                 curline = self.children.index(self.lasthidden)
             else:
-                curline = self.children.index(curpath)
+                curline = self.children.index(self.lastpath)
         else:
             # keep two copies of record so we can restore from state
             curpath, self.lasthidden = (self.children[curline],)*2
@@ -46,7 +46,7 @@ class Paths:
             self.hidden = True
             self.drawtree(curline, scr)
             if curpath in self.children:
-                curline = self.children.index(curpath)
+                curline = self.children.index(self.lasthidden)
             elif self.lastpath:
                 curline = self.children.index(self.lastpath)
         return curline
