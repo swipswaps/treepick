@@ -25,7 +25,7 @@ class Paths:
     #                          SHOW OR HIDE DOTFILES                          #
     ###########################################################################
 
-    def toggle_hidden(self, curline):
+    def toggle_hidden(self, curline, scr):
         if self.hidden:
             # keep two copies of record so we can restore from state when
             # re-hiding
@@ -33,7 +33,7 @@ class Paths:
             # this needs to be reset otherwise we use the old objects
             self.paths = None
             self.hidden = False
-            self.drawtree(curline)
+            self.drawtree(curline, scr)
             curline = self.children.index(curpath)
             if self.lastpath and self.lasthidden in self.children:
                 curline = self.children.index(self.lasthidden)
@@ -44,7 +44,7 @@ class Paths:
             curpath, self.lasthidden = (self.children[curline],)*2
             self.paths = None
             self.hidden = True
-            self.drawtree(curline)
+            self.drawtree(curline, scr)
             if curpath in self.children:
                 curline = self.children.index(curpath)
             elif self.lastpath:
