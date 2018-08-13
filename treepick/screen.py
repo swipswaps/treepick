@@ -34,6 +34,7 @@ class Screen:
         host = socket.gethostname()
         userhost = user + "@" + host
         msg = userhost + " " + path
+        msg = (msg[:self.x - 3] + '..') if len(msg) > self.x - 3 else msg
         try:
             self.header.addstr(0, 0, msg)
             self.header.clrtoeol()  # more frugal than erase. no flicker.
@@ -69,6 +70,7 @@ class Screen:
             children = ""
 
         msg = usergroup + " " + mdate + " " + mode + " " + str(children)
+        msg = (msg[:self.x - 3] + '..') if len(msg) > self.x - 3 else msg
         try:
             self.footer.addstr(0, 0, msg)
             self.footer.clrtoeol()  # more frugal than erase. no flicker.
