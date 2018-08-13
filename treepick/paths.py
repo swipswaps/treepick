@@ -178,7 +178,7 @@ class Paths:
         matches = []
         line = -1
         for c, d in self.traverse():
-            if string in c.name:
+            if string in os.path.basename(c.name):
                 matches.append(line)
             line += 1
         if matches:
