@@ -26,29 +26,25 @@ class Paths:
     ###########################################################################
 
     def toggle_hidden(self, curline, scr):
+        self.paths = None
+
         if self.hidden:
             # keep two copies of record so we can restore from state when
             # re-hiding
-            curpath, self.lastpath = (self.children[curline],)*2
-            # this needs to be reset otherwise we use the old objects
-            self.paths = None
+            self.lastpath = self.children[curline]
             self.hidden = False
-            self.drawtree(curline, scr)
-            curline = self.children.index(curpath)
-            if self.lastpath and self.lasthidden in self.children:
-                curline = self.children.index(self.lasthidden)
-            else:
-                curline = self.children.index(self.lastpath)
         else:
             # keep two copies of record so we can restore from state
-            curpath, self.lasthidden = (self.children[curline],)*2
-            self.paths = None
+            self.lasthidden = self.children[curline]
             self.hidden = True
-            self.drawtree(curline, scr)
-            if curpath in self.children:
-                curline = self.children.index(self.lasthidden)
-            elif self.lastpath:
-                curline = self.children.index(self.lastpath)
+
+        self.drawtree(curline, scr)
+
+        if self.lasthidden in self.children:
+            curline = self.children.index(self.lasthidden)
+        elif self.lastpath in self.children:
+            curline = self.children.index(self.lastpath)
+
         return curline
 
     ###########################################################################
