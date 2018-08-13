@@ -124,14 +124,15 @@ class Screen:
         return box.gather()
 
     def resize(self):
-        self.screen.erase()
+        # self.screen.erase()
         self.y, self.x = self.screen.getmaxyx()
         # self.header = curses.newwin(0, self.x, 0, 0)
         # self.win = curses.newwin(self.y - 3, self.x, 2, 0)
         # self.footer = curses.newwin(0, self.x, self.y - 1, 0)
         # self.header.resize(0, self.x)
+        # self.header.resize(self.y - self.y - 1, self.x)
         self.win.resize(self.y - 3, self.x)
-        self.footer.resize(self.y - 1, self.x)
+        self.footer.resize(self.y, self.x)
         self.screen.refresh()
         self.header.refresh()
         self.win.refresh()
