@@ -272,7 +272,7 @@ class Paths:
             if line == curline:
                 scr.color.curline(c.name)
                 scr.mkheader(c.name)
-                scr.mkfooter(c.name)
+                scr.mkfooter(c.name, c.children)
             else:
                 scr.color.default(c.name)
             if fnmatch.filter(self.picked, c.name):

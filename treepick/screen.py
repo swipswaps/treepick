@@ -48,7 +48,7 @@ class Screen:
             pass
         self.header.refresh()
 
-    def mkfooter(self, path):
+    def mkfooter(self, path, children):
         from datetime import datetime
         # msg = "[?] show keys [.] toggle hidden [/] find"
         # msg += " [p] view picks [r] reset [q] quit"
@@ -57,10 +57,18 @@ class Screen:
         user = pwd.getpwuid(os.stat(path).st_uid)[0]
         group = grp.getgrgid(os.stat(path).st_gid)[0]
         usergroup = user + " " + group
+
         mtime = os.path.getmtime(path)
         mdate = datetime.fromtimestamp(mtime).strftime('%Y-%m-%d %H:%M:%S')
+
         mode = oct(os.stat(path).st_mode)[-3:]
-        msg = usergroup + " " + mdate + " " + mode
+
+        if children:
+            children = len(children)
+        else:
+            children = ""
+
+        msg = usergroup + " " + mdate + " " + mode + " " + str(children)
         try:
             self.footer.addstr(0, 0, msg)
             self.footer.clrtoeol()  # more frugal than erase. no flicker.
@@ -68,8 +76,10 @@ class Screen:
                               curses.color_pair(2))
             self.footer.chgat(0, len(usergroup) + 1, len(mdate),
                               curses.A_BOLD | curses.color_pair(3))
-            self.footer.chgat(0, len(usergroup) + len(mdate) + 1, - 1,
+            self.footer.chgat(0, len(usergroup) + len(mdate) + 1, len(mode) + 1,
                               curses.A_BOLD | curses.color_pair(6))
+            self.footer.chgat(0, len(usergroup) + len(mdate) + len(mode) + 2,
+                              curses.A_BOLD | curses.color_pair(5))
             # for i in range(len(startch)):
             #     self.footer.chgat(0, startch[i], endch[i] - startch[i] + 1,
             #                       curses.A_BOLD | curses.color_pair(3))
