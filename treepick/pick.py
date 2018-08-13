@@ -76,9 +76,9 @@ def pick(stdscr, root, hidden=True, relative=False, picked=[]):
         if action == 'reset':
             parent, action, curline = reset(stdscr, root, hidden, picked=[])
         elif action == 'toggle_hidden':
-            curline = parent.toggle_hidden(curline, scr)
+            curline = scr.toggle_hidden(curline, scr)
         elif action == 'find':
-            string = parent.txtbox("Find: ").strip()
+            string = scr.txtbox("Find: ").strip()
             if string:
                 curline, matches = parent.find(curline, string)
         elif action == 'findnext':
@@ -86,7 +86,7 @@ def pick(stdscr, root, hidden=True, relative=False, picked=[]):
         elif action == 'findprev':
             curline = parent.findprev(curline, matches)
         elif action == 'match':
-            globs = parent.txtbox("Pick: ").strip().split()
+            globs = scr.txtbox("Pick: ").strip().split()
             if globs:
                 parent.pick(curline, parent, globs)
         elif action == 'resize':
