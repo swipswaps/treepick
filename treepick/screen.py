@@ -20,10 +20,25 @@ class Screen:
         self.footer = curses.newwin(0, self.x, self.y - 1, 0)
         self.screen.refresh()
         self.win.refresh()
+        self.pad = curses.newpad(self.y, self.x)
         self.footer.refresh()
         self.header.refresh()
         self.picked = picked
         self.color = Color(self.win, self.picked)
+
+    def resize(self, lc=None):
+        self.screen.erase()
+        self.y, self.x = self.screen.getmaxyx()
+        self.header.resize(1, self.x)
+        self.win.resize(self.y - 3, self.x)
+        if lc:
+            self.pad.resize(lc + 2, self.x)
+        self.footer.mvwin(self.y - 1, 0)
+        self.footer.resize(1, self.x)
+        self.screen.refresh()
+        self.header.refresh()
+        self.win.refresh()
+        self.footer.refresh()
 
     def mkheader(self, path):
         user = getpass.getuser()
@@ -75,27 +90,7 @@ class Screen:
             pass
         self.footer.refresh()
 
-    def showpicks(self):
-        self.win.erase()
-        self.win.attrset(curses.color_pair(0))
-        try:
-            if self.picked:
-                self.win.chgat(0, 0, curses.color_pair(3) | curses.A_BOLD)
-                self.win.addstr(0, 0, "\n".join(self.picked))
-                self.win.addstr(len(self.picked) + 1, 0,
-                                "Press any key to return.")
-                self.win.chgat(len(self.picked) + 1, 0,
-                               curses.color_pair(3) | curses.A_BOLD)
-            else:
-                self.win.addstr(0, 0, "You haven't picked anything yet!")
-                self.win.chgat(0, 0, curses.color_pair(1) | curses.A_BOLD)
-                self.win.addstr(2, 0, "Press any key to return.")
-                self.win.chgat(2, 0, curses.color_pair(3) | curses.A_BOLD)
-        except curses.error:
-            pass
-        self.win.getch()
-
-    def txtbox(self, prompt):
+    def mktbfooter(self, prompt):
         from curses.textpad import Textbox
         length = len(prompt)
         self.footer.erase()
@@ -111,9 +106,73 @@ class Screen:
         self.footer.erase()
         return result
 
-    def resize(self):
-        self.y, self.x = self.screen.getmaxyx()
-        self.header.resize(1, self.x)
-        self.win.resize(self.y - 3, self.x)
-        self.footer.mvwin(self.y - 1, 0)
-        self.footer.resize(1, self.x)
+    def mkpadfooter(self):
+        footstr = "[j,k,f,b] or [DOWN, UP, PGUP, PGDN] to scroll."
+        footstr += " [q] or [ESC] to return."
+        startch = [i for i, ltr in enumerate(footstr) if ltr == "["]
+        endch = [i for i, ltr in enumerate(footstr) if ltr == "]"]
+        self.footer.addstr(0, 0, footstr)
+        for i in range(len(startch)):
+            self.footer.chgat(0, startch[i], endch[i] - startch[i] + 1,
+                              curses.A_BOLD | curses.color_pair(3))
+        self.screen.refresh()
+        self.footer.refresh()
+
+    def mkkeypad(self):
+        from textwrap import dedent
+        msg = '''
+            UP, k             : Step up one line.
+            DOWN, j           : Step down one line.
+            K                 : Jump to previous parent directory.
+            J                 : Jump to next parent directory.
+            PGDN, f           : Jump down a page of lines.
+            PGUP, b           : Jump up a page of lines.
+            HOME, g           : Jump to first line.
+            END, G            : Jump to last line.
+            RIGHT, l          : Expand and step into directory.
+            TAB, RET          : Toggle expansion/collapse of directory.
+            LEFT, h           : Collapse directory.
+            SHIFT RIGHT, L    : Expand directory and child directories.
+            SHIFT LEFT, H     : Jump to parent directory and collapse all.
+            SPC               : Toggle picking of paths.
+            v                 : Toggle picking of all currently expanded paths.
+            :                 : Toggle picking of paths based on entered globs.
+            p                 : View a list of all picked paths.
+            /                 : Search for an entered string.
+            n                 : Jump to next occurrence of last search string.
+            N                 : Jump to prev occurrence of last search string.
+            .                 : Toggle display of dotfiles.
+            s                 : Display total size of path, recursively
+            S                 : Display totol size of all expanded paths.
+            F5, r             : Reset marking and expansion.
+            F1, ?             : View this help page.
+            q, ESC            : Quit and display all marked paths.
+            '''
+        msg = dedent(msg).strip()
+        lc = len(msg.splitlines())
+        self.screen.erase()
+        self.pad.erase()
+        self.pad.resize(lc + 2, self.x)
+        try:
+            self.pad.addstr(0, 0, msg)
+            self.pad.scrollok(1)
+            self.pad.idlok(1)
+            self.mkpadfooter()
+        except curses.error:
+            pass
+        return lc
+
+    def mkpickpad(self):
+        self.screen.erase()
+        self.pad.erase()
+        self.pad.resize(len(self.picked) + 2, self.x)
+        try:
+            if self.picked:
+                self.pad.addstr(0, 0, "\n".join(self.picked))
+            else:
+                self.pad.addstr(0, 0, "You haven't picked anything yet!")
+                self.pad.chgat(0, 0, curses.color_pair(1) | curses.A_BOLD)
+            self.mkpadfooter()
+        except curses.error:
+            pass
+        return len(self.picked)

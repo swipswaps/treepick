@@ -4,8 +4,8 @@
 import os
 import cgitb
 from .paths import Paths
-from .keys import parse
 from .screen import Screen
+from .keys import Keys
 
 # Get more detailed traceback reports
 cgitb.enable(format="text")  # https://pymotw.com/2/cgitb/
@@ -57,28 +57,30 @@ def get_picked(relative, root, picked):
     return picked
 
 
-def reset(stdscr, root, hidden, picked):
-    scr = Screen(stdscr, picked)
-    parent = Paths(root, hidden, picked=picked,
-                   expanded=set([root]), sized=dict())
+def reset(root, hidden, picked):
+    parent = Paths(root, hidden, picked, expanded=set([root]), sized=dict())
     action = None
     curline = 0
-    return scr, parent, action, curline
+    return parent, action, curline
 
 
 def pick(stdscr, root, hidden=True, relative=False, picked=[]):
     picked = [root + p for p in picked]
-    scr, parent, action, curline = reset(stdscr, root, hidden, picked)
+    scr = Screen(stdscr, picked)
+    keys = Keys(stdscr, picked)
+    parent, action, curline = reset(root, hidden, picked)
     matches = []
     while True:
         # to reset or toggle view of dotfiles we need to create a new Path
         # object before erasing the screen & descending into process function.
         if action == 'reset':
-            parent, action, curline = reset(stdscr, root, hidden, picked=[])
+            parent, action, curline = reset(root, hidden, picked=[])
+        elif action == 'resize':
+            scr.resize()
         elif action == 'toggle_hidden':
             curline = parent.toggle_hidden(curline, scr)
         elif action == 'find':
-            string = scr.txtbox("Find: ").strip()
+            string = scr.mktbfooter("Find: ").strip()
             if string:
                 curline, matches = parent.find(curline, string)
         elif action == 'findnext':
@@ -86,15 +88,11 @@ def pick(stdscr, root, hidden=True, relative=False, picked=[]):
         elif action == 'findprev':
             curline = parent.findprev(curline, matches)
         elif action == 'match':
-            globs = scr.txtbox("Pick: ").strip().split()
+            globs = scr.mktbfooter("Pick: ").strip().split()
             if globs:
                 parent.pick(curline, parent, globs)
-        elif action == 'resize':
-            scr.resize()
-        elif action == 'showpicks':
-            scr.showpicks()
         elif action == 'quit':
             return get_picked(relative, root, parent.picked)
         curline, line = process(parent, action, curline)
         parent.drawtree(curline, scr)
-        action, curline = parse(stdscr, scr.win, curline, line)
+        action, curline = keys.getkeys(curline, line)
