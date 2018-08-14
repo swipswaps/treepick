@@ -10,7 +10,7 @@ from .screen import Screen
 
 
 class Paths(Screen):
-    def __init__(self, screen, name, hidden,
+    def __init__(self, screen, name, hidden, curline=0,
                  picked=[], expanded=set(), sized=dict()):
         Screen.__init__(self, screen, picked)
         self.name = name
@@ -22,45 +22,43 @@ class Paths(Screen):
         self.marked = False
         self.children = self.getchildren()
         self.lastpath, self.lasthidden = (None,)*2
-        self.drawtree(0)
+        self.curline = curline
 
     ###########################################################################
     #                          SHOW OR HIDE DOTFILES                          #
     ###########################################################################
 
-    def toggle_hidden(self, curline):
+    def toggle_hidden(self):
         self.paths = None
 
         if self.hidden:
             # keep two copies of record so we can restore from state when
             # re-hiding
-            self.lastpath = self.children[curline]
+            self.lastpath = self.children[self.curline]
             self.hidden = False
         else:
             # keep two copies of record so we can restore from state
-            self.lasthidden = self.children[curline]
+            self.lasthidden = self.children[self.curline]
             self.hidden = True
 
-        self.drawtree(curline)
+        self.drawtree()
 
         if self.lasthidden in self.children:
-            curline = self.children.index(self.lasthidden)
+            self.curline = self.children.index(self.lasthidden)
         elif self.lastpath in self.children:
-            curline = self.children.index(self.lastpath)
-
-        return curline
+            self.curline = self.children.index(self.lastpath)
 
     ###########################################################################
     #                       EXPAND AND COLLAPSE METHODS                       #
     ###########################################################################
 
-    def expand(self, curline, recurse=False, toggle=False):
+    def expand(self, recurse=False, toggle=False):
         if os.path.isdir(self.name) and self.children and recurse:
             self.expanded.add(self.name)
             for c, d in self.traverse():
                 if d < 2 and os.path.isdir(c.name) and c.children:
                     self.expanded.add(c.name)
-            curline += 1
+            self.curline += 1
         elif os.path.isdir(self.name) and self.children:
             if toggle:
                 if self.name in self.expanded:
@@ -69,12 +67,11 @@ class Paths(Screen):
                     self.expanded.add(self.name)
             else:
                 self.expanded.add(self.name)
-                curline += 1
-        return curline
+                self.curline += 1
 
-    def collapse(self, parent, curline, depth, recurse=False):
+    def collapse(self, depth, recurse=False):
         if depth > 1 and recurse:
-            curline, p = self.prevparent(parent, curline, depth)
+            p = self.prevparent(depth)
             self.expanded.remove(p)
             for x in list(self.expanded):  # iterate over copy
                 par = os.path.abspath(p)
@@ -84,25 +81,24 @@ class Paths(Screen):
         elif self.name in self.expanded:
             self.expanded.remove(self.name)
         elif depth > 1 and not os.path.isdir(self.name):
-            curline, p = self.prevparent(parent, curline, depth)
+            p = self.prevparent(depth)
             self.expanded.remove(p)
-        return curline
 
     ###########################################################################
     #                              PICKING NODES                              #
     ###########################################################################
 
-    def pick(self, curline, parent=None, globs=[]):
-        if parent and not globs:
-            for c, d in parent.traverse():
+    def pick(self, pickall=False, globs=[]):
+        if pickall and not globs:
+            for c, d in self.traverse():
                 if d == 0:
                     continue
                 if c.name in self.picked:
                     self.picked.remove(c.name)
                 else:
                     self.picked.append(c.name)
-        elif parent and globs:
-            for c, d in parent.traverse():
+        elif pickall and globs:
+            for c, d in self.traverse():
                 for g in globs:
                     if (fnmatch.fnmatch(c.name, g) or
                             fnmatch.fnmatch(os.path.basename(c.name), g)):
@@ -115,14 +111,13 @@ class Paths(Screen):
                 self.picked.remove(self.name)
             else:
                 self.picked.append(self.name)
-            curline += 1
-        return curline
+            self.curline += 1
 
     ###########################################################################
     #                           LINE JUMPING METHODS                          #
     ###########################################################################
 
-    def nextparent(self, parent, curline, depth):
+    def nextparent(self, depth):
         '''
         Add lines to current line by traversing the grandparent object again
         and once we reach our current line counting every line that is prefixed
@@ -131,46 +126,45 @@ class Paths(Screen):
         pdir = os.path.dirname(self.name)
         if depth > 1:  # can't jump to parent of root node!
             line = 0
-            for c, d in parent.traverse():
-                if line > curline and c.name.startswith(pdir + os.sep):
-                    curline += 1
+            for c, d in self.traverse():
+                if line > self.curline and c.name.startswith(pdir + os.sep):
+                    self.curline += 1
                 line += 1
         else:  # otherwise just skip to next directory
             line = -1  # skip hidden parent node
-            for c, d in parent.traverse():
-                if line > curline:
-                    curline += 1
-                    if os.path.isdir(c.name) and c.name in parent.children[0:]:
+            for c, d in self.traverse():
+                if line > self.curline:
+                    self.curline += 1
+                    if os.path.isdir(c.name) and c.name in self.children[0:]:
                         break
                 line += 1
-        return curline
 
-    def prevparent(self, parent, curline, depth):
+    def prevparent(self, depth):
         '''
-        Subtract lines from our curline if the name of a node is prefixed with
+        Subtract lines from our self.curline if the name of a node is prefixed with
         the parent directory when traversing the grandparent object.
         '''
         pdir = os.path.dirname(self.name)
         if depth > 1:  # can't jump to parent of root node!
-            for c, d in parent.traverse():
+            for c, d in self.traverse():
                 if c.name == self.name:
                     break
                 if c.name.startswith(pdir):
-                    curline -= 1
+                    self.curline -= 1
         else:  # otherwise jus skip to previous directory
             pdir = self.name
             # - 1 otherwise hidden parent node throws count off & our
-            # curline doesn't change!
+            # self.curline doesn't change!
             line = -1
-            for c, d in parent.traverse():
+            for c, d in self.traverse():
                 if c.name == self.name:
                     break
-                if os.path.isdir(c.name) and c.name in parent.children[0:]:
-                    curline = line
+                if os.path.isdir(c.name) and c.name in self.children[0:]:
+                    self.curline = line
                 line += 1
-        return curline, pdir
+        return pdir
 
-    def find(self, curline, string):
+    def find(self, string):
         matches = []
         line = -1
         for c, d in self.traverse():
@@ -178,35 +172,32 @@ class Paths(Screen):
                 matches.append(line)
             line += 1
         if matches:
-            curline = self.findnext(curline, matches)
-        return curline, matches
+            self.curline = self.findnext(self.curline, matches)
+        return matches
 
-    def findnext(self, curline, matches):
+    def findnext(self, matches):
         for m in range(len(matches)):
-            if curline == matches[len(matches) - 1]:
+            if self.curline == matches[len(matches) - 1]:
                 return matches[0]
-            elif curline < matches[m]:
+            elif self.curline < matches[m]:
                 return matches[m]
-        return curline
 
-    def findprev(self, curline, matches):
+    def findprev(self, matches):
         for m in range(len(matches)):
-            if curline <= matches[m]:
+            if self.curline <= matches[m]:
                 return matches[m-1]
-        return curline
 
     ###########################################################################
     #                         SIZE CALCULATING METHODS                        #
     ###########################################################################
 
-    def getsize(self, curline, parent, sizeall=False):
+    def getsize(self, sizeall=False):
         if sizeall:
-            for c, d in parent.traverse():
+            for c, d in self.traverse():
                 self.sized[os.path.abspath(c.name)] = None
         else:
             self.sized[os.path.abspath(self.name)] = None
-            curline += 1
-        return curline
+            self.curline += 1
 
     ###########################################################################
     #                       CURSES LINE DRAWING METHODS                       #
@@ -242,22 +233,22 @@ class Paths(Screen):
         nodestr = '{:<{w}}{:>}'.format(node, size, w=sizepad)
         return sizelen, sizepad, nodestr + ' ' * (width - len(nodestr))
 
-    def drawline(self, depth, curline, line, win):
+    def drawline(self, depth, line, win):
         max_y, max_x = win.getmaxyx()
-        offset = max(0, curline - max_y + 3)
+        offset = max(0, self.curline - max_y + 3)
         y = line - offset
         x = 0
         sizelen, sizepad, string = self.mkline(depth - 1, max_x)
         if 0 <= line - offset < max_y - 1:
             try:
                 win.addstr(y, x, string)  # paint str at y, x co-ordinates
-                if sizelen > 0 and line != curline:
+                if sizelen > 0 and line != self.curline:
                     win.chgat(y, sizepad, sizelen,
                               curses.A_BOLD | curses.color_pair(5))
             except curses.error:
                 pass
 
-    def drawtree(self, curline):
+    def drawtree(self, action):
         '''
         Loop over the object, process path attribute sets, and drawlines based
         on their current contents.
@@ -268,19 +259,43 @@ class Paths(Screen):
             path = os.path.abspath(c.name)
             if d == 0:
                 continue
-            if line == curline:
+            if line == self.curline:
                 self.color.curline(c.name)
                 self.mkheader(c.name)
                 self.mkfooter(c.name, c.children)
+                if action == 'expand':
+                    c.expand()
+                elif action == 'expand_all':
+                    c.expand(recurse=True)
+                elif action == 'toggle_expand':
+                    c.expand(toggle=True)
+                elif action == 'collapse':
+                    c.collapse(depth)
+                elif action == 'collapse_all':
+                    c.collapse(depth, recurse=True)
+                elif action == 'toggle_pick':
+                    c.pick()
+                elif action == 'pickall':
+                    c.pick(pickall=True)
+                elif action == 'nextparent':
+                    c.nextparent(d)
+                elif action == 'prevparent':
+                    c.prevparent(d)
+                elif action == 'getsize':
+                    c.getsize()
+                elif action == 'getsizeall':
+                    c.getsize(sizeall=True)
+                action = None
             else:
                 self.color.default(c.name)
             if fnmatch.filter(self.picked, c.name):
                 c.marked = True
             if path in self.sized and not self.sized[path]:
                 self.sized[path] = " [" + du(c.name) + "]"
-            c.drawline(d, curline, line, self.win)
+            c.drawline(d, line, self.win)
             line += 1
         self.win.refresh()
+        return line
 
     ###########################################################################
     #                    PATH OBJECT INSTANTIATION METHODS                    #
@@ -323,6 +338,7 @@ class Paths(Screen):
             self.paths = [Paths(self.screen,
                                 os.path.join(self.name, child),
                                 self.hidden,
+                                self.curline,
                                 self.picked,
                                 self.expanded,
                                 self.sized)

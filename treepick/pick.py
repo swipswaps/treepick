@@ -4,14 +4,13 @@
 import os
 import cgitb
 from .paths import Paths
-from .screen import Screen
 from .keys import Keys
 
 # Get more detailed traceback reports
 cgitb.enable(format="text")  # https://pymotw.com/2/cgitb/
 
 
-def process(parent, action, curline):
+def process(parent, action):
     '''
     Traverse parent object & process the action returned from keys.parse
     '''
@@ -19,32 +18,32 @@ def process(parent, action, curline):
     for child, depth in parent.traverse():
         if depth == 0:
             continue  # don't process root node
-        if line == curline:
+        if line == parent.curline:
             if action == 'expand':
-                curline = child.expand(curline)
+                child.expand()
             elif action == 'expand_all':
-                curline = child.expand(curline, recurse=True)
+                child.expand(recurse=True)
             elif action == 'toggle_expand':
-                curline = child.expand(curline, toggle=True)
+                child.expand(toggle=True)
             elif action == 'collapse':
-                curline = child.collapse(parent, curline, depth)
+                child.collapse(parent, depth)
             elif action == 'collapse_all':
-                curline = child.collapse(parent, curline, depth, recurse=True)
+                child.collapse(parent, depth, recurse=True)
             elif action == 'toggle_pick':
-                curline = child.pick(curline)
+                child.pick()
             elif action == 'pickall':
-                curline = child.pick(curline, parent)
+                child.pick(parent)
             elif action == 'nextparent':
-                curline = child.nextparent(parent, curline, depth)
+                child.nextparent(parent, depth)
             elif action == 'prevparent':
-                curline = child.prevparent(parent, curline, depth)[0]
+                child.prevparent(parent, depth)[0]
             elif action == 'getsize':
-                curline = child.getsize(curline, parent)
+                child.getsize(parent)
             elif action == 'getsizeall':
-                curline = child.getsize(curline, parent, sizeall=True)
+                child.getsize(parent, sizeall=True)
             action = None  # reset action
         line += 1  # keep scrolling!
-    return curline, line
+    return line
 
 
 def get_picked(relative, root, picked):
@@ -58,41 +57,39 @@ def get_picked(relative, root, picked):
 
 
 def reset(scr, root, hidden, picked):
-    parent = Paths(scr, root, hidden, picked,
+    parent = Paths(scr, root, hidden, picked=picked,
                    expanded=set([root]), sized=dict())
     action = None
-    curline = 0
-    return parent, action, curline
+    return parent, action
 
 
 def pick(stdscr, root, hidden=True, relative=False, picked=[]):
     picked = [root + p for p in picked]
     keys = Keys(stdscr, picked)
-    parent, action, curline = reset(stdscr, root, hidden, picked)
+    parent, action = reset(stdscr, root, hidden, picked)
     matches = []
     while True:
         # to reset or toggle view of dotfiles we need to create a new Path
         # object before erasing the screen & descending into process function.
         if action == 'reset':
-            parent, action, curline = reset(stdscr, root, hidden, picked=[])
+            parent, action = reset(stdscr, root, hidden, picked=[])
         elif action == 'resize':
             parent.resize()
         elif action == 'toggle_hidden':
-            curline = parent.toggle_hidden(curline)
+            parent.toggle_hidden()
         elif action == 'find':
             string = parent.mktbfooter("Find: ").strip()
             if string:
-                curline, matches = parent.find(curline, string)
+                matches = parent.find(string)
         elif action == 'findnext':
-            curline = parent.findnext(curline, matches)
+            parent.findnext(matches)
         elif action == 'findprev':
-            curline = parent.findprev(curline, matches)
+            parent.findprev(matches)
         elif action == 'match':
             globs = parent.mktbfooter("Pick: ").strip().split()
             if globs:
-                parent.pick(curline, parent, globs)
+                parent.pick(parent, globs)
         elif action == 'quit':
             return get_picked(relative, root, parent.picked)
-        curline, line = process(parent, action, curline)
-        parent.drawtree(curline)
-        action, curline = keys.getkeys(curline, line)
+        line = parent.drawtree(action)
+        action, parent.curline = keys.getkeys(parent.curline, line)
