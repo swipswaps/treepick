@@ -26,10 +26,6 @@ class Screen:
         self.color = Color(self.win, self.picked)
 
     def mkheader(self, path):
-        # msg = "[hjkl/HJKL] move/jump [SPC/v/:] "
-        # msg += "pick/all/glob [s/S] size/all [TAB] expand"
-        # startch = [i for i, ltr in enumerate(msg) if ltr == "["]
-        # endch = [i for i, ltr in enumerate(msg) if ltr == "]"]
         user = getpass.getuser()
         host = socket.gethostname()
         userhost = user + "@" + host
@@ -42,19 +38,12 @@ class Screen:
                               curses.A_BOLD | curses.color_pair(2))
             self.header.chgat(0, len(userhost) + 1,
                               curses.A_BOLD | curses.color_pair(3))
-            # for i in range(len(startch)):
-            #     self.header.chgat(0, startch[i], endch[i] - startch[i] + 1,
-            #                       curses.A_BOLD | curses.color_pair(3))
         except curses.error:
             pass
         self.header.refresh()
 
     def mkfooter(self, path, children):
         from datetime import datetime
-        # msg = "[?] show keys [.] toggle hidden [/] find"
-        # msg += " [p] view picks [r] reset [q] quit"
-        # startch = [i for i, ltr in enumerate(msg) if ltr == "["]
-        # endch = [i for i, ltr in enumerate(msg) if ltr == "]"]
         user = pwd.getpwuid(os.stat(path).st_uid)[0]
         group = grp.getgrgid(os.stat(path).st_gid)[0]
         usergroup = user + " " + group
@@ -82,9 +71,6 @@ class Screen:
                               curses.A_BOLD | curses.color_pair(6))
             self.footer.chgat(0, len(usergroup) + len(mdate) + len(mode) + 2,
                               curses.A_BOLD | curses.color_pair(5))
-            # for i in range(len(startch)):
-            #     self.footer.chgat(0, startch[i], endch[i] - startch[i] + 1,
-            #                       curses.A_BOLD | curses.color_pair(3))
         except curses.error:
             pass
         self.footer.refresh()

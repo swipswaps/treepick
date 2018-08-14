@@ -39,17 +39,32 @@ def show(screen):
         '''
     msg = dedent(msg).strip()
     lc = len(msg.splitlines())
+    footstr = "[j,k,f,b] or [DOWN, UP, PGUP, PGDN] to scroll."
+    footstr += " [q] or [ESC] to return."
+    startch = [i for i, ltr in enumerate(footstr) if ltr == "["]
+    endch = [i for i, ltr in enumerate(footstr) if ltr == "]"]
+
+    screen.erase()
+
     keypad = curses.newpad(lc, curses.COLS)
+    footer = curses.newwin(0, curses.COLS, curses.LINES - 1, 0)
 
     try:
         keypad.addstr(0, 0, msg)
         keypad.scrollok(1)
         keypad.idlok(1)
+        footer.addstr(0, 0, footstr)
+        for i in range(len(startch)):
+            footer.chgat(0, startch[i], endch[i] - startch[i] + 1,
+                         curses.A_BOLD | curses.color_pair(3))
     except curses.error:
         pass
 
+    screen.refresh()
+    footer.refresh()
+
     pos = 0
-    keypad.refresh(pos, 0, 0, 0, curses.LINES - 1, curses.COLS - 1)
+    keypad.refresh(pos, 0, 0, 0, curses.LINES - 2, curses.COLS - 1)
 
     while True:
         ch = screen.getch()
@@ -69,7 +84,7 @@ def show(screen):
                 pos = 0
         elif ch == ord('q') or ch == ESC:
             break
-        keypad.refresh(pos, 0, 0, 0, curses.LINES - 1, curses.COLS - 1)
+        keypad.refresh(pos, 0, 0, 0, curses.LINES - 2, curses.COLS - 1)
 
     screen.erase()
     screen.refresh()
