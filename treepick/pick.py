@@ -58,7 +58,7 @@ def get_picked(relative, root, picked):
 
 
 def reset(scr, root, hidden, picked):
-    parent = Paths(scr, root, hidden, picked=picked,
+    parent = Paths(scr, root, hidden, picked,
                    expanded=set([root]), sized=dict())
     action = None
     curline = 0

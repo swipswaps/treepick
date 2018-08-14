@@ -22,6 +22,7 @@ class Paths(Screen):
         self.marked = False
         self.children = self.getchildren()
         self.lastpath, self.lasthidden = (None,)*2
+        self.drawtree(0)
 
     ###########################################################################
     #                          SHOW OR HIDE DOTFILES                          #
