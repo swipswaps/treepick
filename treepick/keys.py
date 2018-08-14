@@ -39,23 +39,36 @@ def show(screen):
         '''
     msg = dedent(msg).strip()
     lc = len(msg.splitlines())
-    keypad = curses.newpad(curses.LINES, curses.COLS)
+    keypad = curses.newpad(lc, curses.COLS)
 
     try:
         keypad.addstr(0, 0, msg)
-        keypad.addstr(lc + 1, 0, "Press any key to return.")
-        keypad.chgat(lc + 1, 0, curses.color_pair(3) | curses.A_BOLD)
+        keypad.scrollok(1)
+        keypad.idlok(1)
     except curses.error:
         pass
 
     pos = 0
     keypad.refresh(pos, 0, 0, 0, curses.LINES - 1, curses.COLS - 1)
 
-    if keypad.getch() == ord('j'):
-        pos += 1
-        keypad.refresh(pos, 0, 0, 0, curses.LINES - 1, curses.COLS - 1)
-    if keypad.getch() == ord('k'):
-        pos -= 1
+    while True:
+        ch = screen.getch()
+        if (ch == curses.KEY_DOWN or ch == ord('j')):
+            if pos < lc - curses.LINES:
+                pos += 1
+        elif (ch == curses.KEY_UP or ch == ord('k')):
+            if pos > 0:
+                pos -= 1
+        elif (ch == curses.KEY_NPAGE or ch == ord('f')):
+            pos += curses.LINES - 1
+            if pos >= lc - curses.LINES:
+                pos = lc - curses.LINES
+        elif (ch == curses.KEY_PPAGE or ch == ord('b')):
+            pos -= curses.LINES - 1
+            if pos < 0:
+                pos = 0
+        elif ch == ord('q') or ch == ESC:
+            break
         keypad.refresh(pos, 0, 0, 0, curses.LINES - 1, curses.COLS - 1)
 
     screen.erase()
