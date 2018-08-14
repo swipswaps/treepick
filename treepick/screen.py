@@ -57,7 +57,7 @@ class Screen:
             pass
         self.header.refresh()
 
-    def mkfooter(self, path, children):
+    def mkfooter(self, path, children=None):
         from datetime import datetime
         user = pwd.getpwuid(os.stat(path).st_uid)[0]
         group = grp.getgrgid(os.stat(path).st_gid)[0]
@@ -71,7 +71,7 @@ class Screen:
         if children:
             children = len(children)
         else:
-            children = ""
+            children = 0
 
         msg = usergroup + " " + mdate + " " + mode + " " + str(children)
         msg = (msg[:self.x - 3] + '..') if len(msg) > self.x - 3 else msg

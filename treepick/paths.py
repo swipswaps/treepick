@@ -6,11 +6,13 @@ import curses
 import fnmatch
 
 from pdu import du
+from .screen import Screen
 
 
-class Paths:
-    def __init__(self, name, hidden,
+class Paths(Screen):
+    def __init__(self, screen, name, hidden,
                  picked=[], expanded=set(), sized=dict()):
+        Screen.__init__(self, screen, picked)
         self.name = name
         self.hidden = hidden
         self.picked = picked
@@ -25,7 +27,7 @@ class Paths:
     #                          SHOW OR HIDE DOTFILES                          #
     ###########################################################################
 
-    def toggle_hidden(self, curline, scr):
+    def toggle_hidden(self, curline):
         self.paths = None
 
         if self.hidden:
@@ -38,7 +40,7 @@ class Paths:
             self.lasthidden = self.children[curline]
             self.hidden = True
 
-        self.drawtree(curline, scr)
+        self.drawtree(curline)
 
         if self.lasthidden in self.children:
             curline = self.children.index(self.lasthidden)
@@ -254,30 +256,30 @@ class Paths:
             except curses.error:
                 pass
 
-    def drawtree(self, curline, scr):
+    def drawtree(self, curline):
         '''
         Loop over the object, process path attribute sets, and drawlines based
         on their current contents.
         '''
-        scr.win.erase()
+        self.win.erase()
         line = 0
         for c, d in self.traverse():
             path = os.path.abspath(c.name)
             if d == 0:
                 continue
             if line == curline:
-                scr.color.curline(c.name)
-                scr.mkheader(c.name)
-                scr.mkfooter(c.name, c.children)
+                self.color.curline(c.name)
+                self.mkheader(c.name)
+                self.mkfooter(c.name, c.children)
             else:
-                scr.color.default(c.name)
+                self.color.default(c.name)
             if fnmatch.filter(self.picked, c.name):
                 c.marked = True
             if path in self.sized and not self.sized[path]:
                 self.sized[path] = " [" + du(c.name) + "]"
-            c.drawline(d, curline, line, scr.win)
+            c.drawline(d, curline, line, self.win)
             line += 1
-        scr.win.refresh()
+        self.win.refresh()
 
     ###########################################################################
     #                    PATH OBJECT INSTANTIATION METHODS                    #
@@ -317,7 +319,8 @@ class Paths:
         if self.children is None:
             return
         if self.paths is None:
-            self.paths = [Paths(os.path.join(self.name, child),
+            self.paths = [Paths(self.screen,
+                                os.path.join(self.name, child),
                                 self.hidden,
                                 self.picked,
                                 self.expanded,
