@@ -248,7 +248,7 @@ class Paths(Screen):
             except curses.error:
                 pass
 
-    def drawtree(self, action):
+    def drawtree(self, action=None):
         '''
         Loop over the object, process path attribute sets, and drawlines based
         on their current contents.
@@ -256,6 +256,7 @@ class Paths(Screen):
         self.win.erase()
         line = 0
         for c, d in self.traverse():
+            c.curline = self.curline
             path = os.path.abspath(c.name)
             if d == 0:
                 continue
@@ -270,9 +271,9 @@ class Paths(Screen):
                 elif action == 'toggle_expand':
                     c.expand(toggle=True)
                 elif action == 'collapse':
-                    c.collapse(depth)
+                    c.collapse(d)
                 elif action == 'collapse_all':
-                    c.collapse(depth, recurse=True)
+                    c.collapse(d, recurse=True)
                 elif action == 'toggle_pick':
                     c.pick()
                 elif action == 'pickall':
@@ -292,6 +293,7 @@ class Paths(Screen):
                 c.marked = True
             if path in self.sized and not self.sized[path]:
                 self.sized[path] = " [" + du(c.name) + "]"
+            self.curline = c.curline
             c.drawline(d, line, self.win)
             line += 1
         self.win.refresh()
