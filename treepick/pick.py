@@ -71,6 +71,7 @@ def pick(stdscr, root, hidden=True, relative=False, picked=[]):
     while True:
         # to reset or toggle view of dotfiles we need to create a new Path
         # object before erasing the screen & descending into process function.
+        line = parent.drawtree(action)
         if action == 'reset':
             parent, action = reset(stdscr, root, hidden, picked=[])
         elif action == 'resize':
@@ -91,5 +92,4 @@ def pick(stdscr, root, hidden=True, relative=False, picked=[]):
                 parent.pick(parent, globs)
         elif action == 'quit':
             return get_picked(relative, root, parent.picked)
-        line = parent.drawtree(action)
         action, parent.curline = keys.getkeys(parent.curline, line)

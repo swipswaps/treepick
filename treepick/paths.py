@@ -117,7 +117,7 @@ class Paths(Screen):
     #                           LINE JUMPING METHODS                          #
     ###########################################################################
 
-    def nextparent(self, depth):
+    def nextparent(self, parent, depth):
         '''
         Add lines to current line by traversing the grandparent object again
         and once we reach our current line counting every line that is prefixed
@@ -126,27 +126,27 @@ class Paths(Screen):
         pdir = os.path.dirname(self.name)
         if depth > 1:  # can't jump to parent of root node!
             line = 0
-            for c, d in self.traverse():
+            for c, d in parent.traverse():
                 if line > self.curline and c.name.startswith(pdir + os.sep):
                     self.curline += 1
                 line += 1
         else:  # otherwise just skip to next directory
             line = -1  # skip hidden parent node
-            for c, d in self.traverse():
+            for c, d in parent.traverse():
                 if line > self.curline:
                     self.curline += 1
                     if os.path.isdir(c.name) and c.name in self.children[0:]:
                         break
                 line += 1
 
-    def prevparent(self, depth):
+    def prevparent(self, parent, depth):
         '''
         Subtract lines from our self.curline if the name of a node is prefixed with
         the parent directory when traversing the grandparent object.
         '''
         pdir = os.path.dirname(self.name)
         if depth > 1:  # can't jump to parent of root node!
-            for c, d in self.traverse():
+            for c, d in parent.traverse():
                 if c.name == self.name:
                     break
                 if c.name.startswith(pdir):
@@ -156,7 +156,7 @@ class Paths(Screen):
             # - 1 otherwise hidden parent node throws count off & our
             # self.curline doesn't change!
             line = -1
-            for c, d in self.traverse():
+            for c, d in parent.traverse():
                 if c.name == self.name:
                     break
                 if os.path.isdir(c.name) and c.name in self.children[0:]:
@@ -266,8 +266,10 @@ class Paths(Screen):
                 self.mkfooter(c.name, c.children)
                 if action == 'expand':
                     c.expand()
+                    self.color.default(c.name)
                 elif action == 'expand_all':
                     c.expand(recurse=True)
+                    self.color.default(c.name)
                 elif action == 'toggle_expand':
                     c.expand(toggle=True)
                 elif action == 'collapse':
@@ -276,14 +278,18 @@ class Paths(Screen):
                     c.collapse(d, recurse=True)
                 elif action == 'toggle_pick':
                     c.pick()
+                    self.color.default(c.name)
                 elif action == 'pickall':
                     c.pick(pickall=True)
                 elif action == 'nextparent':
-                    c.nextparent(d)
+                    c.nextparent(self, d)
+                    self.color.default(c.name)
                 elif action == 'prevparent':
-                    c.prevparent(d)
+                    c.prevparent(self, d)
+                    self.color.default(c.name)
                 elif action == 'getsize':
                     c.getsize()
+                    self.color.default(c.name)
                 elif action == 'getsizeall':
                     c.getsize(sizeall=True)
                 action = None
@@ -293,8 +299,8 @@ class Paths(Screen):
                 c.marked = True
             if path in self.sized and not self.sized[path]:
                 self.sized[path] = " [" + du(c.name) + "]"
-            self.curline = c.curline
             c.drawline(d, line, self.win)
+            self.curline = c.curline
             line += 1
         self.win.refresh()
         return line
