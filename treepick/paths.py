@@ -23,6 +23,8 @@ class Paths(Screen):
         self.children = self.getchildren()
         self.lastpath, self.lasthidden = (None,)*2
         self.curline = curline
+        self.action = None
+        self.globs, self.matches = (None,)*2
 
     ###########################################################################
     #                          SHOW OR HIDE DOTFILES                          #
@@ -69,9 +71,9 @@ class Paths(Screen):
                 self.expanded.add(self.name)
                 self.curline += 1
 
-    def collapse(self, depth, recurse=False):
+    def collapse(self, parent, depth, recurse=False):
         if depth > 1 and recurse:
-            p = self.prevparent(depth)
+            p = self.prevparent(parent, depth)
             self.expanded.remove(p)
             for x in list(self.expanded):  # iterate over copy
                 par = os.path.abspath(p)
@@ -88,8 +90,8 @@ class Paths(Screen):
     #                              PICKING NODES                              #
     ###########################################################################
 
-    def pick(self, pickall=False, globs=[]):
-        if pickall and not globs:
+    def pick(self, pickall=False):
+        if pickall:
             for c, d in self.traverse():
                 if d == 0:
                     continue
@@ -97,9 +99,9 @@ class Paths(Screen):
                     self.picked.remove(c.name)
                 else:
                     self.picked.append(c.name)
-        elif pickall and globs:
+        elif self.globs:
             for c, d in self.traverse():
-                for g in globs:
+                for g in self.globs:
                     if (fnmatch.fnmatch(c.name, g) or
                             fnmatch.fnmatch(os.path.basename(c.name), g)):
                         if c.name in self.picked:
@@ -165,27 +167,29 @@ class Paths(Screen):
         return pdir
 
     def find(self, string):
-        matches = []
+        self.matches = []
         line = -1
         for c, d in self.traverse():
             if string in os.path.basename(c.name):
-                matches.append(line)
+                self.matches.append(line)
             line += 1
-        if matches:
-            self.curline = self.findnext(self.curline, matches)
-        return matches
+        if self.matches:
+            self.findnext()
 
-    def findnext(self, matches):
-        for m in range(len(matches)):
-            if self.curline == matches[len(matches) - 1]:
-                return matches[0]
-            elif self.curline < matches[m]:
-                return matches[m]
+    def findnext(self):
+        for m in range(len(self.matches)):
+            if self.curline == self.matches[len(self.matches) - 1]:
+                self.curline = self.matches[0]
+                break
+            elif self.curline < self.matches[m]:
+                self.curline = self.matches[m]
+                break
 
-    def findprev(self, matches):
-        for m in range(len(matches)):
-            if self.curline <= matches[m]:
-                return matches[m-1]
+    def findprev(self):
+        for m in range(len(self.matches)):
+            if self.curline <= self.matches[m]:
+                self.curline = self.matches[m-1]
+                break
 
     ###########################################################################
     #                         SIZE CALCULATING METHODS                        #
@@ -248,12 +252,61 @@ class Paths(Screen):
             except curses.error:
                 pass
 
-    def drawtree(self, action=None):
+    def process_parent(self):
+        if self.action == 'resize':
+            self.resize()
+        elif self.action == 'toggle_hidden':
+            self.toggle_hidden()
+        elif self.action == 'match':
+            self.globs = self.mktbfooter("Pick: ").strip().split()
+            if self.globs:
+                self.pick()
+        elif self.action == 'find':
+            string = self.mktbfooter("Find: ").strip()
+            if string:
+                self.find(string)
+        elif self.action == 'findnext':
+            self.findnext()
+        elif self.action == 'findprev':
+            self.findprev()
+        elif self.action == 'getsizeall':
+            self.getsize(sizeall=True)
+        elif self.action == 'pickall':
+            self.pick(pickall=True)
+
+    def process_child(self, c, d):
+        if self.action == 'expand':
+            c.expand()
+            self.color.default(c.name)
+        elif self.action == 'expand_all':
+            c.expand(recurse=True)
+            self.color.default(c.name)
+        elif self.action == 'toggle_expand':
+            c.expand(toggle=True)
+        elif self.action == 'collapse':
+            c.collapse(d)
+        elif self.action == 'collapse_all':
+            c.collapse(self, d, recurse=True)
+        elif self.action == 'toggle_pick':
+            c.pick()
+            self.color.default(c.name)
+        elif self.action == 'nextparent':
+            c.nextparent(self, d)
+            self.color.default(c.name)
+        elif self.action == 'prevparent':
+            c.prevparent(self, d)
+            self.color.default(c.name)
+        elif self.action == 'getsize':
+            c.getsize()
+            self.color.default(c.name)
+
+    def drawtree(self):
         '''
         Loop over the object, process path attribute sets, and drawlines based
         on their current contents.
         '''
         self.win.erase()
+        self.process_parent()
         line = 0
         for c, d in self.traverse():
             c.curline = self.curline
@@ -264,35 +317,8 @@ class Paths(Screen):
                 self.color.curline(c.name)
                 self.mkheader(c.name)
                 self.mkfooter(c.name, c.children)
-                if action == 'expand':
-                    c.expand()
-                    self.color.default(c.name)
-                elif action == 'expand_all':
-                    c.expand(recurse=True)
-                    self.color.default(c.name)
-                elif action == 'toggle_expand':
-                    c.expand(toggle=True)
-                elif action == 'collapse':
-                    c.collapse(d)
-                elif action == 'collapse_all':
-                    c.collapse(d, recurse=True)
-                elif action == 'toggle_pick':
-                    c.pick()
-                    self.color.default(c.name)
-                elif action == 'pickall':
-                    c.pick(pickall=True)
-                elif action == 'nextparent':
-                    c.nextparent(self, d)
-                    self.color.default(c.name)
-                elif action == 'prevparent':
-                    c.prevparent(self, d)
-                    self.color.default(c.name)
-                elif action == 'getsize':
-                    c.getsize()
-                    self.color.default(c.name)
-                elif action == 'getsizeall':
-                    c.getsize(sizeall=True)
-                action = None
+                self.process_child(c, d)
+                self.action = None
             else:
                 self.color.default(c.name)
             if fnmatch.filter(self.picked, c.name):
