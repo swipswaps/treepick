@@ -30,5 +30,7 @@ def pick(screen, root, hidden=True, relative=False, picked=[]):
                            picked=[], expanded=set([root]))
         elif parent.action == 'quit':
             return get_picked(relative, root, parent.picked)
-        line = parent.drawtree()
+        parent.process_parent()
+        line = parent.process_curline()
+        parent.drawtree()
         parent.action, parent.curline = keys.getkeys(parent.curline, line)

@@ -275,31 +275,35 @@ class Paths(Screen):
         elif self.action == 'pickall':
             self.pick(pickall=True)
 
-    def process_child(self, c, d):
-        if self.action == 'expand':
-            c.expand()
-            self.color.default(c.name)
-        elif self.action == 'expand_all':
-            c.expand(recurse=True)
-            self.color.default(c.name)
-        elif self.action == 'toggle_expand':
-            c.expand(toggle=True)
-        elif self.action == 'collapse':
-            c.collapse(d)
-        elif self.action == 'collapse_all':
-            c.collapse(self, d, recurse=True)
-        elif self.action == 'toggle_pick':
-            c.pick()
-            self.color.default(c.name)
-        elif self.action == 'nextparent':
-            c.nextparent(self, d)
-            self.color.default(c.name)
-        elif self.action == 'prevparent':
-            c.prevparent(self, d)
-            self.color.default(c.name)
-        elif self.action == 'getsize':
-            c.getsize()
-            self.color.default(c.name)
+    def process_curline(self):
+        line = 0
+        for child, depth in self.traverse():
+            child.curline = self.curline
+            if depth == 0:
+                continue
+            if line == self.curline:
+                if self.action == 'expand':
+                    child.expand()
+                elif self.action == 'expand_all':
+                    child.expand(recurse=True)
+                elif self.action == 'toggle_expand':
+                    child.expand(toggle=True)
+                elif self.action == 'collapse':
+                    child.collapse(depth)
+                elif self.action == 'collapse_all':
+                    child.collapse(self, depth, recurse=True)
+                elif self.action == 'toggle_pick':
+                    child.pick()
+                elif self.action == 'nextparent':
+                    child.nextparent(self, depth)
+                elif self.action == 'prevparent':
+                    child.prevparent(self, depth)
+                elif self.action == 'getsize':
+                    child.getsize()
+                self.action = None
+            self.curline = child.curline
+            line += 1
+        return line
 
     def drawtree(self):
         '''
@@ -307,30 +311,24 @@ class Paths(Screen):
         on their current contents.
         '''
         self.win.erase()
-        self.process_parent()
         line = 0
-        for c, d in self.traverse():
-            c.curline = self.curline
-            path = os.path.abspath(c.name)
-            if d == 0:
+        for child, depth in self.traverse():
+            child.curline = self.curline
+            if depth == 0:
                 continue
             if line == self.curline:
-                self.color.curline(c.name)
-                self.mkheader(c.name)
-                self.mkfooter(c.name, c.children)
-                self.process_child(c, d)
-                self.action = None
+                self.color.curline(child.name)
+                self.mkheader(child.name)
+                self.mkfooter(child.name, child.children)
             else:
-                self.color.default(c.name)
-            if fnmatch.filter(self.picked, c.name):
-                c.marked = True
-            if path in self.sized and not self.sized[path]:
-                self.sized[path] = " [" + du(c.name) + "]"
-            c.drawline(d, line, self.win)
-            self.curline = c.curline
+                self.color.default(child.name)
+            if fnmatch.filter(self.picked, child.name):
+                child.marked = True
+            if child.name in self.sized and not self.sized[child.name]:
+                self.sized[child.name] = " [" + du(child.name) + "]"
+            child.drawline(depth, line, self.win)
             line += 1
         self.win.refresh()
-        return line
 
     ###########################################################################
     #                    PATH OBJECT INSTANTIATION METHODS                    #
