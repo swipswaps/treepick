@@ -6,11 +6,10 @@ import curses
 import fnmatch
 
 from pdu import du
-from .screen import Screen
 from .actions import Actions
 
 
-class Paths(Actions, Screen):
+class Paths(Actions):
     def __init__(self,
                  screen,
                  name,
@@ -27,7 +26,7 @@ class Paths(Actions, Screen):
                          picked,
                          expanded,
                          sized)
-        Screen.__init__(self, screen, picked)
+        self.line = 0
 
     def process_parent(self):
         if self.action == 'resize':
@@ -79,7 +78,6 @@ class Paths(Actions, Screen):
                 self.action = None
             self.curline = child.curline
             line += 1
-        return line
 
     def getnode(self):
         if not os.path.isdir(self.name):
@@ -132,12 +130,12 @@ class Paths(Actions, Screen):
         on their current contents.
         '''
         self.win.erase()
-        line = 0
+        self.line = 0
         for child, depth in self.traverse():
             child.curline = self.curline
             if depth == 0:
                 continue
-            if line == self.curline:
+            if self.line == self.curline:
                 self.color.curline(child.name)
                 self.mkheader(child.name)
                 self.mkfooter(child.name, child.children)
@@ -147,10 +145,9 @@ class Paths(Actions, Screen):
                 child.marked = True
             if child.name in self.sized and not self.sized[child.name]:
                 self.sized[child.name] = " [" + du(child.name) + "]"
-            child.drawline(depth, line, self.win)
-            line += 1
+            child.drawline(depth, self.line, self.win)
+            self.line += 1
         self.win.refresh()
-        return line
 
     ###########################################################################
     #                    PATH OBJECT INSTANTIATION METHODS                    #

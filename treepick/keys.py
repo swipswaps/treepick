@@ -2,14 +2,28 @@
 # ISC License (ISCL) - see LICENSE file for details.
 
 import curses
-from .screen import Screen
+from .paths import Paths
 from os import environ
 environ.setdefault('ESCDELAY', '12')  # otherwise it takes an age!
 
 
-class Keys(Screen):
-    def __init__(self, screen, picked):
-        Screen.__init__(self, screen, picked)
+class Keys(Paths):
+    def __init__(self,
+                 screen,
+                 name,
+                 hidden,
+                 curline=0,
+                 picked=[],
+                 expanded=set(),
+                 sized=dict()):
+        Paths.__init__(self,
+                       screen,
+                       name,
+                       hidden,
+                       curline,
+                       picked,
+                       expanded,
+                       sized)
         self.ESC = 27
 
     def getpadkeys(self, lc):
@@ -40,46 +54,45 @@ class Keys(Screen):
         self.screen.erase()
         self.screen.refresh()
 
-    def getkeys(self, curline, line):
-        action = None
+    def getkeys(self):
         max_y, max_x = self.win.getmaxyx()
         ch = self.screen.getch()
         if ch == ord('q') or ch == self.ESC:
-            action = 'quit'
+            self.action = 'quit'
         elif ch == curses.KEY_F5 or ch == ord('r'):
-            action = 'reset'
+            self.action = 'reset'
         elif ch == ord('.'):
-            action = 'toggle_hidden'
+            self.action = 'toggle_hidden'
         elif ch == curses.KEY_RIGHT or ch == ord('l'):
-            action = 'expand'
+            self.action = 'expand'
         elif ch == curses.KEY_LEFT or ch == ord('h'):
-            action = 'collapse'
+            self.action = 'collapse'
         elif ch == curses.KEY_SRIGHT or ch == ord('L'):
-            action = 'expand_all'
+            self.action = 'expand_all'
         elif ch == curses.KEY_SLEFT or ch == ord('H'):
-            action = 'collapse_all'
+            self.action = 'collapse_all'
         elif ch == ord('\t') or ch == ord('\n'):
-            action = 'toggle_expand'
+            self.action = 'toggle_expand'
         elif ch == ord(' '):
-            action = 'toggle_pick'
+            self.action = 'toggle_pick'
         elif ch == ord('v'):
-            action = 'pickall'
+            self.action = 'pickall'
         elif ch == ord('J'):
-            action = 'nextparent'
+            self.action = 'nextparent'
         elif ch == ord('K'):
-            action = 'prevparent'
+            self.action = 'prevparent'
         elif ch == ord('s'):
-            action = 'getsize'
+            self.action = 'getsize'
         elif ch == ord('S'):
-            action = 'getsizeall'
+            self.action = 'getsizeall'
         elif ch == ord('/'):
-            action = 'find'
+            self.action = 'find'
         elif ch == ord('n'):
-            action = 'findnext'
+            self.action = 'findnext'
         elif ch == ord('N'):
-            action = 'findprev'
+            self.action = 'findprev'
         elif ch == ord(':'):
-            action = 'match'
+            self.action = 'match'
         elif ch == curses.KEY_F1 or ch == ord('?'):
             lc = self.mkkeypad()
             self.getpadkeys(lc)
@@ -87,24 +100,23 @@ class Keys(Screen):
             lc = self.mkpickpad()
             self.getpadkeys(lc)
         elif ch == curses.KEY_DOWN or ch == ord('j'):
-            curline += 1
+            self.curline += 1
         elif ch == curses.KEY_UP or ch == ord('k'):
-            curline -= 1
+            self.curline -= 1
         elif ch == curses.KEY_PPAGE or ch == ord('b'):
-            curline -= max_y
-            if curline < 0:
-                curline = 0
+            self.curline -= max_y
+            if self.curline < 0:
+                self.curline = 0
         elif ch == curses.KEY_NPAGE or ch == ord('f'):
-            curline += max_y
-            if curline >= line:
-                curline = line - 1
+            self.curline += max_y
+            if self.curline >= self.line:
+                self.curline = self.line - 1
         elif ch == curses.KEY_HOME or ch == ord('g'):
-            curline = 0
+            self.curline = 0
         elif ch == curses.KEY_END or ch == ord('G'):
-            curline = line - 1
+            self.curline = self.line - 1
         elif ch == ord('z'):
-            action = 'recenter'
+            self.action = 'recenter'
         elif ch == curses.KEY_RESIZE:
-            action = 'resize'
-        curline %= line
-        return action, curline
+            self.action = 'resize'
+        self.curline %= self.line

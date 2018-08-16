@@ -22,8 +22,7 @@ def get_picked(relative, root, picked):
 
 def pick(screen, root, hidden=True, relative=False, picked=[]):
     picked = [root + p for p in picked]
-    keys = Keys(screen, picked)
-    parent = Paths(screen, root, hidden, picked=picked, expanded=set([root]))
+    parent = Keys(screen, root, hidden, picked=picked, expanded=set([root]))
     while True:
         if parent.action == 'reset':
             parent = Paths(screen, root, hidden,
@@ -31,6 +30,6 @@ def pick(screen, root, hidden=True, relative=False, picked=[]):
         elif parent.action == 'quit':
             return get_picked(relative, root, parent.picked)
         parent.process_parent()
-        line = parent.process_curline()
+        parent.process_curline()
         parent.drawtree()
-        parent.action, parent.curline = keys.getkeys(parent.curline, line)
+        parent.getkeys()

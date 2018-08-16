@@ -4,8 +4,10 @@
 import os
 import fnmatch
 
+from .screen import Screen
 
-class Actions():
+
+class Actions(Screen):
     def __init__(self,
                  screen,
                  name,
@@ -26,6 +28,7 @@ class Actions():
         self.curline = curline
         self.action = None
         self.globs, self.matches = (None,)*2
+        Screen.__init__(self, screen, picked)
 
     ###########################################################################
     #                          SHOW OR HIDE DOTFILES                          #
