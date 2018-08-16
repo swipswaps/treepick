@@ -144,7 +144,7 @@ class Paths(Screen):
 
     def prevparent(self, parent, depth):
         '''
-        Subtract lines from our self.curline if the name of a node is prefixed with
+        Subtract lines from our curline if the name of a node is prefixed with
         the parent directory when traversing the grandparent object.
         '''
         pdir = os.path.dirname(self.name)
