@@ -32,6 +32,7 @@ class Paths(Screen):
 
     def toggle_hidden(self):
         self.paths = None
+        self.action = None
 
         if self.hidden:
             # keep two copies of record so we can restore from state when
