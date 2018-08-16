@@ -10,14 +10,7 @@ from .screen import Screen
 
 
 class Draw(Screen):
-    def __init__(self,
-                 screen,
-                 name,
-                 hidden,
-                 curline=0,
-                 picked=[],
-                 expanded=set(),
-                 sized=dict()):
+    def __init__(self, screen, picked):
         Screen.__init__(self, screen, picked)
         self.line = 0
 

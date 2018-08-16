@@ -13,14 +13,7 @@ class Process(Draw):
                  picked=[],
                  expanded=set(),
                  sized=dict()):
-        Draw.__init__(self,
-                      screen,
-                      name,
-                      hidden,
-                      curline,
-                      picked,
-                      expanded,
-                      sized)
+        Draw.__init__(self, screen, picked)
         self.name = name
         self.hidden = hidden
         self.picked = picked
