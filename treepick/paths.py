@@ -28,7 +28,6 @@ class Paths(Actions, Screen):
                          expanded,
                          sized)
         Screen.__init__(self, screen, picked)
-        self.action, self.paths = (None,)*2
 
     def process_parent(self):
         if self.action == 'resize':

@@ -19,10 +19,12 @@ class Actions():
         self.picked = picked
         self.expanded = expanded
         self.sized = sized
+        self.paths = None
         self.marked = False
         self.children = self.getchildren()
         self.lastpath, self.lasthidden = (None,)*2
         self.curline = curline
+        self.action = None
         self.globs, self.matches = (None,)*2
 
     ###########################################################################
@@ -30,6 +32,9 @@ class Actions():
     ###########################################################################
 
     def toggle_hidden(self):
+        self.paths = None
+        self.action = None
+
         if self.hidden:
             # keep two copies of record so we can restore from state when
             # re-hiding
@@ -39,6 +44,8 @@ class Actions():
             # keep two copies of record so we can restore from state
             self.lasthidden = self.children[self.curline]
             self.hidden = True
+
+        self.drawtree()
 
         if self.lasthidden in self.children:
             self.curline = self.children.index(self.lasthidden)
