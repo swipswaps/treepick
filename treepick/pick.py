@@ -4,7 +4,6 @@
 import os
 import cgitb
 from .paths import Paths
-from .keys import Keys
 
 # Get more detailed traceback reports
 cgitb.enable(format="text")  # https://pymotw.com/2/cgitb/
@@ -22,7 +21,7 @@ def get_picked(relative, root, picked):
 
 def pick(screen, root, hidden=True, relative=False, picked=[]):
     picked = [root + p for p in picked]
-    parent = Keys(screen, root, hidden, picked=picked, expanded=set([root]))
+    parent = Paths(screen, root, hidden, picked=picked, expanded=set([root]))
     while True:
         if parent.action == 'reset':
             parent = Paths(screen, root, hidden,

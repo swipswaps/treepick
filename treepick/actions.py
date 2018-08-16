@@ -4,10 +4,10 @@
 import os
 import fnmatch
 
-from .screen import Screen
+from .process import Process
 
 
-class Actions(Screen):
+class Actions(Process):
     def __init__(self,
                  screen,
                  name,
@@ -16,19 +16,14 @@ class Actions(Screen):
                  picked=[],
                  expanded=set(),
                  sized=dict()):
-        self.name = name
-        self.hidden = hidden
-        self.picked = picked
-        self.expanded = expanded
-        self.sized = sized
-        self.paths = None
-        self.marked = False
-        self.children = self.getchildren()
-        self.lastpath, self.lasthidden = (None,)*2
-        self.curline = curline
-        self.action = None
-        self.globs, self.matches = (None,)*2
-        Screen.__init__(self, screen, picked)
+        Process.__init__(self,
+                         screen,
+                         name,
+                         hidden,
+                         curline,
+                         picked,
+                         expanded,
+                         sized)
 
     ###########################################################################
     #                          SHOW OR HIDE DOTFILES                          #

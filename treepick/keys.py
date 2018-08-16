@@ -2,12 +2,12 @@
 # ISC License (ISCL) - see LICENSE file for details.
 
 import curses
-from .paths import Paths
+from .actions import Actions
 from os import environ
 environ.setdefault('ESCDELAY', '12')  # otherwise it takes an age!
 
 
-class Keys(Paths):
+class Keys(Actions):
     def __init__(self,
                  screen,
                  name,
@@ -16,14 +16,14 @@ class Keys(Paths):
                  picked=[],
                  expanded=set(),
                  sized=dict()):
-        Paths.__init__(self,
-                       screen,
-                       name,
-                       hidden,
-                       curline,
-                       picked,
-                       expanded,
-                       sized)
+        Actions.__init__(self,
+                         screen,
+                         name,
+                         hidden,
+                         curline,
+                         picked,
+                         expanded,
+                         sized)
         self.ESC = 27
 
     def getpadkeys(self, lc):
