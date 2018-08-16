@@ -27,10 +27,6 @@ class Paths(Keys):
                       expanded,
                       sized)
 
-    ###########################################################################
-    #                    PATH OBJECT INSTANTIATION METHODS                    #
-    ###########################################################################
-
     def listdir(self, path):
         '''
         Return a list of all non dotfiles in a given directory.

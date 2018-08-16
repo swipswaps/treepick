@@ -24,6 +24,7 @@ class Actions(Process):
                          picked,
                          expanded,
                          sized)
+        self.lastpath, self.lasthidden = (None,)*2
 
     ###########################################################################
     #                          SHOW OR HIDE DOTFILES                          #

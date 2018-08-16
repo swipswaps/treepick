@@ -29,7 +29,6 @@ class Process(Draw):
         self.paths = None
         self.marked = False
         self.children = self.getchildren()
-        self.lastpath, self.lasthidden = (None,)*2
         self.curline = curline
         self.action = None
         self.globs, self.matches = (None,)*2
