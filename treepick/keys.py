@@ -2,12 +2,12 @@
 # ISC License (ISCL) - see LICENSE file for details.
 
 import curses
-from .actions import Actions
+from .process import Process
 from os import environ
 environ.setdefault('ESCDELAY', '12')  # otherwise it takes an age!
 
 
-class Keys(Actions):
+class Keys(Process):
     def __init__(self,
                  screen,
                  name,
@@ -16,7 +16,7 @@ class Keys(Actions):
                  picked=[],
                  expanded=set(),
                  sized=dict()):
-        Actions.__init__(self,
+        Process.__init__(self,
                          screen,
                          name,
                          hidden,

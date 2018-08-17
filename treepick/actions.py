@@ -4,10 +4,10 @@
 import os
 import fnmatch
 
-from .process import Process
+from .draw import Draw
 
 
-class Actions(Process):
+class Actions(Draw):
     def __init__(self,
                  screen,
                  name,
@@ -16,14 +16,18 @@ class Actions(Process):
                  picked=[],
                  expanded=set(),
                  sized=dict()):
-        Process.__init__(self,
-                         screen,
-                         name,
-                         hidden,
-                         curline,
-                         picked,
-                         expanded,
-                         sized)
+        Draw.__init__(self, screen, picked)
+        self.name = name
+        self.hidden = hidden
+        self.picked = picked
+        self.expanded = expanded
+        self.sized = sized
+        self.paths = None
+        self.marked = False
+        self.children = self.getchildren()
+        self.curline = curline
+        self.action = None
+        self.globs, self.matches = (None,)*2
         self.lastpath, self.lasthidden = (None,)*2
 
     ###########################################################################

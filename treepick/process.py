@@ -1,10 +1,10 @@
 # Copyright (c) 2018, Toby Slight. All rights reserved.
 # ISC License (ISCL) - see LICENSE file for details.
 
-from .draw import Draw
+from .actions import Actions
 
 
-class Process(Draw):
+class Process(Actions):
     def __init__(self,
                  screen,
                  name,
@@ -13,18 +13,14 @@ class Process(Draw):
                  picked=[],
                  expanded=set(),
                  sized=dict()):
-        Draw.__init__(self, screen, picked)
-        self.name = name
-        self.hidden = hidden
-        self.picked = picked
-        self.expanded = expanded
-        self.sized = sized
-        self.paths = None
-        self.marked = False
-        self.children = self.getchildren()
-        self.curline = curline
-        self.action = None
-        self.globs, self.matches = (None,)*2
+        Actions.__init__(self,
+                         screen,
+                         name,
+                         hidden,
+                         curline,
+                         picked,
+                         expanded,
+                         sized)
 
     def process_parent(self):
         if self.action == 'resize':
