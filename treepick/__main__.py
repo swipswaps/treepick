@@ -50,18 +50,11 @@ def get_picked(relative, root, picked):
 def pick(screen, root, hidden=True, relative=False, picked=[]):
     picked = [root + p for p in picked]
     parent = Paths(screen, root, hidden, picked=picked, expanded=set([root]))
-    while True:
-        if parent.action == 'reset':
-            parent = Paths(screen, root, hidden,
-                           picked=[], expanded=set([root]))
-        elif parent.action == 'quit':
-            return get_picked(relative, root, parent.picked)
-        parent.parsekeys()
-        parent.drawtree()
-        parent.getkeys()
+    picked = parent.getkeys()
+    return get_picked(relative, root, picked)
 
 
-def main():
+def main(picked=[]):
     args = getargs()
     root = os.path.abspath(os.path.expanduser(args.path))
     hidden = args.hidden

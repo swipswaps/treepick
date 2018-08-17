@@ -21,7 +21,6 @@ class Actions(Draw):
         self.picked = picked
         self.expanded = expanded
         self.sized = sized
-        self.action = None
         self.globs, self.matches = (None,)*2
         self.lastpath, self.lasthidden = (None,)*2
 
@@ -31,7 +30,6 @@ class Actions(Draw):
 
     def toggle_hidden(self):
         self.paths = None
-        self.action = None
 
         if self.hidden:
             # keep two copies of record so we can restore from state when

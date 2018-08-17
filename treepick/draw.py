@@ -16,7 +16,6 @@ class Draw(Screen):
         self.curline = 0
         self.line = 0
         self.marked = False
-        self.color = Color(self.win, self.picked)
 
     def getnode(self):
         if not os.path.isdir(self.name):
