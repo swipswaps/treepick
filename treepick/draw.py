@@ -7,7 +7,6 @@ import fnmatch
 
 from pdu import du
 from .screen import Screen
-from .color import Color
 
 
 class Draw(Screen):
