@@ -12,7 +12,6 @@ class Actions(Draw):
                  screen,
                  name,
                  hidden,
-                 curline=0,
                  picked=[],
                  expanded=set(),
                  sized=dict()):
@@ -22,10 +21,6 @@ class Actions(Draw):
         self.picked = picked
         self.expanded = expanded
         self.sized = sized
-        self.paths = None
-        self.marked = False
-        self.children = self.getchildren()
-        self.curline = curline
         self.action = None
         self.globs, self.matches = (None,)*2
         self.lastpath, self.lasthidden = (None,)*2

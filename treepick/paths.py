@@ -5,7 +5,6 @@ import os
 import curses
 import fnmatch
 
-from pdu import du
 from .keys import Keys
 
 
@@ -14,7 +13,6 @@ class Paths(Keys):
                  screen,
                  name,
                  hidden,
-                 curline=0,
                  picked=[],
                  expanded=set(),
                  sized=dict()):
@@ -22,10 +20,11 @@ class Paths(Keys):
                       screen,
                       name,
                       hidden,
-                      curline,
                       picked,
                       expanded,
                       sized)
+        self.paths = None
+        self.children = self.getchildren()
 
     def listdir(self, path):
         '''
@@ -44,11 +43,9 @@ class Paths(Keys):
             if self.hidden:
                 return [os.path.join(self.name, child)
                         for child in sorted(self.listdir(self.name))]
-                # return sorted(self.listdir(self.name))
             else:
                 return [os.path.join(self.name, child)
                         for child in sorted(os.listdir(self.name))]
-                # return sorted(os.listdir(self.name))
         except OSError:
             return None  # probably permission denied
 
@@ -57,14 +54,12 @@ class Paths(Keys):
         If we have children, use a list comprehension to instantiate new paths
         objects to traverse.
         '''
-        self.children = self.getchildren()
         if self.children is None:
             return
         if self.paths is None:
             self.paths = [Paths(self.screen,
                                 os.path.join(self.name, child),
                                 self.hidden,
-                                self.curline,
                                 self.picked,
                                 self.expanded,
                                 self.sized)
@@ -77,6 +72,6 @@ class Paths(Keys):
         '''
         yield self, 0
         if self.name in self.expanded:
-            for child in self.getpaths():
-                for c, depth in child.traverse():
-                    yield c, depth + 1
+            for path in self.getpaths():
+                for child, depth in path.traverse():
+                    yield child, depth + 1

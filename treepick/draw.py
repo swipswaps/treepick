@@ -7,12 +7,16 @@ import fnmatch
 
 from pdu import du
 from .screen import Screen
+from .color import Color
 
 
 class Draw(Screen):
     def __init__(self, screen, picked):
         Screen.__init__(self, screen, picked)
+        self.curline = 0
         self.line = 0
+        self.marked = False
+        self.color = Color(self.win, self.picked)
 
     def getnode(self):
         if not os.path.isdir(self.name):

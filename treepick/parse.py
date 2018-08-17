@@ -4,12 +4,11 @@
 from .actions import Actions
 
 
-class Process(Actions):
+class Parse(Actions):
     def __init__(self,
                  screen,
                  name,
                  hidden,
-                 curline=0,
                  picked=[],
                  expanded=set(),
                  sized=dict()):
@@ -17,22 +16,21 @@ class Process(Actions):
                          screen,
                          name,
                          hidden,
-                         curline,
                          picked,
                          expanded,
                          sized)
 
-    def process_parent(self):
+    def parse_parent(self):
         if self.action == 'resize':
             self.resize()
         elif self.action == 'toggle_hidden':
             self.toggle_hidden()
         elif self.action == 'match':
-            self.globs = self.mktbfooter("Pick: ").strip().split()
+            self.globs = self.mktb("Pick: ").strip().split()
             if self.globs:
                 self.pick()
         elif self.action == 'find':
-            string = self.mktbfooter("Find: ").strip()
+            string = self.mktb("Find: ").strip()
             if string:
                 self.find(string)
         elif self.action == 'findnext':
@@ -43,8 +41,10 @@ class Process(Actions):
             self.getsize(sizeall=True)
         elif self.action == 'pickall':
             self.pick(pickall=True)
+        elif self.action == 'reset_picked':
+            self.picked = []
 
-    def process_curline(self):
+    def parse_curline(self):
         line = 0
         for child, depth in self.traverse():
             child.curline = self.curline
@@ -72,3 +72,7 @@ class Process(Actions):
                 self.action = None
             self.curline = child.curline
             line += 1
+
+    def parsekeys(self):
+        self.parse_parent()
+        self.parse_curline()

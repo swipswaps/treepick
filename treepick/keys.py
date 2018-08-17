@@ -2,28 +2,26 @@
 # ISC License (ISCL) - see LICENSE file for details.
 
 import curses
-from .process import Process
+from .parse import Parse
 from os import environ
 environ.setdefault('ESCDELAY', '12')  # otherwise it takes an age!
 
 
-class Keys(Process):
+class Keys(Parse):
     def __init__(self,
                  screen,
                  name,
                  hidden,
-                 curline=0,
                  picked=[],
                  expanded=set(),
                  sized=dict()):
-        Process.__init__(self,
-                         screen,
-                         name,
-                         hidden,
-                         curline,
-                         picked,
-                         expanded,
-                         sized)
+        Parse.__init__(self,
+                       screen,
+                       name,
+                       hidden,
+                       picked,
+                       expanded,
+                       sized)
         self.ESC = 27
 
     def getpadkeys(self, lc):
@@ -59,8 +57,10 @@ class Keys(Process):
         ch = self.screen.getch()
         if ch == ord('q') or ch == self.ESC:
             self.action = 'quit'
-        elif ch == curses.KEY_F5 or ch == ord('r'):
+        elif ch == curses.KEY_F5 or ch == ord('R'):
             self.action = 'reset'
+        elif ch == ord('r'):
+            self.action = 'reset_picked'
         elif ch == ord('.'):
             self.action = 'toggle_hidden'
         elif ch == curses.KEY_RIGHT or ch == ord('l'):

@@ -4,4 +4,3 @@
 name = "treepick"
 from .paths import Paths
 from .color import Color
-from .pick import pick

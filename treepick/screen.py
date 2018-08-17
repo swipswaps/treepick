@@ -7,6 +7,7 @@ import grp
 import os
 import pwd
 import socket
+
 from .color import Color
 
 
@@ -90,7 +91,7 @@ class Screen:
             pass
         self.footer.refresh()
 
-    def mktbfooter(self, prompt):
+    def mktb(self, prompt):
         from curses.textpad import Textbox
         length = len(prompt)
         self.footer.erase()
