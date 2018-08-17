@@ -23,6 +23,13 @@ def pick(screen, root, hidden=True, relative=False, picked=[]):
     picked = [root + p for p in picked]
     parent = Paths(screen, root, hidden, picked=picked, expanded=set([root]))
     while True:
+        # TODO: Get to the following point:
+        # parent.getkeys()
+        # parent.parsekey()
+        # if parent.action == 'quit':
+        #     return parent.picked
+        # parent.drawtree
+
         if parent.action == 'reset':
             parent = Paths(screen, root, hidden,
                            picked=[], expanded=set([root]))
