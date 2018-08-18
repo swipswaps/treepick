@@ -54,6 +54,7 @@ class Paths(Keys):
         If we have children, use a list comprehension to instantiate new paths
         objects to traverse.
         '''
+        self.children = self.getchildren()
         if self.children is None:
             return
         if self.paths is None:
