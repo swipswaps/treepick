@@ -18,7 +18,6 @@ class Actions(Draw):
         Draw.__init__(self, screen, picked)
         self.name = name
         self.hidden = hidden
-        self.picked = picked
         self.expanded = expanded
         self.sized = sized
         self.globs, self.matches = (None,)*2
