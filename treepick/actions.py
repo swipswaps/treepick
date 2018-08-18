@@ -23,10 +23,6 @@ class Actions(Draw):
         self.globs, self.matches = (None,)*2
         self.lastpath, self.lasthidden = (None,)*2
 
-    ###########################################################################
-    #                          SHOW OR HIDE DOTFILES                          #
-    ###########################################################################
-
     def toggle_hidden(self):
         self.paths = None
 
@@ -46,10 +42,6 @@ class Actions(Draw):
             self.curline = self.children.index(self.lasthidden)
         elif self.lastpath in self.children:
             self.curline = self.children.index(self.lastpath)
-
-    ###########################################################################
-    #                       EXPAND AND COLLAPSE METHODS                       #
-    ###########################################################################
 
     def expand(self, recurse=False, toggle=False):
         if os.path.isdir(self.name) and self.children and recurse:
@@ -83,10 +75,6 @@ class Actions(Draw):
             p = self.prevparent(depth)
             self.expanded.remove(p)
 
-    ###########################################################################
-    #                              PICKING NODES                              #
-    ###########################################################################
-
     def pick(self, pickall=False):
         if pickall:
             for c, d in self.traverse():
@@ -111,10 +99,6 @@ class Actions(Draw):
             else:
                 self.picked.append(self.name)
             self.curline += 1
-
-    ###########################################################################
-    #                           LINE JUMPING METHODS                          #
-    ###########################################################################
 
     def nextparent(self, parent, depth):
         '''
@@ -187,10 +171,6 @@ class Actions(Draw):
             if self.curline <= self.matches[m]:
                 self.curline = self.matches[m-1]
                 break
-
-    ###########################################################################
-    #                         SIZE CALCULATING METHODS                        #
-    ###########################################################################
 
     def getsize(self, sizeall=False):
         if sizeall:

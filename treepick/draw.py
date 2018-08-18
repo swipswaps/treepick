@@ -12,6 +12,7 @@ from .screen import Screen
 class Draw(Screen):
     def __init__(self, screen, picked):
         Screen.__init__(self, screen, picked)
+        self.picked = picked
         self.curline = 0
         self.line = 0
 
