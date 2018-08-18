@@ -90,7 +90,7 @@ class Keys(Actions):
                 return self.picked
             elif ch == curses.KEY_F5 or ch == ord('R'):
                 self.picked = []
-                self.expanded = ()
+                self.expanded = ([self.name])
                 self.sized = {}
             elif ch == ord('r'):
                 self.picked = []

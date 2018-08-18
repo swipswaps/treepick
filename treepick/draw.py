@@ -14,7 +14,6 @@ class Draw(Screen):
         Screen.__init__(self, screen, picked)
         self.curline = 0
         self.line = 0
-        self.marked = False
 
     def getnode(self):
         if not os.path.isdir(self.name):
@@ -78,8 +77,6 @@ class Draw(Screen):
                 self.mkfooter(child.name, child.children)
             else:
                 self.color.default(child.name)
-            if fnmatch.filter(self.picked, child.name):
-                child.marked = True
             if child.name in self.sized and not self.sized[child.name]:
                 self.sized[child.name] = " [" + du(child.name) + "]"
             child.drawline(depth, self.line, self.win)
