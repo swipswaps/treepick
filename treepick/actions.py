@@ -15,11 +15,9 @@ class Actions(Draw):
                  picked=[],
                  expanded=set(),
                  sized=dict()):
-        Draw.__init__(self, screen, picked)
+        Draw.__init__(self, screen, picked, expanded, sized)
         self.name = name
         self.hidden = hidden
-        self.expanded = expanded
-        self.sized = sized
         self.globs, self.matches = (None,)*2
         self.lastpath, self.lasthidden = (None,)*2
 

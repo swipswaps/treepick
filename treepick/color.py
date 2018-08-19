@@ -7,9 +7,8 @@ import os
 
 
 class Color:
-    def __init__(self, stdscr, picked=set()):
-        self.scr = stdscr
-        self.picked = picked
+    def __init__(self, screen):
+        self.screen = screen
         curses.init_pair(1, curses.COLOR_RED, curses.COLOR_BLACK)
         curses.init_pair(2, curses.COLOR_GREEN, curses.COLOR_BLACK)
         curses.init_pair(3, curses.COLOR_YELLOW, curses.COLOR_BLACK)
@@ -24,38 +23,38 @@ class Color:
         curses.init_pair(12, curses.COLOR_CYAN, curses.COLOR_WHITE)
 
     def reset(self):
-        self.scr.attrset(curses.color_pair(0))
+        self.screen.attrset(curses.color_pair(0))
 
     def white_blue(self):
-        self.scr.attrset(curses.color_pair(
+        self.screen.attrset(curses.color_pair(
             10) | curses.A_BOLD | curses.A_REVERSE)
 
     def blue_black(self):
-        self.scr.attrset(curses.color_pair(4) | curses.A_BOLD)
+        self.screen.attrset(curses.color_pair(4) | curses.A_BOLD)
 
     def yellow_black(self):
-        self.scr.attrset(curses.color_pair(3))
+        self.screen.attrset(curses.color_pair(3))
 
     def black_yellow(self):
-        self.scr.attrset(curses.color_pair(3) | curses.A_REVERSE)
+        self.screen.attrset(curses.color_pair(3) | curses.A_REVERSE)
 
-    def curline(self, path):
+    def curline(self, path, picked):
         # can't use "in", as we have to catch all descendants.
         self.white_blue()
-        for p in self.picked:
+        for p in picked:
             if (p == path or
                 path.startswith(p + os.sep) or
                     fnmatch.fnmatch(path, p) or
                     fnmatch.fnmatch(os.path.basename(path), p)):
                 self.black_yellow()
 
-    def default(self, path):
+    def default(self, path, picked):
         # can't use "in", as we have to catch all descendants.
         if os.path.isdir(path):
             self.blue_black()
         else:
             self.reset()
-        for p in self.picked:
+        for p in picked:
             if (p == path or
                 path.startswith(p + os.sep) or
                     fnmatch.fnmatch(path, p) or

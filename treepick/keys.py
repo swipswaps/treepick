@@ -89,8 +89,9 @@ class Keys(Actions):
             if ch == ord('q') or ch == self.ESC:
                 return self.picked
             elif ch == curses.KEY_F5 or ch == ord('R'):
+                self.curline = 0
                 self.picked = []
-                self.expanded = ([self.name])
+                self.expanded = set([self.name])
                 self.sized = {}
             elif ch == ord('r'):
                 self.picked = []

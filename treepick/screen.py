@@ -25,7 +25,7 @@ class Screen:
         self.footer.refresh()
         self.header.refresh()
         self.picked = picked
-        self.color = Color(self.win, self.picked)
+        self.color = Color(self.win)
 
     def resize(self, lc=None):
         self.screen.erase()

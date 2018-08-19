@@ -10,9 +10,10 @@ from .screen import Screen
 
 
 class Draw(Screen):
-    def __init__(self, screen, picked):
+    def __init__(self, screen, picked, expanded, sized):
         Screen.__init__(self, screen, picked)
-        self.picked = picked
+        self.expanded = expanded
+        self.sized = sized
         self.curline = 0
         self.line = 0
 
@@ -70,14 +71,17 @@ class Draw(Screen):
         self.line = 0
         for child, depth in self.traverse():
             child.curline = self.curline
+            child.picked = self.picked
+            child.expanded = self.expanded
+            child.sized = self.sized
             if depth == 0:
                 continue
             if self.line == self.curline:
-                self.color.curline(child.name)
+                self.color.curline(child.name, child.picked)
                 self.mkheader(child.name)
                 self.mkfooter(child.name, child.children)
             else:
-                self.color.default(child.name)
+                self.color.default(child.name, child.picked)
             if child.name in self.sized and not self.sized[child.name]:
                 self.sized[child.name] = " [" + du(child.name) + "]"
             child.drawline(depth, self.line, self.win)
