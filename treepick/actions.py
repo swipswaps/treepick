@@ -21,6 +21,9 @@ class Actions(Draw):
         self.globs, self.matches = (None,)*2
         self.lastpath, self.lasthidden = (None,)*2
 
+    def quit(self):
+        return True
+
     def reset_all(self):
         self.picked = []
         self.expanded = set([self.name])

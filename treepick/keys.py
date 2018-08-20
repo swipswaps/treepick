@@ -78,8 +78,8 @@ class Keys(Actions):
             self.drawtree()
             key = self.screen.getch()
             keys = {
-                ord('q'): 'break',
-                self.ESC: 'break',
+                ord('q'): self.quit,
+                self.ESC: self.quit,
                 curses.KEY_F5: self.reset_all,
                 ord('R'): self.reset_all,
                 curses.KEY_F4: self.reset_picked,
@@ -122,5 +122,7 @@ class Keys(Actions):
                 curses.KEY_END: self.bottom,
                 ord('G'): self.bottom,
                 curses.KEY_RESIZE: self.resize,
-            }[key]()
+            }
+            if keys[key]():
+                return self.picked
             self.curline %= self.line
