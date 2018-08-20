@@ -145,7 +145,8 @@ class Screen:
             .                 : Toggle display of dotfiles.
             s                 : Display total size of path, recursively
             S                 : Display totol size of all expanded paths.
-            F5, r             : Reset marking and expansion.
+            F4, r             : Reset picked paths.
+            F5, R             : Reset picked paths, expansion and size display.
             F1, ?             : View this help page.
             q, ESC            : Quit and display all marked paths.
             '''

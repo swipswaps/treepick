@@ -78,8 +78,7 @@ class Draw(Screen):
                 continue
             if self.line == self.curline:
                 self.color.curline(child.name, child.picked)
-                self.mkheader(child.name)
-                self.mkfooter(child.name, child.children)
+                children = child.children
             else:
                 self.color.default(child.name, child.picked)
             if child.name in self.sized and not self.sized[child.name]:
@@ -87,3 +86,5 @@ class Draw(Screen):
             child.drawline(depth, self.line, self.win)
             self.line += 1
         self.win.refresh()
+        self.mkheader(self.children[self.curline])
+        self.mkfooter(self.children[self.curline], children)

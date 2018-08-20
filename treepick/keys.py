@@ -93,7 +93,7 @@ class Keys(Actions):
                 self.picked = []
                 self.expanded = set([self.name])
                 self.sized = {}
-            elif ch == ord('r'):
+            elif ch == curses.KEY_F4 or ch == ord('r'):
                 self.picked = []
             elif ch == ord('.'):
                 self.toggle_hidden()
