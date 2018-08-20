@@ -66,7 +66,7 @@ class Keys(Actions):
                 elif action == 'toggle_expand':
                     child.expand(toggle=True)
                 elif action == 'collapse':
-                    child.collapse(depth)
+                    child.collapse(self, depth)
                 elif action == 'collapse_all':
                     child.collapse(self, depth, recurse=True)
                 elif action == 'toggle_pick':
