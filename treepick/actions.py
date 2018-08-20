@@ -116,7 +116,7 @@ class Actions(Draw):
             for c, d in parent.traverse():
                 if line > self.curline:
                     self.curline += 1
-                    if os.path.isdir(c.name) and c.name in self.children[0:]:
+                    if os.path.isdir(c.name) and c.name in parent.children[0:]:
                         break
                 line += 1
 
@@ -140,7 +140,7 @@ class Actions(Draw):
             for c, d in parent.traverse():
                 if c.name == self.name:
                     break
-                if os.path.isdir(c.name) and c.name in self.children[0:]:
+                if os.path.isdir(c.name) and c.name in parent.children[0:]:
                     self.curline = line
                 line += 1
         return pdir
