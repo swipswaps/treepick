@@ -21,6 +21,36 @@ class Actions(Draw):
         self.globs, self.matches = (None,)*2
         self.lastpath, self.lasthidden = (None,)*2
 
+    def reset_all(self):
+        self.picked = []
+        self.expanded = set([self.name])
+        self.sized = {}
+
+    def reset_picked(self):
+        self.picked = []
+
+    def dn(self):
+        self.curline += 1
+
+    def up(self):
+        self.curline -= 1
+
+    def pgdn(self):
+        self.curline += self.y
+        if self.curline >= self.line:
+            self.curline = self.line - 1
+
+    def pgup(self):
+        self.curline -= self.y
+        if self.curline < 0:
+            self.curline = 0
+
+    def top(self):
+        self.curline = 0
+
+    def bottom(self):
+        self.curline = self.line - 1
+
     def toggle_hidden(self):
         self.paths = None
 
@@ -73,7 +103,7 @@ class Actions(Draw):
             p = self.prevparent(depth)
             self.expanded.remove(p)
 
-    def pick(self, pickall=False):
+    def pick(self, pickall=False, globs=False):
         if pickall:
             for c, d in self.traverse():
                 if d == 0:
@@ -82,15 +112,17 @@ class Actions(Draw):
                     self.picked.remove(c.name)
                 else:
                     self.picked.append(c.name)
-        elif self.globs:
-            for c, d in self.traverse():
-                for g in self.globs:
-                    if (fnmatch.fnmatch(c.name, g) or
-                            fnmatch.fnmatch(os.path.basename(c.name), g)):
-                        if c.name in self.picked:
-                            self.picked.remove(c.name)
-                        else:
-                            self.picked.append(c.name)
+        elif globs:
+            self.globs = self.mktb("Pick: ").strip().split()
+            if self.globs:
+                for c, d in self.traverse():
+                    for g in self.globs:
+                        if (fnmatch.fnmatch(c.name, g) or
+                                fnmatch.fnmatch(os.path.basename(c.name), g)):
+                            if c.name in self.picked:
+                                self.picked.remove(c.name)
+                            else:
+                                self.picked.append(c.name)
         else:
             if self.name in self.picked:
                 self.picked.remove(self.name)
@@ -145,15 +177,17 @@ class Actions(Draw):
                 line += 1
         return pdir
 
-    def find(self, string):
-        self.matches = []
-        line = -1
-        for c, d in self.traverse():
-            if string in os.path.basename(c.name):
-                self.matches.append(line)
-            line += 1
-        if self.matches:
-            self.findnext()
+    def find(self):
+        string = self.mktb("Find: ").strip()
+        if string:
+            self.matches = []
+            line = -1
+            for c, d in self.traverse():
+                if string in os.path.basename(c.name):
+                    self.matches.append(line)
+                line += 1
+            if self.matches:
+                self.findnext()
 
     def findnext(self):
         for m in range(len(self.matches)):
