@@ -46,7 +46,7 @@ class Keys(Actions):
                     pos = 0
             elif (ch == curses.KEY_RESIZE):
                 self.resize(lc)
-            elif ch == ord('q') or ch == 27:
+            elif ch == ord('q') or ch == self.ESC:
                 break
             self.pad.refresh(pos, 0, 0, 0, self.y - 2, self.x - 1)
         self.screen.erase()
