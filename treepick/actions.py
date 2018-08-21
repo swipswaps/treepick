@@ -139,19 +139,22 @@ class Actions(Draw):
         and once we reach our current line counting every line that is prefixed
         with the parent directory.
         '''
-        pdir = os.path.dirname(self.name)
         if depth > 1:  # can't jump to parent of root node!
-            line = 0
+            pdir = os.path.dirname(self.name)
+            pidx = parent.children.index(pdir)
+            line = -1
             for c, d in parent.traverse():
-                if line > self.curline and c.name.startswith(pdir + os.sep):
-                    self.curline += 1
+                if line > parent.curline:
+                    parent.curline += 1
+                if c.name == parent.children[pidx + 1]:
+                    break
                 line += 1
         else:  # otherwise just skip to next directory
             line = -1  # skip hidden parent node
             for c, d in parent.traverse():
-                if line > self.curline:
-                    self.curline += 1
-                    if os.path.isdir(c.name) and c.name in parent.children[self.curline:]:
+                if line > parent.curline:
+                    parent.curline += 1
+                    if os.path.isdir(c.name) and c.name in parent.children[0:]:
                         break
                 line += 1
 
@@ -166,7 +169,7 @@ class Actions(Draw):
                 if c.name == self.name:
                     break
                 if c.name.startswith(pdir):
-                    self.curline -= 1
+                    parent.curline -= 1
         else:  # otherwise jus skip to previous directory
             pdir = self.name
             # - 1 otherwise hidden parent node throws count off & our
@@ -176,7 +179,7 @@ class Actions(Draw):
                 if c.name == self.name:
                     break
                 if os.path.isdir(c.name) and c.name in parent.children[0:]:
-                    self.curline = line
+                    parent.curline = line
                 line += 1
         return pdir
 

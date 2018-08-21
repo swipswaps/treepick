@@ -55,7 +55,6 @@ class Keys(Actions):
     def parse_curline(self, action):
         line = 0
         for child, depth in self.traverse():
-            child.curline = self.curline
             if depth == 0:
                 continue
             if line == self.curline:
@@ -70,7 +69,7 @@ class Keys(Actions):
                     'prevparent': lambda: child.prevparent(self, depth),
                     'getsize': lambda: child.getsize(),
                 }[action]()
-            self.curline = child.curline
+                break
             line += 1
 
     def getkeys(self):
@@ -78,20 +77,29 @@ class Keys(Actions):
             self.drawtree()
             key = self.screen.getch()
             keys = {
-                ord('q'): self.quit,
                 self.ESC: self.quit,
+                curses.KEY_F1: lambda: self.getpadkeys(self.mkkeypad()),
+                curses.KEY_F2: lambda: self.getpadkeys(self.mkpickpad()),
                 curses.KEY_F5: self.reset_all,
-                ord('R'): self.reset_all,
                 curses.KEY_F4: self.reset_picked,
+                curses.KEY_UP: self.up,
+                curses.KEY_DOWN: self.dn,
+                curses.KEY_PPAGE: self.pgup,
+                curses.KEY_NPAGE: self.pgdn,
+                curses.KEY_LEFT: lambda: self.parse_curline('collapse'),
+                curses.KEY_RIGHT: lambda: self.parse_curline('expand'),
+                curses.KEY_SRIGHT: lambda: self.parse_curline('expand_all'),
+                curses.KEY_SLEFT: lambda: self.parse_curline('collapse_all'),
+                curses.KEY_HOME: self.top,
+                curses.KEY_END: self.bottom,
+                curses.KEY_RESIZE: self.resize,
+                ord('q'): self.quit,
+                ord('R'): self.reset_all,
                 ord('r'): self.reset_picked,
                 ord('.'): self.toggle_hidden,
-                curses.KEY_RIGHT: lambda: self.parse_curline('expand'),
                 ord('l'): lambda: self.parse_curline('expand'),
-                curses.KEY_LEFT: lambda: self.parse_curline('collapse'),
                 ord('h'): lambda: self.parse_curline('collapse'),
-                curses.KEY_SRIGHT: lambda: self.parse_curline('expand_all'),
                 ord('L'): lambda: self.parse_curline('expand_all'),
-                curses.KEY_SLEFT: lambda: self.parse_curline('collapse_all'),
                 ord('H'): lambda: self.parse_curline('collapse_all'),
                 ord('\t'): lambda: self.parse_curline('toggle_expand'),
                 ord('\n'): lambda: self.parse_curline('toggle_expand'),
@@ -105,23 +113,14 @@ class Keys(Actions):
                 ord('n'): self.findnext,
                 ord('N'): self.findprev,
                 ord(':'): lambda: self.pick(globs=True),
-                curses.KEY_F1: lambda: self.getpadkeys(self.mkkeypad()),
                 ord('?'): lambda: self.getpadkeys(self.mkkeypad()),
-                curses.KEY_F2: lambda: self.getpadkeys(self.mkpickpad()),
                 ord('p'): lambda: self.getpadkeys(self.mkpickpad()),
-                curses.KEY_DOWN: self.dn,
                 ord('j'): self.dn,
-                curses.KEY_UP: self.up,
                 ord('k'): self.up,
-                curses.KEY_PPAGE: self.pgup,
                 ord('b'): self.pgup,
-                curses.KEY_NPAGE: self.pgdn,
                 ord('f'): self.pgdn,
-                curses.KEY_HOME: self.top,
                 ord('g'): self.top,
-                curses.KEY_END: self.bottom,
                 ord('G'): self.bottom,
-                curses.KEY_RESIZE: self.resize,
             }
             if keys[key]():
                 return self.picked
