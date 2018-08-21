@@ -141,9 +141,6 @@ class Actions(Draw):
     def collapse(self):
         if self.name in self.expanded:
             self.expanded.remove(self.name)
-        # elif depth > 1 and not os.path.isdir(self.name):
-        #     p = self.prevparent(depth)
-        #     self.expanded.remove(p)
 
     def collapse_all(self, parent, depth):
         if depth > 1:
