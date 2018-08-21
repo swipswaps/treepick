@@ -59,7 +59,7 @@ class Keys(Actions):
             if depth == 0:
                 continue
             if line == self.curline:
-                actions = {
+                {
                     'expand': lambda: child.expand(),
                     'expand_all': lambda: child.expand(recurse=True),
                     'toggle_expand': lambda: child.expand(toggle=True),

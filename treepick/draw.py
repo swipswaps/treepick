@@ -3,7 +3,6 @@
 
 import os
 import curses
-import fnmatch
 
 from pdu import du
 from .screen import Screen

@@ -151,7 +151,7 @@ class Actions(Draw):
             for c, d in parent.traverse():
                 if line > self.curline:
                     self.curline += 1
-                    if os.path.isdir(c.name) and c.name in parent.children[0:]:
+                    if os.path.isdir(c.name) and c.name in parent.children[self.curline:]:
                         break
                 line += 1
 
