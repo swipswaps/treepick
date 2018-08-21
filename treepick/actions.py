@@ -21,6 +21,10 @@ class Actions(Draw):
         self.globs, self.matches = (None,)*2
         self.lastpath, self.lasthidden = (None,)*2
 
+    ###########################################################################
+    #                          QUIT AND RESET METHODS                         #
+    ###########################################################################
+
     def quit(self):
         return True
 
@@ -31,6 +35,10 @@ class Actions(Draw):
 
     def reset_picked(self):
         self.picked = []
+
+    ###########################################################################
+    #                          LINE MOVEMENT METHODS                          #
+    ###########################################################################
 
     def dn(self):
         self.curline += 1
@@ -54,84 +62,9 @@ class Actions(Draw):
     def bottom(self):
         self.curline = self.line - 1
 
-    def toggle_hidden(self):
-        self.paths = None
-
-        if self.hidden:
-            # keep two copies of record so we can restore from state when
-            # re-hiding
-            self.lastpath = self.children[self.curline]
-            self.hidden = False
-        else:
-            # keep two copies of record so we can restore from state
-            self.lasthidden = self.children[self.curline]
-            self.hidden = True
-
-        self.drawtree()
-
-        if self.lasthidden in self.children:
-            self.curline = self.children.index(self.lasthidden)
-        elif self.lastpath in self.children:
-            self.curline = self.children.index(self.lastpath)
-
-    def expand(self, recurse=False, toggle=False):
-        if os.path.isdir(self.name) and self.children and recurse:
-            self.expanded.add(self.name)
-            for c, d in self.traverse():
-                if d < 2 and os.path.isdir(c.name) and c.children:
-                    self.expanded.add(c.name)
-            self.curline += 1
-        elif os.path.isdir(self.name) and self.children:
-            if toggle:
-                if self.name in self.expanded:
-                    self.expanded.remove(self.name)
-                else:
-                    self.expanded.add(self.name)
-            else:
-                self.expanded.add(self.name)
-                self.curline += 1
-
-    def collapse(self, parent, depth, recurse=False):
-        if depth > 1 and recurse:
-            p = self.prevparent(parent, depth)
-            self.expanded.remove(p)
-            for x in list(self.expanded):  # iterate over copy
-                par = os.path.abspath(p)
-                path = os.path.abspath(x)
-                if path.startswith(par):
-                    self.expanded.remove(x)
-        elif self.name in self.expanded:
-            self.expanded.remove(self.name)
-        elif depth > 1 and not os.path.isdir(self.name):
-            p = self.prevparent(depth)
-            self.expanded.remove(p)
-
-    def pick(self, pickall=False, globs=False):
-        if pickall:
-            for c, d in self.traverse():
-                if d == 0:
-                    continue
-                if c.name in self.picked:
-                    self.picked.remove(c.name)
-                else:
-                    self.picked.append(c.name)
-        elif globs:
-            self.globs = self.mktb("Pick: ").strip().split()
-            if self.globs:
-                for c, d in self.traverse():
-                    for g in self.globs:
-                        if (fnmatch.fnmatch(c.name, g) or
-                                fnmatch.fnmatch(os.path.basename(c.name), g)):
-                            if c.name in self.picked:
-                                self.picked.remove(c.name)
-                            else:
-                                self.picked.append(c.name)
-        else:
-            if self.name in self.picked:
-                self.picked.remove(self.name)
-            else:
-                self.picked.append(self.name)
-            self.curline += 1
+    ###########################################################################
+    #                           LINE JUMPING METHODS                          #
+    ###########################################################################
 
     def nextparent(self, parent, depth):
         '''
@@ -183,6 +116,83 @@ class Actions(Draw):
                 line += 1
         return pdir
 
+    ###########################################################################
+    #                       EXPAND AND COLLAPSE METHODS                       #
+    ###########################################################################
+
+    def expand(self, recurse=False, toggle=False):
+        self.expanded.add(self.name)
+        self.curline += 1
+
+    def expand_all(self):
+        if os.path.isdir(self.name) and self.children:
+            self.expanded.add(self.name)
+            for c, d in self.traverse():
+                if d < 2 and os.path.isdir(c.name) and c.children:
+                    self.expanded.add(c.name)
+            self.curline += 1
+
+    def toggle_expand(self):
+        if self.name in self.expanded:
+            self.expanded.remove(self.name)
+        else:
+            self.expanded.add(self.name)
+
+    def collapse(self):
+        if self.name in self.expanded:
+            self.expanded.remove(self.name)
+        # elif depth > 1 and not os.path.isdir(self.name):
+        #     p = self.prevparent(depth)
+        #     self.expanded.remove(p)
+
+    def collapse_all(self, parent, depth):
+        if depth > 1:
+            p = self.prevparent(parent, depth)
+            self.expanded.remove(p)
+            for x in list(self.expanded):  # iterate over copy
+                par = os.path.abspath(p)
+                path = os.path.abspath(x)
+                if path.startswith(par):
+                    self.expanded.remove(x)
+        else:
+            self.collapse()
+
+    ###########################################################################
+    #                           PATH PICKING METHODS                          #
+    ###########################################################################
+
+    def pick(self):
+        if self.name in self.picked:
+            self.picked.remove(self.name)
+        else:
+            self.picked.append(self.name)
+        self.curline += 1
+
+    def pickall(self):
+        for c, d in self.traverse():
+            if d == 0:
+                continue
+            if c.name in self.picked:
+                self.picked.remove(c.name)
+            else:
+                self.picked.append(c.name)
+
+    def pickglobs(self):
+        self.globs = self.mktb("Pick: ").strip().split()
+        if self.globs:
+            for c, d in self.traverse():
+                for g in self.globs:
+                    if (fnmatch.fnmatch(c.name, g) or
+                            fnmatch.fnmatch(os.path.basename(c.name), g)):
+                        if c.name in self.picked:
+                            self.picked.remove(c.name)
+                        else:
+                            self.picked.append(c.name)
+
+    ###########################################################################
+    #                            SEARCHING METHODS                            #
+    ###########################################################################
+
     def find(self):
         string = self.mktb("Find: ").strip()
         if string:
@@ -210,6 +220,10 @@ class Actions(Draw):
                 self.curline = self.matches[m-1]
                 break
 
+    ###########################################################################
+    #                         SIZE AND HIDING METHODS                         #
+    ###########################################################################
+
     def getsize(self, sizeall=False):
         if sizeall:
             for c, d in self.traverse():
@@ -217,3 +231,23 @@ class Actions(Draw):
         else:
             self.sized[os.path.abspath(self.name)] = None
             self.curline += 1
+
+    def toggle_hidden(self):
+        self.paths = None
+
+        if self.hidden:
+            # keep two copies of record so we can restore from state when
+            # re-hiding
+            self.lastpath = self.children[self.curline]
+            self.hidden = False
+        else:
+            # keep two copies of record so we can restore from state
+            self.lasthidden = self.children[self.curline]
+            self.hidden = True
+
+        self.drawtree()
+
+        if self.lasthidden in self.children:
+            self.curline = self.children.index(self.lasthidden)
+        elif self.lastpath in self.children:
+            self.curline = self.children.index(self.lastpath)
