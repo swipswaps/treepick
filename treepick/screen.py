@@ -26,14 +26,15 @@ class Screen:
         self.header.refresh()
         self.picked = picked
         self.color = Color(self.win)
+        self.lc, self.pos = (0,)*2
 
-    def resize(self, lc=None):
+    def resize(self):
         self.screen.erase()
         self.y, self.x = self.screen.getmaxyx()
         self.header.resize(1, self.x)
         self.win.resize(self.y - 3, self.x)
-        if lc:
-            self.pad.resize(lc + 2, self.x)
+        if self.lc:
+            self.pad.resize(self.lc + 2, self.x)
         self.footer.mvwin(self.y - 1, 0)
         self.footer.resize(1, self.x)
         self.screen.refresh()
@@ -151,10 +152,10 @@ class Screen:
             q, ESC            : Quit and display all marked paths.
             '''
         msg = dedent(msg).strip()
-        lc = len(msg.splitlines())
+        self.lc = len(msg.splitlines())
         self.screen.erase()
         self.pad.erase()
-        self.pad.resize(lc + 2, self.x)
+        self.pad.resize(self.lc + 2, self.x)
         try:
             self.pad.addstr(0, 0, msg)
             self.pad.scrollok(1)
@@ -162,7 +163,7 @@ class Screen:
             self.mkpadfooter()
         except curses.error:
             pass
-        return lc
+        self.getpadkeys()
 
     def mkpickpad(self):
         self.screen.erase()
@@ -177,4 +178,5 @@ class Screen:
             self.mkpadfooter()
         except curses.error:
             pass
-        return len(self.picked)
+        self.lc = len(self.picked)
+        self.getpadkeys()

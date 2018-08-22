@@ -24,31 +24,27 @@ class Keys(Actions):
                          sized)
         self.ESC = 27
 
-    def getpadkeys(self, lc):
+    def getpadkeys(self):
         self.screen.refresh()
-        pos = 0
-        self.pad.refresh(pos, 0, 0, 0, self.y - 2, self.x - 1)
+        self.pad.refresh(self.pos, 0, 0, 0, self.y - 2, self.x - 1)
         while True:
-            ch = self.screen.getch()
-            if (ch == curses.KEY_DOWN or ch == ord('j')):
-                if pos < lc - self.y + 1:
-                    pos += 1
-            elif (ch == curses.KEY_UP or ch == ord('k')):
-                if pos > 0:
-                    pos -= 1
-            elif (ch == curses.KEY_NPAGE or ch == ord('f')):
-                pos += self.y - 1
-                if pos >= lc - self.y + 1:
-                    pos = lc - self.y + 1
-            elif (ch == curses.KEY_PPAGE or ch == ord('b')):
-                pos -= self.y - 1
-                if pos < 0:
-                    pos = 0
-            elif (ch == curses.KEY_RESIZE):
-                self.resize(lc)
-            elif ch == ord('q') or ch == self.ESC:
+            key = self.screen.getch()
+            keys = {
+                self.ESC: self.quit,
+                curses.KEY_DOWN: self.pad_dn,
+                curses.KEY_UP: self.pad_up,
+                curses.KEY_NPAGE: self.pad_pgup,
+                curses.KEY_PPAGE: self.pad_pgdn,
+                curses.KEY_RESIZE: self.resize,
+                ord('q'): self.quit,
+                ord('j'): self.pad_dn,
+                ord('k'): self.pad_up,
+                ord('f'): self.pad_pgup,
+                ord('b'): self.pad_pgdn,
+            }
+            if keys[key]():
                 break
-            self.pad.refresh(pos, 0, 0, 0, self.y - 2, self.x - 1)
+            self.pad.refresh(self.pos, 0, 0, 0, self.y - 2, self.x - 1)
         self.screen.erase()
         self.screen.refresh()
 
@@ -78,8 +74,8 @@ class Keys(Actions):
             key = self.screen.getch()
             keys = {
                 self.ESC: self.quit,
-                curses.KEY_F1: lambda: self.getpadkeys(self.mkkeypad()),
-                curses.KEY_F2: lambda: self.getpadkeys(self.mkpickpad()),
+                curses.KEY_F1: self.mkkeypad,
+                curses.KEY_F2: self.mkpickpad,
                 curses.KEY_F5: self.reset_all,
                 curses.KEY_F4: self.reset_picked,
                 curses.KEY_UP: self.up,
@@ -94,8 +90,8 @@ class Keys(Actions):
                 curses.KEY_END: self.bottom,
                 curses.KEY_RESIZE: self.resize,
                 ord('q'): self.quit,
-                ord('?'): lambda: self.getpadkeys(self.mkkeypad()),
-                ord('p'): lambda: self.getpadkeys(self.mkpickpad()),
+                ord('?'): self.mkkeypad,
+                ord('p'): self.mkpickpad,
                 ord('R'): self.reset_all,
                 ord('r'): self.reset_picked,
                 ord('j'): self.dn,
