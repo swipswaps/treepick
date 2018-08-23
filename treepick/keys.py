@@ -110,7 +110,7 @@ class Keys(Actions):
                 ord('J'): lambda: self.parse_curline('nextparent'),
                 ord('K'): lambda: self.parse_curline('prevparent'),
                 ord('s'): lambda: self.parse_curline('getsize'),
-                ord('S'): lambda: self.parse_curline('getsizeall'),
+                ord('S'): self.getsizeall,
                 ord('.'): self.toggle_hidden,
                 ord('/'): self.find,
                 ord('n'): self.findnext,

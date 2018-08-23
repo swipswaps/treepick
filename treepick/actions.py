@@ -120,7 +120,7 @@ class Actions(Draw):
     #                       EXPAND AND COLLAPSE METHODS                       #
     ###########################################################################
 
-    def expand(self, recurse=False, toggle=False):
+    def expand(self):
         self.expanded.add(self.name)
         self.curline += 1
 
@@ -221,13 +221,13 @@ class Actions(Draw):
     #                         SIZE AND HIDING METHODS                         #
     ###########################################################################
 
-    def getsize(self, sizeall=False):
-        if sizeall:
-            for c, d in self.traverse():
-                self.sized[os.path.abspath(c.name)] = None
-        else:
-            self.sized[os.path.abspath(self.name)] = None
-            self.curline += 1
+    def getsize(self):
+        self.sized[os.path.abspath(self.name)] = None
+        self.curline += 1
+
+    def getsizeall(self):
+        for c, d in self.traverse():
+            self.sized[os.path.abspath(c.name)] = None
 
     def toggle_hidden(self):
         self.paths = None
