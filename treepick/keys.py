@@ -8,21 +8,6 @@ environ.setdefault('ESCDELAY', '12')  # otherwise it takes an age!
 
 
 class Keys(Actions):
-    def __init__(self,
-                 screen,
-                 name,
-                 hidden,
-                 picked=[],
-                 expanded=set(),
-                 sized=dict()):
-        Actions.__init__(self,
-                         screen,
-                         name,
-                         hidden,
-                         picked,
-                         expanded,
-                         sized)
-        self.ESC = 27
 
     def getpadkeys(self):
         self.screen.refresh()
@@ -30,7 +15,7 @@ class Keys(Actions):
         while True:
             key = self.screen.getch()
             keys = {
-                self.ESC: self.quit,
+                27: self.quit,
                 curses.KEY_DOWN: self.pad_dn,
                 curses.KEY_UP: self.pad_up,
                 curses.KEY_NPAGE: self.pad_pgup,
@@ -73,7 +58,7 @@ class Keys(Actions):
             self.drawtree()
             key = self.screen.getch()
             keys = {
-                self.ESC: self.quit,
+                27: self.quit,
                 curses.KEY_F1: self.mkkeypad,
                 curses.KEY_F2: self.mkpickpad,
                 curses.KEY_F5: self.reset_all,

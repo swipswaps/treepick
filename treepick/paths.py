@@ -2,8 +2,6 @@
 # ISC License (ISCL) - see LICENSE file for details.
 
 import os
-import curses
-import fnmatch
 
 from .keys import Keys
 
