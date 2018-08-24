@@ -74,13 +74,10 @@ class Actions(Draw):
         '''
         if depth > 1:  # can't jump to parent of root node!
             pdir = os.path.dirname(self.name)
-            pidx = parent.children.index(pdir)
-            line = -1
+            line = 0
             for c, d in parent.traverse():
-                if line > parent.curline:
+                if line > parent.curline and c.name.startswith(pdir):
                     parent.curline += 1
-                if c.name == parent.children[pidx + 1]:
-                    break
                 line += 1
         else:  # otherwise just skip to next directory
             line = -1  # skip hidden parent node
