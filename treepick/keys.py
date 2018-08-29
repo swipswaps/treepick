@@ -27,8 +27,11 @@ class Keys(Actions):
                 ord('f'): self.pad_pgup,
                 ord('b'): self.pad_pgdn,
             }
-            if keys[key]():
-                break
+            try:
+                if keys[key]():
+                    break
+            except KeyError:
+                pass
             self.pad.refresh(self.pos, 0, 0, 0, self.y - 2, self.x - 1)
         self.screen.erase()
         self.screen.refresh()
@@ -103,6 +106,9 @@ class Keys(Actions):
                 ord('v'): self.pickall,
                 ord(':'): self.pickglobs,
             }
-            if keys[key]():
-                return self.picked
+            try:
+                if keys[key]():
+                    return self.picked
+            except KeyError:
+                pass
             self.curline %= self.line
