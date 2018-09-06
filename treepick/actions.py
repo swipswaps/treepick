@@ -117,17 +117,17 @@ class Actions(Draw):
     #                       EXPAND AND COLLAPSE METHODS                       #
     ###########################################################################
 
-    def expand(self):
+    def expand(self, parent):
         self.expanded.add(self.name)
-        self.curline += 1
+        parent.curline += 1
 
-    def expand_all(self):
+    def expand_all(self, parent):
         if os.path.isdir(self.name) and self.children:
             self.expanded.add(self.name)
             for c, d in self.traverse():
                 if d < 2 and os.path.isdir(c.name) and c.children:
                     self.expanded.add(c.name)
-            self.curline += 1
+            parent.curline += 1
 
     def toggle_expand(self):
         if self.name in self.expanded:
@@ -155,12 +155,12 @@ class Actions(Draw):
     #                           PATH PICKING METHODS                          #
     ###########################################################################
 
-    def pick(self):
+    def pick(self, parent):
         if self.name in self.picked:
             self.picked.remove(self.name)
         else:
             self.picked.append(self.name)
-        self.curline += 1
+        parent.curline += 1
 
     def pickall(self):
         for c, d in self.traverse():
@@ -218,9 +218,9 @@ class Actions(Draw):
     #                         SIZE AND HIDING METHODS                         #
     ###########################################################################
 
-    def getsize(self):
+    def getsize(self, parent):
         self.sized[os.path.abspath(self.name)] = None
-        self.curline += 1
+        parent.curline += 1
 
     def getsizeall(self):
         for c, d in self.traverse():

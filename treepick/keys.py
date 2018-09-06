@@ -43,15 +43,15 @@ class Keys(Actions):
                 continue
             if line == self.curline:
                 {
-                    'expand': child.expand,
-                    'expand_all': child.expand_all,
+                    'expand': lambda: child.expand(self),
+                    'expand_all': lambda: child.expand_all(self),
                     'toggle_expand': child.toggle_expand,
                     'collapse': child.collapse,
                     'collapse_all': lambda: child.collapse_all(self, depth),
-                    'toggle_pick': child.pick,
+                    'toggle_pick': lambda: child.pick(self),
                     'nextparent': lambda: child.nextparent(self, depth),
                     'prevparent': lambda: child.prevparent(self, depth),
-                    'getsize': child.getsize,
+                    'getsize': lambda: child.getsize(self),
                 }[action]()
                 break
             line += 1
