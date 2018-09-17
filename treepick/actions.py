@@ -29,6 +29,7 @@ class Actions(Draw):
         return True
 
     def reset_all(self):
+        self.curline = 0
         self.picked = []
         self.expanded = set([self.name])
         self.sized = {}
