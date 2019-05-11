@@ -24,8 +24,8 @@ class Keys(Actions):
                 ord('q'): self.quit,
                 ord('j'): self.pad_dn,
                 ord('k'): self.pad_up,
-                ord('f'): self.pad_pgup,
-                ord('b'): self.pad_pgdn,
+                ord('f'): self.pad_pgdn,
+                ord('b'): self.pad_pgup,
             }
             try:
                 if keys[key]():
